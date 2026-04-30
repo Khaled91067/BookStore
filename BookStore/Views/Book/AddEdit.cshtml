@@ -1,0 +1,100 @@
+﻿@using BookStore.ViewModels
+@model BookVM
+
+@{
+    ViewBag.Title = $"{ViewBag.Operation} Book";
+}
+
+<h1>@ViewBag.Operation Book</h1>
+
+<form asp-action="AddEdit" method="post" enctype="multipart/form-data">
+
+    <input type="hidden" asp-for="BookId" />
+    <input type="hidden" asp-for="ImageUrl" />
+
+    <!-- Title -->
+    <div class="mb-3">
+        <label asp-for="Title" class="form-label"></label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+
+    <!-- ISBN -->
+    <div class="mb-3">
+        <label asp-for="ISBN" class="form-label"></label>
+        <input asp-for="ISBN" class="form-control" />
+        <span asp-validation-for="ISBN" class="text-danger"></span>
+    </div>
+
+    <!-- Price -->
+    <div class="mb-3">
+        <label asp-for="Price" class="form-label"></label>
+        <input asp-for="Price" class="form-control" />
+        <span asp-validation-for="Price" class="text-danger"></span>
+    </div>
+
+    <!-- Stock -->
+    <div class="mb-3">
+        <label asp-for="StockQuantity" class="form-label">Quantity</label>
+        <input asp-for="StockQuantity" class="form-control" />
+        <span asp-validation-for="StockQuantity" class="text-danger"></span>
+    </div>
+
+    <!-- Category -->
+    <div class="mb-3">
+        <label class="form-label">Category</label>
+
+        @foreach (var cat in Model.Categories)
+        {
+            <div class="form-check">
+                <input class="form-check-input"
+                       type="radio"
+                       asp-for="CategoryId"
+                       value="@cat.CategoryId" />
+
+                <label class="form-check-label">
+                    @cat.Name
+                </label>
+            </div>
+        }
+
+        <span asp-validation-for="CategoryId" class="text-danger"></span>
+    </div>
+
+    <!-- Publisher -->
+    <div class="mb-3">
+        <label asp-for="PublisherId" class="form-label"></label>
+        <select asp-for="PublisherId" class="form-control" asp-items="ViewBag.Publishers">
+            <option value="">Select Publisher</option>
+            @foreach (var pub in Model.Publishers)
+            {
+                <option value="@pub.PublisherId">@pub.Name</option>
+            }
+        </select>
+        <span asp-validation-for="PublisherId" class="text-danger"></span>
+    </div>
+
+    <!-- Current Image -->
+    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+    {
+        <div class="mb-3">
+            <img src="~/Images/@Model.ImageUrl" width="120" />
+        </div>
+    }
+
+    <!-- Upload Image -->
+    <div class="mb-3">
+        <label asp-for="ImageFile" class="form-label">Book Image</label>
+        <input asp-for="ImageFile" type="file" class="form-control" />
+        <span asp-validation-for="ImageFile" class="text-danger"></span>
+    </div>
+
+    <!-- Buttons -->
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+
+</form>
+
+@* @section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+} *@

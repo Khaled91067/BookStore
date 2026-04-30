@@ -1,0 +1,19 @@
+﻿@model List<Order>
+
+@if (!Model.Any())
+{
+    <h3>No Orders Found</h3>
+}
+
+@foreach (var order in Model)
+{
+    <h3>Order #@order.OrderId</h3>
+
+    @foreach (var item in order.OrderItems)
+    {
+        <p>
+            @item.Book.Title -
+            Qty: @item.Quantity
+        </p>
+    }
+}

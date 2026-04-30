@@ -1,0 +1,58 @@
+﻿@using BookStore.ViewModels
+
+@model List<OrderItemVM>
+
+
+@{
+    ViewData["Title"] = "Cart";
+    decimal total = Model.Sum(x => x.Price * x.Quantity);
+}
+<h1>My Cart</h1>
+
+<!--Form to finalize and create the order-->
+<form asp-action="PlaceOrder" method="post">
+    <h3>Order Items</h3>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                
+                <th>Book</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+
+			@foreach(var item in Model)
+            {
+                <tr>
+                    <td>@item.ProductName</td>
+
+                    <td>@item.Price EGP</td>
+
+                    <td>@item.Quantity</td>
+
+                    <td>@(item.Price * item.Quantity) EGP</td>
+
+                    <td>
+                        <a asp-action="RemoveFromCart"
+                               asp-route-bookId="@item.ProductId"
+                               class="btn btn-danger btn-sm">
+                            Remove
+                        </a>
+                    </td>
+                </tr>
+            }
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td class="bg-primary bg-gradient text-white fw-bold">@total.ToString("C")</td>
+            </tr>       
+        </tbody>
+    </table>
+    <div class="form-group">
+        <input type="submit" value="Place Order" class="btn btn-primary" />
+    </div>
+</form>
