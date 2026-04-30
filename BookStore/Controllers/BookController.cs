@@ -125,6 +125,29 @@ namespace BookStore.Controllers
             return RedirectToAction("Index");           
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var book = await _context.Books.FindAsync(id);
+
+            if (book == null)
+                return NotFound();
+
+            // حذف الصورة
+            if (!string.IsNullOrEmpty(book.ImageUrl))
+            {
+                var path = Path.Combine(_webHostEnvironment.WebRootPath, "images", book.ImageUrl);
+
+                if (System.IO.File.Exists(path))
+                    System.IO.File.Delete(path);
+            }
+
+            _context.Books.Remove(book);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index");
+        }
 
     }
 }

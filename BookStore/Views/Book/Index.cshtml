@@ -20,6 +20,20 @@
                 <p class="card-text">@book.Price</p>
                     <a asp-controller="Order" asp-action="AddToCart" asp-route-bookId="@book.BookId" class="btn btn-success">Add To Cart</a>
                     <a asp-controller="Book" asp-action="AddEdit" asp-route-Id="@book.BookId" class="btn btn-danger">Edit</a>
+                    
+                    <form asp-controller="Book"
+                          asp-action="Delete"
+                          method="post"
+                          style="display:inline;">
+
+                        <input type="hidden" name="id" value="@book.BookId" />
+
+                        @Html.AntiForgeryToken()
+
+                        <button type="submit" class="btn btn-danger">
+                            Delete
+                        </button>
+                    </form>
             </div>
         </div>
     </div>
