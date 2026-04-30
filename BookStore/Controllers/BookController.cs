@@ -30,6 +30,7 @@ namespace BookStore.Controllers
             return View(books);
         }
 
+        [HttpGet]
         public async Task<IActionResult> AddEdit(int id)
         {
             BookVM vm = new BookVM();
@@ -37,9 +38,26 @@ namespace BookStore.Controllers
             vm.Publishers = _context.Publishers.ToList();
 
 
+            
+            if (id != 0)
+            {
+                var book = _context.Books.Find(id);
+
+                if (book == null)
+                    return NotFound();
+
+                vm.BookId = book.BookId;
+                vm.Title = book.Title;
+                vm.Price = book.Price;
+                vm.ImageUrl = book.ImageUrl;
+                vm.CategoryId = book.CategoryId;
+                vm.StockQuantity = book.StockQuantity;
+                vm.PublisherId = book.PublisherId;
+            }
+            ModelState.Clear();
+            Console.WriteLine($"ID: {id}");
+           
             return View(vm);
-
-
         }
 
         [HttpPost]
@@ -51,48 +69,60 @@ namespace BookStore.Controllers
 
                 return View(vm);
             }
-                
+
+            string? fileName = vm.ImageUrl;
 
             if (vm.ImageFile != null)
             {
                 
                     
                     var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "Images");
-                    var uniqueFileName = Guid.NewGuid().ToString() + "_" + vm.ImageFile.FileName;
-                    string path = Path.Combine(uploadsFolder, uniqueFileName);
+                    var newFileName = Guid.NewGuid().ToString() + "_" + vm.ImageFile.FileName;
+                    string path = Path.Combine(uploadsFolder, newFileName);
 
                     using (var stream = new FileStream(path, FileMode.Create))
                     {
                         vm.ImageFile.CopyTo(stream);
                     }
-                    vm.ImageUrl = uniqueFileName;
+                    fileName = newFileName;
                
                
             }
 
+            if(vm.BookId == 0)
+            {
+                var book = new Book
+                {
 
+                    Title = vm.Title,
+                    Price = vm.Price,
+                    ImageUrl = fileName,
+                    CategoryId = vm.CategoryId,
+                    
+                    StockQuantity = vm.StockQuantity,
+                    PublisherId = vm.PublisherId
 
-            var book = new Book
-            { 
-             
-                Title = vm.Title,
-                Price = vm.Price,
-                ImageUrl = vm.ImageUrl,
-                CategoryId = vm.CategoryId,
-                
-                StockQuantity = vm.StockQuantity,
-                PublisherId = vm.PublisherId
+                };
+                _context.Books.Add(book);
+            }
+            else
+            {
+                var book = _context.Books.Find(vm.BookId);
 
-            };
+                if (book == null)
+                    return NotFound();
 
-            _context.Books.Add(book);
+                book.Title = vm.Title;
+                book.Price = vm.Price;
+                book.ImageUrl = fileName;
+                book.CategoryId = vm.CategoryId;
+                book.StockQuantity = vm.StockQuantity;
+                book.PublisherId = vm.PublisherId;
+
+            }     
+
             _context.SaveChanges();
-
-            return RedirectToAction("Index");
-
-            
-            
-           
+            return RedirectToAction("Index");           
         }
 
 
