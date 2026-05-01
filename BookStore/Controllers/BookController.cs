@@ -134,7 +134,7 @@ namespace BookStore.Controllers
             if (book == null)
                 return NotFound();
 
-            // حذف الصورة
+            
             if (!string.IsNullOrEmpty(book.ImageUrl))
             {
                 var path = Path.Combine(_webHostEnvironment.WebRootPath, "images", book.ImageUrl);

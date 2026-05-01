@@ -12,9 +12,11 @@
 <div class="row">
     @foreach (var book in Model)
     {
-        <div class="col-md-4">
-        <div class="card" style="width: 18rem;">
-            <img src="~/Images/@book.ImageUrl" class="card-img-top" alt="...">
+    <div class="col-md-3">
+        <div class="card" style="width: 14rem;">
+                <div class="ratio ratio-1x1">
+                    <img src="~/Images/@book.ImageUrl" class="card-img-top" style="object-fit: contain;" alt="...">
+                </div>
             <div class="card-body">
                 <h5 class="card-title">@book.Title</h5>
                 <p class="card-text">@book.Price</p>
