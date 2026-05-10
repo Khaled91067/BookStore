@@ -40,7 +40,26 @@
                             <a class="nav-link text-white" asp-area="" asp-controller="Order" asp-action="Create">Create Order</a>
                         </li>
                     </ul>
+                    <form asp-controller="UserBook" asp-action="Index" method="get" class="d-flex" role="search">
+
+                        <input class="form-control me-2"
+                               type="search"
+                               name="search"
+                               placeholder="Search"
+                               aria-label="Search" />
+
+                        <button class="btn btn-outline-success"
+                                type="submit">
+                            
+                                Search
+
+                        </button>
+
+                    </form>
+                  
+
                     <partial name="_LoginPartial" />
+
                 </div>
             </div>
         </nav>

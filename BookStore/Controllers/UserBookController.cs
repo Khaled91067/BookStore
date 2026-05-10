@@ -11,29 +11,58 @@ namespace BookStore.Controllers
     public class UserBookController : Controller
     {
         private readonly ApplicationDbContext _context;
-        
-        public UserBookController(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment)
+
+        public UserBookController(ApplicationDbContext context)
         {
             _context = context;
-            
         }
-        public async Task<IActionResult> Index()
+        [HttpGet]
+        public async Task<IActionResult> Index(string? search)
         {
-            var books = _context.Books
-        .Select(b => new BookVM
-        {
-            BookId = b.BookId,
-            Title = b.Title,
-            Price = b.Price,
-            StockQuantity = b.StockQuantity,
-            ImageUrl = b.ImageUrl
-        })
-        .ToList();
+            var booksQuery = _context.Books
+
+                .Include(b => b.Category)
+
+                .Include(b => b.Publisher)
+
+                .Include(b => b.BookAuthors)
+                    .ThenInclude(ba => ba.Author)
+
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                booksQuery = booksQuery.Where(b =>
+
+                    b.Title.Contains(search) ||
+
+                    (b.Category != null &&
+                     b.Category.Name.Contains(search)) ||
+
+                    (b.Publisher != null &&
+                     b.Publisher.Name.Contains(search)) ||
+
+                    b.BookAuthors.Any(ba =>
+                        ba.Author != null &&
+                        ba.Author.Name.Contains(search))
+                );
+            }
+
+            var books = await booksQuery
+                .Select(b => new BookVM
+                {
+                    BookId = b.BookId,
+                    Title = b.Title,
+                    Price = b.Price,
+                    StockQuantity = b.StockQuantity,
+                    ImageUrl = b.ImageUrl
+                })
+                .ToListAsync();
 
             return View(books);
         }
 
-        
+
 
     }
 }

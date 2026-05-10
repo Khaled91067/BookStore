@@ -1,4 +1,5 @@
-﻿using BookStore.Data;
+﻿using BookStore.Controllers;
+using BookStore.Data;
 using BookStore.Models;
 using BookStore.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -51,7 +52,7 @@ namespace BookStore.Areas.Admin.Controllers
                 vm.CategoryId = book.CategoryId;
                 vm.StockQuantity = book.StockQuantity;
                 vm.PublisherId = book.PublisherId;
-
+                
                 vm.SelectedAuthorIds = book.BookAuthors
                     .Select(ba => ba.AuthorId)
                     .ToList();
@@ -112,8 +113,20 @@ namespace BookStore.Areas.Admin.Controllers
                     StockQuantity = vm.StockQuantity,
                     PublisherId = vm.PublisherId
 
+
                 };
                 _context.Books.Add(book);
+
+                await _context.SaveChangesAsync();
+
+                foreach (var authorId in vm.SelectedAuthorIds)
+                {
+                    _context.BookAuthors.Add(new BookAuthor
+                    {
+                        BookId = book.BookId,
+                        AuthorId = authorId
+                    });
+                }
             }
             else
             {
@@ -129,10 +142,23 @@ namespace BookStore.Areas.Admin.Controllers
                 book.StockQuantity = vm.StockQuantity;
                 book.PublisherId = vm.PublisherId;
 
+                var existingAuthors = _context.BookAuthors
+                 .Where(ba => ba.BookId == book.BookId);
+
+                _context.BookAuthors.RemoveRange(existingAuthors);
+
+                foreach (var authorId in vm.SelectedAuthorIds)
+                {
+                    _context.BookAuthors.Add(new BookAuthor
+                    {
+                        BookId = book.BookId,
+                        AuthorId = authorId
+                    });
+                }
             }
 
-            _context.SaveChanges();
-            return RedirectToAction("Index");
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index","UserBook", routeValues: new { area = "" });
         }
 
         [HttpPost]
