@@ -7,7 +7,7 @@ namespace BookStore
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +17,7 @@ namespace BookStore
                 options.UseSqlServer(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-            builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true).AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddControllersWithViews();
 
@@ -44,16 +44,30 @@ namespace BookStore
 
             app.UseHttpsRedirection();
             app.UseRouting();
+            
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            var scopeFactory = app.Services.GetRequiredService<IServiceScopeFactory>();
+            using (var scope = scopeFactory.CreateScope())
+            {
+                await IdentityConfig.CreateAdminUserAsync(scope.ServiceProvider);
+            }
 
             app.UseSession();//
 
-            app.UseAuthorization();
 
             app.MapStaticAssets();
+
+            app.MapControllerRoute(
+                name: "areas",
+                pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Book}/{action=Index}/{id?}")
                 .WithStaticAssets();
+            
             app.MapRazorPages()
                .WithStaticAssets();
 

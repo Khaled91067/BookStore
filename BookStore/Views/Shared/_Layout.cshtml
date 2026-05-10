@@ -29,8 +29,13 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-white" asp-area="" asp-controller="Book" asp-action="Index">Books</a>
-
                         </li>
+                        @if(User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-white bg-warning" asp-area="Admin" asp-controller="User" asp-action="Index">Manage Users <i class="bi bi-people-fill"></i></a>
+                            </li>
+                        }
                         <li class="nav-item">
                             <a class="nav-link text-white" asp-area="" asp-controller="Order" asp-action="Create">Create Order</a>
                         </li>
