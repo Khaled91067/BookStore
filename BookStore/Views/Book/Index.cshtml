@@ -20,22 +20,30 @@
             <div class="card-body">
                 <h5 class="card-title">@book.Title</h5>
                 <p class="card-text">@book.Price</p>
-                    <a asp-controller="Order" asp-action="AddToCart" asp-route-bookId="@book.BookId" class="btn btn-success">Add To Cart</a>
-                    <a asp-controller="Book" asp-action="AddEdit" asp-route-Id="@book.BookId" class="btn btn-danger">Edit</a>
-                    
-                    <form asp-controller="Book"
-                          asp-action="Delete"
-                          method="post"
-                          style="display:inline;">
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-controller="Book" asp-action="AddEdit" asp-route-Id="@book.BookId" class="btn btn-danger">Edit</a>
+                     
 
-                        <input type="hidden" name="id" value="@book.BookId" />
+                        <form asp-controller="Book"
+                              asp-action="Delete"
+                              method="post"
+                              style="display:inline;">
 
-                        @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@book.BookId" />
 
-                        <button type="submit" class="btn btn-danger">
-                            Delete
-                        </button>
-                    </form>
+                            @Html.AntiForgeryToken()
+
+                            <button type="submit" class="btn btn-danger">
+                                Delete
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <a asp-controller="Order" asp-action="AddToCart" asp-route-bookId="@book.BookId" class="btn btn-success">Add To Cart</a>
+                    }
+                                        
             </div>
         </div>
     </div>
