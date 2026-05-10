@@ -65,7 +65,7 @@ namespace BookStore
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Book}/{action=Index}/{id?}")
+                pattern: "{controller=UserBook}/{action=Index}/{id?}")
                 .WithStaticAssets();
             
             app.MapRazorPages()

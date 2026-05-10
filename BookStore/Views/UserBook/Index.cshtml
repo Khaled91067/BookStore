@@ -6,9 +6,13 @@
 	ViewData["Title"] = "Books";
 }
 
-
 	<h1>Books</h1>
-    <a asp-action="AddEdit" asp-controller="Book" class="btn btn-primary">Create New Item</a>
+
+    @if(User.IsInRole("Admin"))
+    {
+    <a asp-action="AddEdit" asp-area="Admin" asp-controller="AdminBook" class="btn btn-primary">Create New Item</a>
+    }
+    
 <div class="row">
     @foreach (var book in Model)
     {
@@ -22,10 +26,11 @@
                 <p class="card-text">@book.Price</p>
                     @if (User.IsInRole("Admin"))
                     {
-                        <a asp-controller="Book" asp-action="AddEdit" asp-route-Id="@book.BookId" class="btn btn-danger">Edit</a>
+                        <a asp-controller="AdminBook" asp-area="Admin" asp-action="AddEdit" asp-route-Id="@book.BookId" class="btn btn-danger">Edit</a>
                      
 
-                        <form asp-controller="Book"
+                        <form asp-controller="AdminBook"
+                              asp-area="Admin"  
                               asp-action="Delete"
                               method="post"
                               style="display:inline;">

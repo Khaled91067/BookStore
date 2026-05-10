@@ -1,4 +1,5 @@
 ﻿using BookStore.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 
 namespace BookStore.ViewModels
@@ -15,7 +16,8 @@ namespace BookStore.ViewModels
         public string? ImageUrl { get; set; }
         public int CategoryId { get; set; }
         public List<Category>? Categories { get; set; }
-
+        public List<int> SelectedAuthorIds { get; set; } = new();
+        public List<SelectListItem> Authors { get; set; } = new();
         public IFormFile? ImageFile { get; set; }
         public int StockQuantity { get; set; }
         public int PublisherId { get; set; }

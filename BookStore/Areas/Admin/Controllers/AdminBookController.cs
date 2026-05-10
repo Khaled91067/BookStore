@@ -2,34 +2,22 @@
 using BookStore.Models;
 using BookStore.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
-namespace BookStore.Controllers
+namespace BookStore.Areas.Admin.Controllers
 {
-    public class BookController : Controller
+    [Area("Admin")]
+    public class AdminBookController : Controller
     {
+        
         private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
-        public BookController(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment)
+        public AdminBookController(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
-            _webHostEnvironment=webHostEnvironment;
+            _webHostEnvironment = webHostEnvironment;
         }
-        public async Task<IActionResult> Index()
-        {
-            var books = _context.Books
-        .Select(b => new BookVM
-        {
-            BookId = b.BookId,
-            Title = b.Title,
-            Price = b.Price,
-            StockQuantity = b.StockQuantity,
-            ImageUrl = b.ImageUrl
-        })
-        .ToList();
-
-            return View(books);
-        }
-
         [HttpGet]
         public async Task<IActionResult> AddEdit(int id)
         {
@@ -37,11 +25,21 @@ namespace BookStore.Controllers
             vm.Categories = _context.Categories.ToList();
             vm.Publishers = _context.Publishers.ToList();
 
+            vm.Authors = await _context.Authors
+                    .Select(a => new SelectListItem
+                    {
+                        Value = a.AuthorId.ToString(),
+                        Text = a.Name
+                    })
+                    .ToListAsync();
 
-            
+
             if (id != 0)
             {
-                var book = _context.Books.Find(id);
+                /*var book = _context.Books.Find(id);*/
+                var book = _context.Books
+                    .Include(b => b.BookAuthors)
+                    .FirstOrDefault(b => b.BookId == id);
 
                 if (book == null)
                     return NotFound();
@@ -53,19 +51,32 @@ namespace BookStore.Controllers
                 vm.CategoryId = book.CategoryId;
                 vm.StockQuantity = book.StockQuantity;
                 vm.PublisherId = book.PublisherId;
+
+                vm.SelectedAuthorIds = book.BookAuthors
+                    .Select(ba => ba.AuthorId)
+                    .ToList();
+
             }
-            ModelState.Clear();
-            Console.WriteLine($"ID: {id}");
-           
+            /*ModelState.Clear();*/
+
             return View(vm);
         }
 
         [HttpPost]
-        public IActionResult AddEdit(BookVM vm)
+        public async Task<IActionResult> AddEdit(BookVM vm)
         {
-            if (!ModelState.IsValid) {
+            if (!ModelState.IsValid)
+            {
                 vm.Categories = _context.Categories.ToList();
                 vm.Publishers = _context.Publishers.ToList();
+                vm.Authors = await _context.Authors
+                .Select(a => new SelectListItem
+                {
+                    Value = a.AuthorId.ToString(),
+                    Text = a.Name
+                })
+                   .ToListAsync();
+
 
                 return View(vm);
             }
@@ -74,22 +85,22 @@ namespace BookStore.Controllers
 
             if (vm.ImageFile != null)
             {
-                
-                    
-                    var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "Images");
-                    var newFileName = Guid.NewGuid().ToString() + "_" + vm.ImageFile.FileName;
-                    string path = Path.Combine(uploadsFolder, newFileName);
 
-                    using (var stream = new FileStream(path, FileMode.Create))
-                    {
-                        vm.ImageFile.CopyTo(stream);
-                    }
-                    fileName = newFileName;
-               
-               
+
+                var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "Images");
+                var newFileName = Guid.NewGuid().ToString() + "_" + vm.ImageFile.FileName;
+                string path = Path.Combine(uploadsFolder, newFileName);
+
+                using (var stream = new FileStream(path, FileMode.Create))
+                {
+                    vm.ImageFile.CopyTo(stream);
+                }
+                fileName = newFileName;
+
+
             }
 
-            if(vm.BookId == 0)
+            if (vm.BookId == 0)
             {
                 var book = new Book
                 {
@@ -98,7 +109,6 @@ namespace BookStore.Controllers
                     Price = vm.Price,
                     ImageUrl = fileName,
                     CategoryId = vm.CategoryId,
-                    
                     StockQuantity = vm.StockQuantity,
                     PublisherId = vm.PublisherId
 
@@ -119,10 +129,10 @@ namespace BookStore.Controllers
                 book.StockQuantity = vm.StockQuantity;
                 book.PublisherId = vm.PublisherId;
 
-            }     
+            }
 
             _context.SaveChanges();
-            return RedirectToAction("Index");           
+            return RedirectToAction("Index");
         }
 
         [HttpPost]
@@ -134,7 +144,7 @@ namespace BookStore.Controllers
             if (book == null)
                 return NotFound();
 
-            
+
             if (!string.IsNullOrEmpty(book.ImageUrl))
             {
                 var path = Path.Combine(_webHostEnvironment.WebRootPath, "images", book.ImageUrl);
@@ -148,6 +158,5 @@ namespace BookStore.Controllers
 
             return RedirectToAction("Index");
         }
-
     }
 }

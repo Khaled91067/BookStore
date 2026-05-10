@@ -1,4 +1,5 @@
 ﻿@using BookStore.ViewModels
+
 @model BookVM
 
 @{
@@ -72,6 +73,37 @@
             }
         </select>
         <span asp-validation-for="PublisherId" class="text-danger"></span>
+    </div>
+
+    @* <div class="mb-3">
+        <label asp-for="SelectedAuthorIds" class="form-label"></label>
+
+        <select asp-for="SelectedAuthorIds" class="form-control" asp-items="Model.Authors" multiple>
+            <option value="">Select Authors</option>
+            @foreach (var auth in Model.Authors)
+            {
+                <option value="@auth.Selected">@auth.Text</option>
+            }
+        </select>
+        <span asp-validation-for="SelectedAuthorIds" class="text-danger"></span>
+    </div> *@
+    <div class="mb-3">
+
+        <label asp-for="SelectedAuthorIds"
+               class="form-label">
+        </label>
+
+        <select asp-for="SelectedAuthorIds"
+                size="5"
+                class="form-select"
+                asp-items="Model.Authors"
+                multiple>
+        </select>
+
+        <span asp-validation-for="SelectedAuthorIds"
+              class="text-danger">
+        </span>
+
     </div>
 
     <!-- Current Image -->
