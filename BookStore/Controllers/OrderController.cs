@@ -50,7 +50,7 @@ namespace BookStore.Controllers
 
             HttpContext.Session.Set("Cart", cart);
 
-            return RedirectToAction("Index", "Book");
+            return RedirectToAction("Index", "UserBook");
         }
 
         public IActionResult Cart()
