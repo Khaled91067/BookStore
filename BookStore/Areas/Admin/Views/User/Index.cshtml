@@ -1,6 +1,8 @@
 ﻿@model UserVM
 @{
 	ViewData["Title"] = " | Manage Users";
+		
+
 }
 <h4 class="mb-2">Manage Users</h4>
 <h5 class="mt-2"><a asp-action="Register" asp-area="Identity" asp-controller="Account"> Add a User</a></h5>
@@ -62,8 +64,8 @@
 
 
 </table>
-
 <h4>Manage Roles</h4>
+	<div asp-validation-summary="All" class="text-danger"></div>
 <form method="post" asp-action="CreateRole" asp-controller="User" asp-area="Admin">
 	<div class="row mb-5 mt-5">
 			<label for="roleName" class="col-sm-1 col-form-label col-form-label-sm">Role Name</label>
@@ -105,4 +107,5 @@ else
 			}
 		</tbody>
 </table>
+
 }

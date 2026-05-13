@@ -1,8 +1,10 @@
 ﻿using BookStore.Areas.Admin.Models;
 using BookStore.Models;
+using BookStore.Services.Implementaion;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 namespace BookStore.Areas.Admin.Controllers
 {
@@ -12,30 +14,17 @@ namespace BookStore.Areas.Admin.Controllers
     {
         private UserManager<ApplicationUser> _userManager;
         private RoleManager<IdentityRole> _roleManager;
-
+        private UserService _userService;
         public UserController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _roleManager = roleManager;
+            _userService = new UserService(_userManager, _roleManager);
         }
 
         public async Task<IActionResult> Index()
         {
-            List<ApplicationUser> users = new List<ApplicationUser>();
-
-            foreach (ApplicationUser user in _userManager.Users)
-            {
-                user.RoleNames = await _userManager.GetRolesAsync(user);
-                users.Add(user);
-            }
-
-            UserVM model = new UserVM
-            {
-                Users = users,
-                Roles = _roleManager.Roles.ToList()
-            };
-
-
+            UserVM model = await _userService.GetUsersAsync();
 
             return View(model);
         }
@@ -43,51 +32,35 @@ namespace BookStore.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete(string id)
         {
-            ApplicationUser user = await _userManager.FindByIdAsync(id);
-            if (user != null)
-            {
-                IdentityResult result = await _userManager.DeleteAsync(user);
-                if (!result.Succeeded)
-                {
-                    foreach (IdentityError error in result.Errors)
-                    {
-                        ModelState.AddModelError("", error.Description);
-                    }
+            IdentityResult result = await _userService.DeleteUserByIdAsync(id);
 
+            if (!result.Succeeded)
+            {
+                foreach (IdentityError error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
                 }
             }
             return RedirectToAction("Index");
-
-        }
-
+        }   
+                
         [HttpPost]
         public async Task<IActionResult> AddToRole(string id, string roleName)
         {
-            IdentityRole role = await _roleManager.FindByNameAsync(roleName);
-            if (role == null)
+            
+
+            if (!await _userService.AddUserToRoleAsync(id, roleName))
             {
                 return NotFound();
             }
-            else
-            {
-                ApplicationUser user = await _userManager.FindByIdAsync(id);
-                if (user != null)
-                {
-                    await _userManager.AddToRoleAsync(user, roleName);
-                }
-
-            }
+            
             return RedirectToAction("Index");
         }
 
         [HttpPost]
         public async Task<IActionResult> RemoveFromRole(string userId, string roleName)
         {
-            ApplicationUser user = await _userManager.FindByIdAsync(userId);
-            if (user != null)
-            {
-                await _userManager.RemoveFromRoleAsync(user, roleName);
-            }
+             await _userService.RemoveUserFromRoleAsync(userId, roleName);
 
             return RedirectToAction("Index");
         }
@@ -95,7 +68,12 @@ namespace BookStore.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateRole(string roleName)
         {
-            await _roleManager.CreateAsync(new IdentityRole(roleName));
+
+            if (!await _userService.CreateRoleAsync(roleName))
+            {
+                ModelState.AddModelError("", "role already exists");
+                return View("Index", await _userService.GetUsersAsync());
+            }
             return RedirectToAction("Index");
         }
 

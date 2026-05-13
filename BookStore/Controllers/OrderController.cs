@@ -1,5 +1,6 @@
 ﻿using BookStore.Data;
 using BookStore.Models;
+using BookStore.Services.Implementaion;
 using BookStore.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -13,40 +14,27 @@ namespace BookStore.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly OrderService _orderService;
 
-        public OrderController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public OrderController(ApplicationDbContext context, UserManager<ApplicationUser> userManager , OrderService orderService)
         {
             _context = context;
             _userManager = userManager;
+            _orderService = orderService;
+        }
+        public IActionResult Index()
+        {
+            return View();
         }
 
 
-        public IActionResult AddToCart(int bookId)
+        public async Task<IActionResult> AddToCart(int bookId)
         {
-            var book = _context.Books.Find(bookId);
-
-            if (book == null)
-                return NotFound();
-
+            
             var cart = HttpContext.Session.Get<List<OrderItemVM>>("Cart") ?? new List<OrderItemVM>();
 
-            var item = cart.FirstOrDefault(x => x.ProductId == bookId);
-
-            if (item != null)
-            {
-                item.Quantity++;
-            }
-
-            else
-            {
-                cart.Add(new OrderItemVM
-                {
-                    ProductId = book.BookId,
-                    ProductName = book.Title,
-                    Price = book.Price,
-                    Quantity = 1
-                });
-            }
+            if (!await _orderService.AddToCart(bookId, cart))
+                return NotFound();
 
             HttpContext.Session.Set("Cart", cart);
 
@@ -59,51 +47,21 @@ namespace BookStore.Controllers
             return View(cart);
         }
 
-
-
-
-
         [Authorize]
         [HttpPost]
-        public IActionResult PlaceOrder()
+        public async Task<IActionResult> PlaceOrder()
         {
-            var cart = HttpContext.Session
-                .Get<List<OrderItemVM>>("Cart");
-
-            if (cart == null || !cart.Any())
-                return RedirectToAction("Cart");
-
+            var cart = HttpContext.Session.Get<List<OrderItemVM>>("Cart");
             var userId = _userManager.GetUserId(User);
 
-            Order order = new Order
-            {
-                OrderDate = DateTime.Now,
-                UserId = userId,
-                OrderItems = new List<OrderItem>()
-            };
-
-            foreach (var item in cart)
-            {
-                order.OrderItems.Add(new OrderItem
-                {
-                    BookId = item.ProductId,
-                    Quantity = item.Quantity,
-                    Price = item.Price
-                });
-            }
-
-            _context.Orders.Add(order);
-            _context.SaveChanges();
+            if (!await _orderService.PlaceOrder(userId, cart))
+                return RedirectToAction("Cart");
 
             HttpContext.Session.Remove("Cart");
 
             return RedirectToAction("Index", "Book");
         }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
 
         [HttpGet]
         [Authorize]

@@ -1,5 +1,6 @@
 using BookStore.Data;
 using BookStore.Models;
+using BookStore.Services.Implementaion;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,6 +28,8 @@ namespace BookStore
                 //option.Cookie.HttpOnly = true;
                 //option.Cookie.IsEssential = true;
             });
+            builder.Services.AddScoped<BookService>();
+            builder.Services.AddScoped<OrderService>();
 
             var app = builder.Build();
 
@@ -47,6 +50,9 @@ namespace BookStore
             
             app.UseAuthentication();
             app.UseAuthorization();
+
+            
+
 
             var scopeFactory = app.Services.GetRequiredService<IServiceScopeFactory>();
             using (var scope = scopeFactory.CreateScope())
