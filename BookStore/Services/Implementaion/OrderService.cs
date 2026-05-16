@@ -85,6 +85,41 @@ namespace BookStore.Services.Implementaion
 
         }
 
+        public async Task<CheckOutVM> PrepareCheckOutVMAsync(int id, ApplicationUser user)
+        {
+            var order = await _context.Orders.Where(o => o.OrderId == id)
+                                             .Include(o => o.OrderItems)
+                                             .ThenInclude(i => i.Book)
+                                             .FirstOrDefaultAsync();
+            if (order == null)
+                return null;
+
+            CheckOutVM vm = new CheckOutVM
+            {
+                OrderId = order.OrderId,
+                Address = user?.Address,
+                PhoneNumber = user?.PhoneNumber,
+                Email = user?.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+
+
+                OrderItems = order.OrderItems.Select(i => new OrderItemVM
+                {
+
+                    ProductId = i.BookId,
+                    ProductName = i.Book.Title,
+                    ImageUrl = i.Book.ImageUrl,
+                    Price = i.Price,
+                    Quantity = i.Quantity
+                }).ToList()
+
+            };
+
+            return vm;
+
+        }
+
 
 
     }

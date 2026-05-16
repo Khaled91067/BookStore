@@ -86,16 +86,15 @@ namespace BookStore.Controllers
         [Authorize]
         public async Task<IActionResult> Checkout(int id)
         {
-            var order = await _context.Orders.Where(o => o.OrderId == id)
-                                             .Include(o => o.OrderItems)
-                                             .ThenInclude(i => i.Book)
-                                             .FirstOrDefaultAsync();
-            if (order == null)
-                return NotFound();
+        
+           
 
             var user = await _userManager.GetUserAsync(User);
 
-            var vm = await _orderService.GetCheckOutVMAsync(order, user);
+            var vm = await _orderService.PrepareCheckOutVMAsync(id, user);
+
+            if (vm == null)
+                return NotFound();
 
             return View(vm);
 
