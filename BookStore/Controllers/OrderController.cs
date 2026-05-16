@@ -56,6 +56,7 @@ namespace BookStore.Controllers
             var cart = HttpContext.Session.Get<List<OrderItemVM>>("Cart");
             var userId = _userManager.GetUserId(User);
             int? orderId = await _orderService.PlaceOrder(userId, cart);
+
             if (!orderId.HasValue)
                 return RedirectToAction("Cart");
 
@@ -92,46 +93,9 @@ namespace BookStore.Controllers
             if (order == null)
                 return NotFound();
 
-
-           
-
-           
             var user = await _userManager.GetUserAsync(User);
 
-            CheckOutVM vm = new CheckOutVM
-            {
-                OrderId = order.OrderId,
-                Address = user?.Address,
-                PhoneNumber = user?.PhoneNumber,
-                Email = user?.Email,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-
-
-                OrderItems = order.OrderItems.Select(i => new OrderItemVM
-                {
-
-                    ProductId = i.BookId,
-                    ProductName = i.Book.Title,
-                    ImageUrl = i.Book.ImageUrl,
-                    Price = i.Price,
-                    Quantity = i.Quantity
-                }).ToList()
-            };
-
-
-            /*var cultures = CultureInfo.GetCultures(CultureTypes.SpecificCultures);
-            vm.Countries = cultures
-               .Select(c => new RegionInfo(c.Name))
-               .DistinctBy(r => r.EnglishName)
-               .Select(r => new SelectListItem
-               {
-                   Value = r.EnglishName,
-                   Text = r.EnglishName
-               })
-               .OrderBy(c => c.Text)
-               .ToList();*/
-
+            var vm = await _orderService.GetCheckOutVMAsync(order, user);
 
             return View(vm);
 
