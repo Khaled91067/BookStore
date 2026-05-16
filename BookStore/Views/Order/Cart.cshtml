@@ -7,11 +7,12 @@
     ViewData["Title"] = "Cart";
     decimal total = Model.Sum(x => x.Price * x.Quantity);
 }
-<h1>My Cart</h1>
+
 
 <!--Form to finalize and create the order-->
 <form asp-action="PlaceOrder" method="post">
-    <h3>Order Items</h3>
+    <div class="container">
+    <h3>Cart</h3>
     <table class="table table-bordered">
         <thead>
             <tr>
@@ -54,5 +55,7 @@
     </table>
     <div class="form-group">
         <input type="submit" value="Place Order" class="btn btn-primary" />
+    </div>
+
     </div>
 </form>
