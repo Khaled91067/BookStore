@@ -25,6 +25,7 @@
                     <div class="card-body">
                         <h5 class="card-title">@book.Title</h5>
                         <p class="card-text">@book.Price</p>
+
                         @if (User.IsInRole("Admin"))
                         {
                             <a asp-controller="AdminBook" asp-area="Admin" asp-action="AddEdit" asp-route-Id="@book.BookId" class="btn btn-danger">Edit</a>

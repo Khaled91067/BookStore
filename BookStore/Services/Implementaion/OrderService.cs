@@ -44,14 +44,14 @@ namespace BookStore.Services.Implementaion
             return true;
         }
 
-        public async Task<bool> PlaceOrder(string userId, List<OrderItemVM> cart)
+        public async Task<int?> PlaceOrder(string userId, List<OrderItemVM> cart)
         {
             if (cart == null || !cart.Any())
-                return false;
+                return null;
 
             Order order = new Order
             {
-                OrderDate = DateTime.Now,
+                OrderDate = DateTime.UtcNow,
                 UserId = userId,
                 OrderItems = new List<OrderItem>()
             };
@@ -68,7 +68,20 @@ namespace BookStore.Services.Implementaion
 
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
-            return true;
+
+            Payment payment = new Payment
+            {
+                OrderId = order.OrderId,
+                Amount = order.OrderItems.Sum(i => i.Price * i.Quantity),
+                PaymentStatus = PaymentStatus.Pending,
+                PaymentMethod = PaymentMethod.Cash
+            };
+
+            _context.Payments.Add(payment);
+
+            await _context.SaveChangesAsync();
+
+            return order.OrderId;
 
         }
 
