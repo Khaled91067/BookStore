@@ -28,6 +28,9 @@ namespace BookStore.Services.Implementaion
 
             if (item != null)
             {
+                if (item.Quantity >= book.StockQuantity)
+                    return false;
+
                 item.Quantity++;
             }
 
