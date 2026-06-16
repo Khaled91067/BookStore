@@ -1,12 +1,15 @@
-﻿namespace BookStore.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace BookStore.Models
 {
     public class Category
     {
-
         public int CategoryId { get; set; }
-        public string Name { get; set; }
 
-        public ICollection<Book>? Books { get; set; } 
+        [Required]
+        [StringLength(100, MinimumLength = 2, ErrorMessage = "Category name must be between 2 and 100 characters.")]
+        public string Name { get; set; } = string.Empty;
 
+        public ICollection<Book>? Books { get; set; }
     }
 }
