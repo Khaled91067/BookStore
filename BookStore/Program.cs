@@ -30,6 +30,7 @@ namespace BookStore
             });
             builder.Services.AddScoped<BookService>();
             builder.Services.AddScoped<OrderService>();
+            builder.Services.AddHttpClient<PaymobService>();
 
             var app = builder.Build();
 
