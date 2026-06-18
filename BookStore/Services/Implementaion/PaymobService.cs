@@ -15,16 +15,11 @@ namespace BookStore.Services.Implementaion
 
         public async Task<string> CreateIntention()
         {
-            var secretKey =
-            _configuration["Paymob:SecretKey"];
+            var secretKey = _configuration["Paymob:SecretKey"];
 
-            var request = new HttpRequestMessage(
-                HttpMethod.Post,
-                "https://accept.paymob.com/v1/intention/");
+            var request = new HttpRequestMessage(HttpMethod.Post,"https://accept.paymob.com/v1/intention/");
 
-            request.Headers.Add(
-                "Authorization",
-                $"Token {secretKey}");
+            request.Headers.Add("Authorization",$"Token {secretKey}");
 
 
             var body = new
@@ -33,7 +28,7 @@ namespace BookStore.Services.Implementaion
                 currency = "EGP",
 
                 payment_methods = new[]
-    {
+            {
         5733305
     },
 
