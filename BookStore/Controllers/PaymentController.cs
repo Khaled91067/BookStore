@@ -1,8 +1,13 @@
 ﻿using BookStore.Data;
+using BookStore.DTOs.Paymob;
+using BookStore.Models;
 using BookStore.Services.Implementaion;
+using BookStore.ViewModels;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using System.Text.Json;
 
 namespace BookStore.Controllers
@@ -20,116 +25,38 @@ namespace BookStore.Controllers
             _context = context;
         }
 
-        public IActionResult Success()
+        public async Task<IActionResult> PaymentResult(int orderId)
         {
-            return View();
+
+            if (orderId == null)
+                return RedirectToAction("ViewOrders");
+
+            var payment = await _context.Payments
+                .Where(p => p.OrderId == orderId)
+                .OrderByDescending(p => p.PaymentId)
+                .FirstOrDefaultAsync();
+
+            if (payment == null)
+                return RedirectToAction("ViewOrders");
+
+            var vm = new OrderVM
+            {
+                OrderId = orderId,
+                PaymentStatus = payment.PaymentStatus,
+                TransactionId = payment.TransactionId
+            };
+
+            return View(vm);
         }
 
-        public IActionResult Failed()
-        {
-            return View();
-        }
-
-        public async Task<IActionResult> TestIntention()
-        {
-            var clientSecret =
-                await _paymobService.CreateIntention();
-
-            var publicKey =
-                _configuration["Paymob:PublicKey"];
-
-            var checkoutUrl =
-                $"https://accept.paymob.com/unifiedcheckout/?" +
-                $"publicKey={publicKey}" +
-                $"&clientSecret={clientSecret}";
-
-            return Redirect(checkoutUrl);
-        }
-
-
+      
         [HttpPost]
         public async Task<IActionResult> CreateIntention(int orderId)
         {
-            var order = await _context.Orders
-                .Include(o => o.User)
-                .Include(o => o.OrderItems)
-                .FirstOrDefaultAsync(o => o.OrderId == orderId);
-
-            if (order == null)
-                return NotFound();
-
-            // Create Intent
-            var client = new HttpClient();
-            var request = new HttpRequestMessage(HttpMethod.Post, "https://accept.paymob.com/v1/intention/");
-            var secretKey = _configuration["Paymob:SecretKey"];
-
-            request.Headers.Add("Authorization", $"Token {secretKey}");
-           
-            var totalPrice = order.OrderItems
-                .Sum(i => i.Price * i.Quantity);
-
-            var body = new
-            {
-                amount = (int)(totalPrice * 100),
-                currency = "EGP",
-                payment_methods = new[] { 5733305 },
-                billing_data = new
-                {
-                    first_name = order.User.FirstName,
-                    last_name = order.User.LastName,
-                    email = order.User.Email,
-                    phone_number = "01092395887",
-                    address = order.User.Address
-                }
-            };
-
-            var json = JsonSerializer.Serialize(body);
-
-
-            var content = new StringContent(json, null, "application/json");
-            request.Content = content;
-            var response = await client.SendAsync(request);
-
-            response.EnsureSuccessStatusCode();
-
-
-
-
-
-
-
-            var result = await response.Content.ReadAsStringAsync();
-
-            var publicKey = _configuration["Paymob:PublicKey"];
-
-
-
-            var json2 = JsonDocument.Parse(result);
-
-            var clientSecret =
-            json2.RootElement
-            .GetProperty("client_secret")
-            .GetString();
-
-            var checkoutUrl = $"https://accept.paymob.com/unifiedcheckout/?publicKey={publicKey}&clientSecret={clientSecret}";
+            var checkoutUrl = await _paymobService.CreateIntentionAsync(orderId);
 
             return Redirect(checkoutUrl);
-
         }
-
-       /* [HttpPost]
-        public async Task<IActionResult> Webhook()
-        {
-            using var reader = new StreamReader(Request.Body);
-            var body = await reader.ReadToEndAsync();
-            var path = Path.Combine(
-    Directory.GetCurrentDirectory(),
-    "webhook.txt");
-
-            System.IO.File.WriteAllText("webhook.txt", body);
-
-            return Ok();
-        }*/
 
         [HttpPost]
         public async Task<IActionResult> Webhook()
@@ -137,16 +64,48 @@ namespace BookStore.Controllers
             using var reader = new StreamReader(Request.Body);
             var body = await reader.ReadToEndAsync();
 
-            var folder = @"C:\Temp";
-            Directory.CreateDirectory(folder);
+            using var json = JsonDocument.Parse(body);
 
-            var path = Path.Combine(folder, "webhook.txt");
+            var success = json.RootElement
+                .GetProperty("obj")
+                .GetProperty("success")
+                .GetBoolean();
 
-            await System.IO.File.WriteAllTextAsync(path, body);
+
+            var paymobOrderId = json.RootElement
+                .GetProperty("obj")
+                .GetProperty("order")
+                .GetProperty("id")
+                .GetInt64();
+
+            var transactionId = json.RootElement
+                .GetProperty("obj")
+                .GetProperty("id")
+                .GetInt64();
+
+            var payment = await _context.Payments
+                .FirstOrDefaultAsync(p =>
+                    p.ProviderReference == paymobOrderId.ToString());
+
+            if (payment == null)
+                return Ok();
+
+            if (success)
+            {
+                payment.PaymentStatus = PaymentStatus.Succeeded;
+                payment.TransactionId = transactionId.ToString();
+                payment.PaymentMethod = PaymentMethod.Paymob;
+            }
+            else
+            {
+                payment.PaymentStatus = PaymentStatus.Failed;
+            }
+
+
+            await _context.SaveChangesAsync();
 
             return Ok();
         }
-
 
 
     }

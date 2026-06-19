@@ -1,0 +1,60 @@
+﻿@using BookStore.ViewModels
+
+@model OrderVM
+
+<head>
+
+    <style>
+            body {
+                background-color: #f8f9fa;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            }
+
+            .status-card {
+                max-width: 500px;
+                margin: 50px auto;
+                border-radius: 15px;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            }
+
+            .icon-large {
+                font-size: 5rem;
+            }
+    </style>
+</head>
+
+    <div class="container">
+
+        @if (Model.PaymentStatus == PaymentStatus.Succeeded)
+            {
+            <div class="card status-card text-center border-0">
+                <div class="card-body p-5">
+                    <i class="bi bi-check-circle-fill text-success icon-large mb-3 d-block"></i>
+                    <h2 class="card-title fw-bold text-success mb-3">Payment Successful</h2>
+                    <p class="card-text text-muted fs-5">Thank you for shopping with BookStore. Your order has been confirmed and we will prepare it soon.</p>
+                    <hr class="my-4 text-muted">
+                    <div class="d-flex justify-content-between mb-4">
+                        <span class="text-muted">Transaction ID: </span>
+                        <span class="fw-bold">@Model.TransactionId</span>
+                    </div>
+                    <a asp-controller="UserBook" asp-action="Index" class="btn btn-success w-100 rounded-pill py-2 fw-bold">Main Home</a>
+                </div>
+            </div>
+            }
+           else{
+        <div class="card status-card text-center border-0">
+            <div class="card-body p-5">
+                <i class="bi bi-x-circle-fill text-danger icon-large mb-3 d-block"></i>
+                <h2 class="card-title fw-bold text-danger mb-3">Payment Failed</h2>
+                <p class="card-text text-muted fs-5">Sorry, an error occurred while processing your payment. Please try again or check your card details.</p>
+                <hr class="my-4 text-muted">
+                <a asp-controller="order" asp-action="CheckOut" asp-route-orderId="@Model.OrderId" class="btn btn-danger w-100 rounded-pill py-2 mb-3 fw-bold">Try Again</a>
+                <a asp-controller="Cart" asp-action="Index" class="btn btn-outline-secondary w-100 rounded-pill py-2 fw-bold">Return to Cart</a>
+            </div>
+        </div>
+           }
+
+       
+        
+
+    </div>

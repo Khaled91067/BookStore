@@ -20,7 +20,7 @@ namespace BookStore.Models
         public int PaymentId { get; set; }
         public PaymentMethod PaymentMethod { get; set; }
         public PaymentStatus PaymentStatus { get; set; }
-
+        public string? ProviderReference { get; set; }
         public string? TransactionId { get; set; }
 
         public decimal Amount { get; set; }

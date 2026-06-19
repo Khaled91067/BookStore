@@ -1,4 +1,10 @@
-﻿using System.Text.Json;
+﻿using BookStore.Data;
+using BookStore.DTOs.Paymob;
+using BookStore.Models;
+using BookStore.ViewModels;
+using Microsoft.EntityFrameworkCore;
+using System.Text;
+using System.Text.Json;
 
 namespace BookStore.Services.Implementaion
 {
@@ -6,102 +12,86 @@ namespace BookStore.Services.Implementaion
     {
         private readonly HttpClient _httpClient;
         private readonly IConfiguration _configuration;
-
-        public PaymobService(HttpClient httpClient,IConfiguration configuration)
+        private readonly ApplicationDbContext _context;
+        public PaymobService(HttpClient httpClient,IConfiguration configuration,ApplicationDbContext context)
         {
             _httpClient = httpClient;
             _configuration = configuration;
+            _context = context;
         }
 
-        public async Task<string> CreateIntention()
+        public async Task<string> CreateIntentionAsync(int orderId)
         {
+            var order = await _context.Orders
+                .Include(o => o.User)
+                .Include(o => o.OrderItems)
+                .Include(o => o.Payments)
+                .FirstOrDefaultAsync(o => o.OrderId == orderId);
+
+            if (order == null)
+                throw new Exception("Order not found");
+
+
+            var payment = order.Payments
+                 .OrderByDescending(p => p.PaymentId)
+                 .FirstOrDefault();
+
+            if (payment == null)
+                throw new Exception("Payment not found");
+
+
+            var client = new HttpClient();
+            var request = new HttpRequestMessage(HttpMethod.Post, "https://accept.paymob.com/v1/intention/");
             var secretKey = _configuration["Paymob:SecretKey"];
 
-            var request = new HttpRequestMessage(HttpMethod.Post,"https://accept.paymob.com/v1/intention/");
+            request.Headers.Add("Authorization", $"Token {secretKey}");
 
-            request.Headers.Add("Authorization",$"Token {secretKey}");
+            var totalPrice = order.OrderItems
+                .Sum(i => i.Price * i.Quantity);
 
-
-            var body = new
+            var body = new CreateIntentionRequestDto
             {
-                amount = 1000,
-                currency = "EGP",
-
-                payment_methods = new[]
-            {
-        5733305
-    },
-
-                items = new[]
-    {
-        new
-        {
-            name = "Test Book",
-            amount = 1000,
-            description = "Book Test",
-            quantity = 1
-        }
-    },
-
-                billing_data = new
+                Amount = (int)(totalPrice * 100),
+                Currency = "EGP",
+                PaymentMethods = new[] { 5733305 },
+                BillingData = new BillingDataDto
                 {
-                    apartment = "NA",
-                    first_name = "Khaled",
-                    last_name = "Ahmed",
-                    street = "NA",
-                    building = "NA",
-                    phone_number = "+201000000000",
-                    city = "Cairo",
-                    country = "EG",
-                    email = "test@test.com",
-                    floor = "NA",
-                    state = "Cairo"
+                    FirstName = order.User.FirstName,
+                    LastName = order.User.LastName,
+                    Email = order.User.Email,
+                    PhoneNumber = "01092395887",
+                    Address = order.User.Address
                 },
-
-                expiration = 3600
+                NotificationUrl = "https://backup-ambition-certified.ngrok-free.dev/Payment/Webhook",
+                RedirectionUrl = $"https://localhost:7065/Payment/PaymentResult?orderId={order.OrderId}"
             };
-            request.Content = JsonContent.Create(body);
-            var response =
-    await _httpClient.SendAsync(request);
 
-           
+            var json = JsonSerializer.Serialize(body);
 
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            var json =
-        await response.Content.ReadAsStringAsync();
-
-            var document = JsonDocument.Parse(json);
-
-            var clientSecret =
-                document.RootElement
-                        .GetProperty("client_secret")
-                        .GetString();
-
-            return clientSecret!;
-        }
-
-
-        public async Task<string> GetAuthToken()
-        {
-            var apiKey = _configuration["Paymob:ApiKey"];
-
-            var response = await _httpClient.PostAsJsonAsync("https://accept.paymob.com/api/auth/tokens",
-                new
-                {
-                    api_key = apiKey
-                });
+            request.Content = content;
+            var response = await client.SendAsync(request);
 
             response.EnsureSuccessStatusCode();
 
-            var json = await response.Content.ReadAsStringAsync();
 
-            var document = JsonDocument.Parse(json);
+            var result = await response.Content.ReadAsStringAsync();
 
-            var token = document.RootElement
-                                .GetProperty("token")
-                                .GetString();
+            var publicKey = _configuration["Paymob:PublicKey"];
 
-            return token;
+            var intentionResponse = JsonSerializer.Deserialize<CreateIntentionResponseDto>(result);
+
+            var clientSecret = intentionResponse.ClientSecret;
+
+            var paymobOrderId = intentionResponse.IntentionOrderId;
+
+            var checkoutUrl = $"https://accept.paymob.com/unifiedcheckout/?publicKey={publicKey}&clientSecret={clientSecret}";
+
+            payment.ProviderReference = paymobOrderId.ToString();
+
+            await _context.SaveChangesAsync();
+            return checkoutUrl;
         }
 
     }
