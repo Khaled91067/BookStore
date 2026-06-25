@@ -1,6 +1,7 @@
 ﻿using BookStore.Data;
 using BookStore.DTOs.Paymob;
 using BookStore.Models;
+using BookStore.Services.Interfaces;
 using BookStore.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
@@ -8,7 +9,7 @@ using System.Text.Json;
 
 namespace BookStore.Services.Implementaion
 {
-    public class PaymobService
+    public class PaymobService : IPaymobService
     {
         private readonly HttpClient _httpClient;
         private readonly IConfiguration _configuration;
@@ -58,8 +59,6 @@ namespace BookStore.Services.Implementaion
             if (payment == null)
                 throw new Exception("Payment not found");
 
-
-            var client = new HttpClient();
             var request = new HttpRequestMessage(HttpMethod.Post, "https://accept.paymob.com/v1/intention/");
             var secretKey = _configuration["Paymob:SecretKey"];
 
@@ -90,7 +89,7 @@ namespace BookStore.Services.Implementaion
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
             request.Content = content;
-            var response = await client.SendAsync(request);
+            var response = await _httpClient.SendAsync(request);
 
             response.EnsureSuccessStatusCode();
 

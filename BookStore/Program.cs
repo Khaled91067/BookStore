@@ -1,6 +1,7 @@
 using BookStore.Data;
 using BookStore.Models;
 using BookStore.Services.Implementaion;
+using BookStore.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -30,7 +31,7 @@ namespace BookStore
             });
             builder.Services.AddScoped<BookService>();
             builder.Services.AddScoped<OrderService>();
-            builder.Services.AddHttpClient<PaymobService>();
+            builder.Services.AddHttpClient<IPaymobService, PaymobService>();
 
             var app = builder.Build();
 

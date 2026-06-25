@@ -2,6 +2,7 @@
 using BookStore.DTOs.Paymob;
 using BookStore.Models;
 using BookStore.Services.Implementaion;
+using BookStore.Services.Interfaces;
 using BookStore.ViewModels;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
@@ -14,11 +15,11 @@ namespace BookStore.Controllers
 {
     public class PaymentController : Controller
     {
-        private readonly PaymobService _paymobService;
+        private readonly IPaymobService _paymobService;
         private readonly IConfiguration _configuration;
         private readonly ApplicationDbContext _context;
 
-        public PaymentController(IConfiguration configuration,PaymobService paymobService,ApplicationDbContext context)
+        public PaymentController(IConfiguration configuration,IPaymobService paymobService,ApplicationDbContext context)
         {
             _configuration = configuration;
             _paymobService = paymobService;
