@@ -1,11 +1,10 @@
-﻿namespace BookStore.DTOs.Paymob
+﻿using System.Text.Json.Serialization;
+
+namespace BookStore.DTOs.Paymob
 {
     public class PaymobWebHookDto
     {
-        [System.Text.Json.Serialization.JsonPropertyName("type")]
-        public string Type { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("obj")]
+        [JsonPropertyName("obj")]
         public PaymobTransactionDto Obj { get; set; }
     }
 }

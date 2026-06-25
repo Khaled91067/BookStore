@@ -20,6 +20,25 @@ namespace BookStore.Services.Implementaion
             _context = context;
         }
 
+        public async Task<OrderVM> GetPaymentResultAsync(int orderId)
+        {
+            var payment = await _context.Payments
+                .Where(p => p.OrderId == orderId)
+                .OrderByDescending(p => p.PaymentId)
+                .FirstOrDefaultAsync();
+
+            if (payment == null)
+                return null;
+
+            var vm = new OrderVM
+            {
+                OrderId = orderId,
+                PaymentStatus = payment.PaymentStatus,
+                TransactionId = payment.TransactionId
+            };
+            return vm;
+        }
+
         public async Task<string> CreateIntentionAsync(int orderId)
         {
             var order = await _context.Orders
@@ -92,6 +111,33 @@ namespace BookStore.Services.Implementaion
 
             await _context.SaveChangesAsync();
             return checkoutUrl;
+        }
+
+        public async Task ProcessWebhookAsync(PaymobWebHookDto webhook)
+        {
+            var success = webhook.Obj.Success;
+            var paymobOrderId = webhook.Obj.Order.Id;
+            var transactionId = webhook.Obj.Id;
+
+            var payment = await _context.Payments
+                .FirstOrDefaultAsync(p =>p.ProviderReference == paymobOrderId.ToString());
+
+            if (payment == null)
+                return ;
+
+            if (success)
+            {
+                payment.PaymentStatus = PaymentStatus.Succeeded;
+                payment.TransactionId = transactionId.ToString();
+                payment.PaymentMethod = PaymentMethod.Paymob;
+            }
+            else
+            {
+                payment.PaymentStatus = PaymentStatus.Failed;
+            }
+
+            await _context.SaveChangesAsync();
+
         }
 
     }

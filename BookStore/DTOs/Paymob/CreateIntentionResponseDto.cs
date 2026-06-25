@@ -6,6 +6,7 @@ namespace BookStore.DTOs.Paymob
     {
         [JsonPropertyName("client_secret")]
         public string ClientSecret { get; set; }
+
         [JsonPropertyName("intention_order_id")]
         public long IntentionOrderId { get; set; }
     }

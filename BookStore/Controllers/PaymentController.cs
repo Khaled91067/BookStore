@@ -25,26 +25,15 @@ namespace BookStore.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> PaymentResult(int orderId)
+        public async Task<IActionResult> PaymentResult(int? orderId)
         {
-
             if (orderId == null)
                 return RedirectToAction("ViewOrders");
 
-            var payment = await _context.Payments
-                .Where(p => p.OrderId == orderId)
-                .OrderByDescending(p => p.PaymentId)
-                .FirstOrDefaultAsync();
+            var vm = await _paymobService.GetPaymentResultAsync(orderId.Value);
 
-            if (payment == null)
+            if (vm == null)
                 return RedirectToAction("ViewOrders");
-
-            var vm = new OrderVM
-            {
-                OrderId = orderId,
-                PaymentStatus = payment.PaymentStatus,
-                TransactionId = payment.TransactionId
-            };
 
             return View(vm);
         }
@@ -62,47 +51,15 @@ namespace BookStore.Controllers
         public async Task<IActionResult> Webhook()
         {
             using var reader = new StreamReader(Request.Body);
+
             var body = await reader.ReadToEndAsync();
 
-            using var json = JsonDocument.Parse(body);
+            var webhook = JsonSerializer.Deserialize<PaymobWebHookDto>(body);
 
-            var success = json.RootElement
-                .GetProperty("obj")
-                .GetProperty("success")
-                .GetBoolean();
+            if (webhook is null)
+                return BadRequest();
 
-
-            var paymobOrderId = json.RootElement
-                .GetProperty("obj")
-                .GetProperty("order")
-                .GetProperty("id")
-                .GetInt64();
-
-            var transactionId = json.RootElement
-                .GetProperty("obj")
-                .GetProperty("id")
-                .GetInt64();
-
-            var payment = await _context.Payments
-                .FirstOrDefaultAsync(p =>
-                    p.ProviderReference == paymobOrderId.ToString());
-
-            if (payment == null)
-                return Ok();
-
-            if (success)
-            {
-                payment.PaymentStatus = PaymentStatus.Succeeded;
-                payment.TransactionId = transactionId.ToString();
-                payment.PaymentMethod = PaymentMethod.Paymob;
-            }
-            else
-            {
-                payment.PaymentStatus = PaymentStatus.Failed;
-            }
-
-
-            await _context.SaveChangesAsync();
+            await _paymobService.ProcessWebhookAsync(webhook);
 
             return Ok();
         }

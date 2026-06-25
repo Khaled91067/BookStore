@@ -1,14 +1,16 @@
+using System.Text.Json.Serialization;
+
 namespace BookStore.DTOs.Paymob
 {
     public class PaymobTransactionDto
     {
-        [System.Text.Json.Serialization.JsonPropertyName("id")]
-        public string Id { get; set; }
+        [JsonPropertyName("success")]
+        public bool Success { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("status")]
-        public string Status { get; set; }
+        [JsonPropertyName("id")]
+        public long Id { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("amount")]
-        public long Amount { get; set; }
+        [JsonPropertyName("order")]
+        public PaymobOrderDto Order { get; set; }
     }
 }

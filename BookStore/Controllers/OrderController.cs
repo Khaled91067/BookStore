@@ -86,9 +86,6 @@ namespace BookStore.Controllers
         [Authorize]
         public async Task<IActionResult> Checkout(int id)
         {
-        
-           
-
             var user = await _userManager.GetUserAsync(User);
 
             var vm = await _orderService.PrepareCheckOutVMAsync(id, user);
