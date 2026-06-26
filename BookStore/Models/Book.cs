@@ -28,7 +28,7 @@ namespace BookStore.Models
 
         [Range(1, int.MaxValue, ErrorMessage = "Publisher is required.")]
         public int PublisherId { get; set; }
-
+        public string Description { get; set; } = string.Empty;
         public Publisher? Publisher { get; set; }
 
         public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();

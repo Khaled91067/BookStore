@@ -201,6 +201,33 @@ namespace BookStore.Services.Implementaion
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<BookDetailsVM> GetBookDetailsAsync(int id)
+        {
+            // TODO: Resolve nullable reference warnings (CS8600, CS8602)
+            return await _context.Books
+                .Include(b => b.Category)
+                .Include(b => b.Publisher)
+                .Include(b => b.BookAuthors)
+                .ThenInclude(ba => ba.Author)
+                .Where(b => b.BookId == id)
+                .Select(b => new BookDetailsVM
+                {
+                    BookId = b.BookId,
+                    Title = b.Title,
+                    Description = b.Description,
+                    Price = b.Price,
+                    ImageUrl = b.ImageUrl,
+                    StockQuantity = b.StockQuantity,
+                    CategoryName = b.Category.Name,
+                    PublisherName = b.Publisher.Name,
+                    Authors = b.BookAuthors
+                                .Select(ba => ba.Author.Name)
+                                .ToList()
+                })
+                .FirstOrDefaultAsync();
+        }
+
         public async Task LoadDataAsync(BookVM vm)
         {
             vm.Categories = _context.Categories.ToList();

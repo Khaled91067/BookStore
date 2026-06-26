@@ -13,55 +13,62 @@
 </head>
 <body class="d-flex flex-column min-vh-100">
 	<header>
-		<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-dark border-bottom box-shadow">
-			<div class="container-fluid">
-				<a class="navbar-brand text-white" asp-area="" asp-controller="UserBook" asp-action="Index">BookStore</a>
-				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-						aria-expanded="false" aria-label="Toggle navigation">
-					<span class="navbar-toggler-icon"></span>
-				</button>
-				<div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-					<ul class="navbar-nav flex-grow-1">
-						
-					
-						<li class="nav-item">
-							<a class="nav-link text-white" asp-area="" asp-controller="UserBook" asp-action="Index">Books</a>
-						</li>
-						@if (User.IsInRole("Admin"))
-						{
-							<li class="nav-item">
-								<a class="nav-link text-white bg-warning" asp-area="Admin" asp-controller="User" asp-action="Index">Manage Users <i class="bi bi-people-fill"></i></a>
-							</li>
-						}
-						<li class="nav-item">
-							<a class="nav-link text-white" asp-area="" asp-controller="Order" asp-action="ViewOrders">View Orders</a>
-						</li>
-					</ul>
-					<form asp-controller="UserBook" asp-action="Index" method="get" class="d-flex" role="search">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom box-shadow py-2">
+        <div class="container-fluid">
+            
+            <a class="navbar-brand fw-bold fs-4 text-white d-flex align-items-center" asp-area="" asp-controller="UserBook" asp-action="Index">
+                <i class="bi bi-book-half text-info me-2"></i> BookStore
+            </a>
+            
+            <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="navbar-collapse collapse d-lg-inline-flex justify-content-between align-items-center">
+                
+                <ul class="navbar-nav flex-grow-1 mb-2 mb-lg-0 gap-2">
+                    <li class="nav-item">
+                        <a class="nav-link px-2" asp-area="" asp-controller="UserBook" asp-action="Index">Books</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-2" asp-area="" asp-controller="Order" asp-action="ViewOrders">View Orders</a>
+                    </li>
+                    
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link text-warning fw-semibold px-2" asp-area="Admin" asp-controller="User" asp-action="Index">
+                                <i class="bi bi-shield-lock-fill me-1"></i> Manage Users
+                            </a>
+                        </li>
+                    }
+                </ul>
+                
+                <div class="d-flex flex-column flex-lg-row align-items-lg-center gap-3 mt-3 mt-lg-0">
+                    
+                    <form asp-controller="UserBook" asp-action="Index" method="get" role="search">
+                        <div class="input-group">
+                            <input class="form-control border-secondary bg-body text-light"
+                                   type="search"
+                                   name="search"
+                                   placeholder="Search books..."
+                                   aria-label="Search" />
+                            <button class="btn btn-outline-info" type="submit">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </form>
 
-						<input class="form-control me-2"
-							   type="search"
-							   name="search"
-							   placeholder="Search"
-							   aria-label="Search" />
-
-						<button class="btn btn-outline-success"
-								type="submit">
-                            
-							<i class="bi bi-search"></i>
-
-						</button>
-
-					</form>
-
-                  
-					<partial name="_LoginPartial" />
-
-				</div>
-			</div>
-		</nav>
-	</header>
-
+                    <div class="d-flex align-items-center">
+                        <partial name="_LoginPartial" />
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
 	<main role="main" class="pb-3 flex-grow-1">
 		<div class="container">
         @RenderBody()

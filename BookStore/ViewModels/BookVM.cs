@@ -33,6 +33,8 @@ namespace BookStore.ViewModels
 
         [Range(1, int.MaxValue, ErrorMessage = "Publisher is required.")]
         public int PublisherId { get; set; }
+
+        public string Description { get; set; } = string.Empty;
         public List<Publisher>? Publishers { get; set; }
     }
 }
