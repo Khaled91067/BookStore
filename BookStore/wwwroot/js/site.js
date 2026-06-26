@@ -23,3 +23,19 @@
         }, false)
     })
 })()
+
+document.addEventListener("DOMContentLoaded", function () {
+    // Find the toast element by its ID
+    var toastElement = document.getElementById('cartToast');
+
+    // If the element exists (meaning TempData wasn't null), show it
+    if (toastElement) {
+        // Initialize the toast with a 3-second delay before it auto-hides
+        var toast = new bootstrap.Toast(toastElement, {
+            delay: 3000
+        });
+
+        // Show the toast
+        toast.show();
+    }
+});

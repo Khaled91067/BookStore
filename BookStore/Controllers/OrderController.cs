@@ -32,7 +32,7 @@ namespace BookStore.Controllers
             return View();
         }
 
-
+        [Authorize]
         public async Task<IActionResult> AddToCart(int bookId)
         {
 
@@ -42,6 +42,8 @@ namespace BookStore.Controllers
                 return NotFound();
 
             HttpContext.Session.Set("Cart", cart);
+
+            TempData["Success"] = "Book added to cart successfully.";
 
             return RedirectToAction("Index", "UserBook");
         }
