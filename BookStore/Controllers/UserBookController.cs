@@ -21,9 +21,9 @@ namespace BookStore.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(string? search)
+        public async Task<IActionResult> Index(string? search,int page=1)
         {
-            var books = await _bookService.GetAllBooksAsync(search);
+            var books = await _bookService.GetAllBooksAsync(search,page);
             return View(books);
         }
 

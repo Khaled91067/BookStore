@@ -4,6 +4,7 @@ using BookStore.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace BookStore.Services.Implementaion
 {
@@ -18,8 +19,10 @@ namespace BookStore.Services.Implementaion
             _webHostEnvironment = webHostEnvironment;
         }
 
-        public async Task<List<BookVM>> GetAllBooksAsync(string? search)
+        public async Task<BooksPageVM> GetAllBooksAsync(string? search ,int page)
         {
+            const int pageSize = 8;
+
             var booksQuery = _context.Books.AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(search))
@@ -40,6 +43,11 @@ namespace BookStore.Services.Implementaion
                 );
             }
 
+            var totalBooks = await booksQuery.CountAsync();
+            booksQuery = booksQuery
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize);
+
             var books = await booksQuery
                 .Select(b => new BookVM
                 {
@@ -51,7 +59,13 @@ namespace BookStore.Services.Implementaion
                 })
                 .ToListAsync();
 
-            return books;
+            return new BooksPageVM
+            {
+                Books = books,
+                SearchTerm = search,
+                CurrentPage = page,
+                TotalPages = (int)Math.Ceiling(totalBooks / (double)pageSize)
+            }; 
         }
         public async Task<BookVM?> GetAddEdit(int id)
         {
