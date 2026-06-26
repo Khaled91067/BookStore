@@ -115,6 +115,7 @@ namespace BookStore.Services.Implementaion
                     ImageUrl = i.Book.ImageUrl,
                     Price = i.Price,
                     Quantity = i.Quantity
+
                 }).ToList()
 
             };

@@ -191,7 +191,8 @@
 
     <div class="container">
       <main>
-                    <form asp-controller="Payment" asp-action="CreateIntention" asp-route-orderId="@Model.OrderId" method="post">
+            <form asp-controller="Order" asp-action="Checkout" asp-route-orderId="@Model.OrderId" method="post">
+
         
         <div class="row g-5 py-3">
           <div class="col-md-5 col-lg-4 order-md-last">
@@ -274,9 +275,9 @@
 
               
                 <div class="col-12">
-                  <label for="email" class="form-label"
+                  <label for="Email" class="form-label"
                     >Email
-                    <span class="text-body-secondary">(Optional)</span></label
+                    <span class="text-body-secondary"></span></label
                   >
                   <input
                     asp-for="Email"
@@ -291,17 +292,13 @@
                   </div>
                 </div>
                 <div class="col-12">
-                  <label for="phone" class="form-label"
+                  <label asp-for="PhoneNumber" class="form-label"
                     >Phone
-                    <span class="text-body-secondary">(Optional)</span></label
-                  >
+                    <span class="text-body-secondary"></span>
+                </label>
+
                   <input
-                    asp-for="PhoneNumber"
-                    
-                    class="form-control"
-     
-                    placeholder="+20xxxxxx"
-                  />
+                    asp-for="PhoneNumber" class="form-control" placeholder="+20xxxxxx"/>
 
                   <div class="invalid-feedback">
                     Please enter a valid Phone number.
@@ -351,11 +348,12 @@
                             
           
           </div>
-            </form>
+            
+      </form>
 
-          </div>
-
+         </div>
         </div>
+
       </main>
      
     </div>

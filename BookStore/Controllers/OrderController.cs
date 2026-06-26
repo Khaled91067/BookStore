@@ -1,6 +1,7 @@
 ﻿using BookStore.Data;
 using BookStore.Models;
 using BookStore.Services.Implementaion;
+using BookStore.Services.Interfaces;
 using BookStore.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -14,15 +15,17 @@ namespace BookStore.Controllers
 {
     public class OrderController : Controller
     {
+        private readonly IPaymobService _paymobService;
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly OrderService _orderService;
 
-        public OrderController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, OrderService orderService)
+        public OrderController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, OrderService orderService, IPaymobService paymobService)
         {
             _context = context;
             _userManager = userManager;
             _orderService = orderService;
+            _paymobService = paymobService;
         }
         public IActionResult Index()
         {
@@ -100,15 +103,12 @@ namespace BookStore.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> Checkout(CheckOutVM vm)
+        public async Task<IActionResult> Checkout(CheckOutVM vm,int orderId)
         {
-            
-
-
             var user = await _userManager.GetUserAsync(User);
 
-            /*if (!ModelState.IsValid)
-                return Content("Model Invalid");*/
+            if (!ModelState.IsValid)
+                return Content("Model Invalid");
 
             if (user != null)
             {
@@ -120,9 +120,9 @@ namespace BookStore.Controllers
                 await _userManager.UpdateAsync(user);
             }
 
-            return RedirectToAction("ViewOrders");
+            var checkoutUrl = await _paymobService.CreateIntentionAsync(orderId);
 
-
+            return Redirect(checkoutUrl);
 
         }
 

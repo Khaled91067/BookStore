@@ -77,7 +77,7 @@ namespace BookStore.Services.Implementaion
                     FirstName = order.User.FirstName,
                     LastName = order.User.LastName,
                     Email = order.User.Email,
-                    PhoneNumber = "01092395887",
+                    PhoneNumber = order.User.PhoneNumber,
                     Address = order.User.Address
                 },
                 NotificationUrl = "https://backup-ambition-certified.ngrok-free.dev/Payment/Webhook",
@@ -92,7 +92,6 @@ namespace BookStore.Services.Implementaion
             var response = await _httpClient.SendAsync(request);
 
             response.EnsureSuccessStatusCode();
-
 
             var result = await response.Content.ReadAsStringAsync();
 
