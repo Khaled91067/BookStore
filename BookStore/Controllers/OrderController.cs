@@ -71,9 +71,9 @@ namespace BookStore.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> ViewOrders()
+        public async Task<IActionResult> ViewOrders(string? searchTerm)
         {
-            var userId = _userManager.GetUserId(User);
+           /* var userId = _userManager.GetUserId(User);
 
             var userOrders = await _context.Orders.Where(o => o.UserId == userId)
                                                   .Include(o => o.OrderItems)
@@ -81,7 +81,16 @@ namespace BookStore.Controllers
                                                   .ToListAsync();
 
 
-            return View("ViewOrders", userOrders);
+            return View("ViewOrders", userOrders);*/
+           var user = await _userManager.GetUserAsync(User);
+
+           if (user == null)
+           return Unauthorized();
+
+           var orders = await _orderService.GetUserOrdersAsync(user.Id, searchTerm);
+
+           return View(orders);
+
         }
 
 

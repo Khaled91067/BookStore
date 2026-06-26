@@ -9,9 +9,12 @@ namespace BookStore.Services.Implementaion
     public class OrderService
     {
         private readonly ApplicationDbContext _context;
-        public OrderService(ApplicationDbContext context)
+       
+
+        public OrderService(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            
         }
 
         public async Task<bool> AddToCart(int bookId, List<OrderItemVM> cart)
@@ -124,6 +127,38 @@ namespace BookStore.Services.Implementaion
 
         }
 
+        public async Task<List<OrderVM>> GetUserOrdersAsync(string userId,string? searchTerm)
+        {
+            var query = _context.Orders
+               .Where(o => o.UserId == userId);
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                query = query.Where(o =>
+                    o.OrderItems.Any(i =>
+                        i.Book.Title.Contains(searchTerm)));
+            }
+
+            return await query
+                .Select(o => new OrderVM
+                {
+                    OrderId = o.OrderId,
+                    OrderDate = o.OrderDate,
+                    CustomerName = o.User.UserName,
+                    TotalAmount = o.OrderItems.Sum(i => i.Price * i.Quantity),
+
+                    OrderItems = o.OrderItems.Select(i => new OrderItemVM
+                    {
+                        ProductId = i.BookId,
+                        ProductName = i.Book.Title,
+                        ImageUrl = i.Book.ImageUrl,
+                        Quantity = i.Quantity,
+                        Price = i.Price
+                    }).ToList()
+                })
+                .ToListAsync();
+
+        }
 
 
     }

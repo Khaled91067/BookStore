@@ -40,13 +40,7 @@ namespace BookStore.Controllers
         }
 
       
-        [HttpPost]
-        public async Task<IActionResult> CreateIntention(int orderId)
-        {
-            var checkoutUrl = await _paymobService.CreateIntentionAsync(orderId);
-
-            return Redirect(checkoutUrl);
-        }
+    
 
         [HttpPost]
         public async Task<IActionResult> Webhook()
