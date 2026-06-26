@@ -1,4 +1,4 @@
-﻿@using BookStore.ViewModels
+﻿@* @using BookStore.ViewModels
 
 @model List<OrderItemVM>
 
@@ -59,3 +59,91 @@
 
     </div>
 </form>
+
+ *@
+@using BookStore.ViewModels
+@model List<OrderItemVM>
+
+@{
+    ViewData["Title"] = "Shopping Cart";
+    decimal total = Model?.Sum(x => x.Price * x.Quantity) ?? 0;
+}
+
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-header bg-white border-bottom pt-4 pb-3">
+                    <h3 class="mb-0 text-primary">Shopping Cart</h3>
+                </div>
+
+                <div class="card-body p-0">
+                    @if (Model == null || !Model.Any())
+                    {
+                        <div class="p-5 text-center">
+                            <h5 class="text-muted">Your cart is currently empty.</h5>
+                            <a asp-action="Index" asp-controller="UserBook" class="btn btn-outline-primary mt-3">Browse Books</a>
+                        </div>
+                    }
+                    else
+                    {
+                        <form asp-action="PlaceOrder" method="post">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th scope="col" class="ps-4">Book</th>
+                                            <th scope="col">Price</th>
+                                            <th scope="col" class="text-center">Quantity</th>
+                                            <th scope="col">Subtotal</th>
+                                            <th scope="col" class="text-end pe-4">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model)
+                                        {
+                                            <tr>
+                                                <td class="ps-4 fw-semibold">@item.ProductName</td>
+                                                <td>@item.Price.ToString("0.00") EGP</td>
+                                                <td class="text-center">
+                                                    <span class="badge bg-secondary rounded-pill fs-6 px-3">@item.Quantity</span>
+                                                </td>
+                                                <td class="fw-bold text-success">
+                                                    @( (item.Price * item.Quantity).ToString("0.00") ) EGP
+                                                </td>
+                                                <td class="text-end pe-4">
+                                                    <a asp-action="RemoveFromCart"
+                                                       asp-route-bookId="@item.ProductId"
+                                                       class="btn btn-outline-danger btn-sm">
+                                                        Remove
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="card-footer bg-white border-top-0 p-4">
+                                <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+                                    <h4 class="text-muted mb-0">Order Total:</h4>
+                                    <h3 class="text-primary fw-bold mb-0">@total.ToString("0.00") EGP</h3>
+                                </div>
+
+                                <div class="d-flex justify-content-end gap-3">
+                                    <a asp-action="Index" asp-controller="UserBook" class="btn btn-light border shadow-sm">Continue Shopping</a>
+
+                                    <button type="submit" class="btn btn-primary px-5 shadow-sm fw-bold">
+                                        Place Order
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    }
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
