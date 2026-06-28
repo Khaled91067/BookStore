@@ -81,7 +81,7 @@ namespace BookStore.Services.Implementaion
                     Address = order.User.Address
                 },
                 NotificationUrl = "https://backup-ambition-certified.ngrok-free.dev/Payment/Webhook",
-                RedirectionUrl = $"https://localhost:7065/Payment/PaymentResult?orderId={order.OrderId}"
+                RedirectionUrl = $"https://backup-ambition-certified.ngrok-free.dev/Payment/PaymentResult?orderId={order.OrderId}"
             };
 
             var json = JsonSerializer.Serialize(body);

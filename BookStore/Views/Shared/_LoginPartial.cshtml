@@ -5,7 +5,9 @@
 
 <ul class="navbar-nav">
 @if (SignInManager.IsSignedIn(User))
-{
+    {
+        @if(!User.IsInRole("Admin"))
+        {
         <li class="nav-item">
             @{
                 int cartCount = 0;
@@ -22,6 +24,8 @@
                 }
             }
 
+       
+
             <a class="nav-link position-relative" asp-action="Cart" asp-controller="Order">
                 <i class="bi bi-cart2 text-white"></i>
                 <span class="position-absolute start-100 translate-middle badge rounded-pill bg-success">
@@ -30,6 +34,7 @@
                 </span>
             </a>
         </li>
+        }
 
 
 

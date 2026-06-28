@@ -1,111 +1,154 @@
 ﻿@model UserVM
 @{
-	ViewData["Title"] = " | Manage Users";
-		
-
+    ViewData["Title"] = "Manage Users & Roles";
 }
-<h4 class="mb-2">Manage Users</h4>
-<h5 class="mt-2"><a asp-action="Register" asp-area="Identity" asp-controller="Account"> Add a User</a></h5>
 
-<table class="table table-bordered table-striped table-sm">
-	<thead>
-		<tr><th>UserName</th><th>Roles</th><th></th><th></th><th></th>
-			
+<div class="container my-4">
+    <div class="card shadow-sm mb-5">
+        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="bi bi-people-fill me-2"></i>Manage Users</h5>
+            <a asp-action="Register" asp-area="Identity" asp-controller="Account" class="btn btn-sm btn-success">
+                <i class="bi bi-person-plus-fill me-1"></i> Add a User
+            </a>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col" class="ps-3">Username</th>
+                            <th scope="col">Current Roles</th>
+                            <th scope="col" class="text-end pe-3">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Users.Any())
+                        {
+                            <tr>
+                                <td colspan="3" class="text-muted text-center py-4">There are no user accounts available.</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (ApplicationUser user in Model.Users)
+                            {
+                                <tr>
+                                    <td class="fw-bold ps-3">@user.UserName</td>
+                                    <td>
+                                        @if (user.RoleNames != null && user.RoleNames.Any())
+                                        {
+                                            @foreach (string roleName in user.RoleNames)
+                                            {
+                                                <span class="badge bg-secondary me-1">@roleName</span>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted small">No roles assigned</span>
+                                        }
+                                    </td>
+                                    <td class="text-end pe-3">
+                                        <div class="d-inline-flex gap-2 justify-content-end align-items-center">
+                                            @foreach (var role in Model.Roles)
+                                            {
+                                                if (!user.RoleNames.Contains(role.Name))
+                                                {
+                                                    <form method="post" asp-action="AddToRole" asp-route-id="@user.Id" asp-route-roleName="@role.Name" class="m-0">
+                                                        <button type="submit" class="btn btn-sm btn-outline-success">
+                                                            + @role.Name
+                                                        </button>
+                                                    </form>
+                                                }
+                                                else
+                                                {
+                                                    <form method="post" asp-action="RemoveFromRole" asp-route-userid="@user.Id" asp-route-roleName="@role.Name" class="m-0">
+                                                        <button type="submit" class="btn btn-sm btn-outline-warning">
+                                                            - @role.Name
+                                                        </button>
+                                                    </form>
+                                                }
+                                            }
 
+                                            <div class="vr my-1 mx-1"></div>
 
-	</thead>
-	<tbody>
-		@if(Model.Users.Count()==0)
-		{
-		<tr><td colspan="5">There are no user accounts.</td></tr>	
+                                            <form method="post" asp-action="Delete" asp-route-id="@user.Id" class="m-0" onsubmit="return confirm('Are you sure you want to delete this user?');">
+                                                <button type="submit" class="btn btn-sm btn-danger">
+                                                    Delete User
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
-		}
-		else
-		{
-			@foreach(ApplicationUser user in Model.Users)
-			{
-				<tr>
-					<td>@user.UserName</td>
-					<td> 
-						@foreach(string roleName in user.RoleNames)
-						{
-							<div>@roleName</div>
-						}
-					</td>
-					<td>
-						<form method="post" asp-action="Delete" asp-route-id="@user.Id">
-							<button type="submit" class="btn btn-primary">
-								Delete User
-							</button>
-						</form>
-					</td>
-					<td>
-						@foreach(var role in Model.Roles)
-						{
-							if(!user.RoleNames.Contains(role.Name))
-							{
-								<form method="post" asp-action="AddToRole" asp-route-id = "@user.Id" asp-route-roleName="@role.Name">
-									<button type="submit" class="btn btn-primary">Add to @role.Name</button>
-								</form>
-							}
-							else
-							{
-								<form method="post" asp-action="RemoveFromRole" asp-route-userid = "@user.Id" asp-route-roleName="@role.Name">
-									<button type="submit" class="btn btn-danger">Remove From @role.Name</button>
-								</form>
-							}
-						}
-					</td>
-				</tr>
-			}
-		}
+    <div class="card shadow-sm">
+        <div class="card-header bg-dark text-white">
+            <h5 class="mb-0"><i class="bi bi-shield-lock-fill me-2"></i>Manage Roles</h5>
+        </div>
+        <div class="card-body">
 
-	</tbody>
+            <div asp-validation-summary="All" class="alert alert-danger py-2 d-none-if-empty" role="alert"></div>
 
+            <form method="post" asp-action="CreateRole" asp-controller="User" asp-area="Admin" class="row g-3 align-items-center mb-4">
+                <div class="col-12 col-md-auto">
+                    <label for="rolename" class="form-label fw-semibold mb-md-0">Create New Role:</label>
+                </div>
+                <div class="col-12 col-md-4">
+                    <div class="input-group">
+                        <input type="text" name="roleName" class="form-control" id="rolename" placeholder="e.g., Editor, Manager" required />
+                        <button type="submit" class="btn btn-primary">Create Role</button>
+                    </div>
+                </div>
 
-</table>
-<h4>Manage Roles</h4>
-	<div asp-validation-summary="All" class="text-danger"></div>
-<form method="post" asp-action="CreateRole" asp-controller="User" asp-area="Admin">
-	<div class="row mb-5 mt-5">
-			<label for="roleName" class="col-sm-1 col-form-label col-form-label-sm">Role Name</label>
-		<div class="col-sm-3">
-			<input type="text" name="roleName" class="form-control form-control-sm" id="rolename" placeholder="Role Name" />
-			<button type="submit" class="btn btn-primary">Create Role</button>
-		</div>
-		
-	</div>
-</form>
+                @if (!Model.Roles.Any(role => role.Name?.ToLower() == "admin"))
+                {
+                    <div class="col-12 col-md-auto ms-md-auto">
+                        <form method="post" asp-action="CreateAdminRole" class="m-0">
+                            <button type="submit" class="btn btn-info w-100">Setup Admin Role</button>
+                        </form>
+                    </div>
+                }
+            </form>
 
-@if(!Model.Roles.Any(role=> role.Name?.ToLower()=="admin"))
-{
-	<form method="post" asp-action="CreateAdminRole">
-		<button type="submit" class="btn btn-info">Create Admin Role</button>
-	</form>
-}
-else
-{
-	<table class="table table-bordered table-striped table-sm">
-		<thead>
-			<tr>
-				<th>Role</th>
-				<td></td>
-			</tr>
-		</thead>
-		<tbody>
-			@foreach(var role in Model.Roles)
-			{
-				<tr>
-					<td>@role.Name</td>
-						<td>
-							<form method="post" asp-action="DeleteRole" asp-route-id="@role.Id">
-								<button type="submit" class="btn btn-danger">Delete Role</button>
-							</form>
-						</td>
-				</tr>
-				
-			}
-		</tbody>
-</table>
+            <hr />
 
-}
+            <h6 class="text-muted mb-3">Existing Roles</h6>
+            @if (Model.Roles == null || !Model.Roles.Any())
+            {
+                <p class="text-muted small">No roles configured yet.</p>
+            }
+            else
+            {
+                <div class="table-responsive" style="max-width: 600px;">
+                    <table class="table table-sm table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Role Name</th>
+                                <th class="text-end">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var role in Model.Roles)
+                            {
+                                <tr>
+                                    <td class="fw-semibold">@role.Name</td>
+                                    <td class="text-end">
+                                        <form method="post" asp-action="DeleteRole" asp-route-id="@role.Id" class="m-0" onsubmit="return confirm('Are you sure you want to delete this role?');">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>
