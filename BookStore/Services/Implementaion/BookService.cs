@@ -55,6 +55,7 @@ namespace BookStore.Services.Implementaion
                     Title = b.Title,
                     Price = b.Price,
                     StockQuantity = b.StockQuantity,
+                    Description = b.Description,
                     ImageUrl = b.ImageUrl
                 })
                 .ToListAsync();
@@ -86,6 +87,7 @@ namespace BookStore.Services.Implementaion
                 vm.BookId = book.BookId;
                 vm.Title = book.Title;
                 vm.Price = book.Price;
+                vm.Description = book.Description;
                 vm.ImageUrl = book.ImageUrl;
                 vm.CategoryId = book.CategoryId;
                 vm.StockQuantity = book.StockQuantity;
@@ -131,6 +133,7 @@ namespace BookStore.Services.Implementaion
                     Price = vm.Price,
                     ImageUrl = fileName,
                     CategoryId = vm.CategoryId,
+                    Description = vm.Description,
                     StockQuantity = vm.StockQuantity,
                     PublisherId = vm.PublisherId
 
@@ -159,6 +162,7 @@ namespace BookStore.Services.Implementaion
                 book.Title = vm.Title;
                 book.Price = vm.Price;
                 book.ImageUrl = fileName;
+                book.Description = vm.Description;
                 book.CategoryId = vm.CategoryId;
                 book.StockQuantity = vm.StockQuantity;
                 book.PublisherId = vm.PublisherId;

@@ -31,6 +31,13 @@
                             <span asp-validation-for="Title" class="text-danger small"></span>
                         </div>
 
+                        <!-- Added Description Section -->
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label fw-semibold"></label>
+                            <textarea asp-for="Description" class="form-control" rows="4" placeholder="Enter a compelling summary of the book..."></textarea>
+                            <span asp-validation-for="Description" class="text-danger small"></span>
+                        </div>
+
                         <div class="row g-3 mb-3">
                             <div class="col-md-6">
                                 <label asp-for="ISBN" class="form-label fw-semibold"></label>

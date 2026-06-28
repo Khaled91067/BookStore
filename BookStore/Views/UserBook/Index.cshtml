@@ -1,5 +1,4 @@
-﻿
-@using BookStore.ViewModels
+﻿@using BookStore.ViewModels
 @model BooksPageVM
 
 @{
@@ -28,7 +27,7 @@
         @foreach (var book in Model.Books)
         {
             <div class="col-6 col-md-4 col-lg-3">
-            @* <div class="col-12 col-sm-6 col-md-4 col-lg-3"> *@
+                @* <div class="col-12 col-sm-6 col-md-4 col-lg-3"> *@
                 <div class="card h-100 shadow-sm">
 
                     <a asp-controller="UserBook"
@@ -55,7 +54,16 @@
 
                             </a>
                         </h5>
-                        <p class="card-text text-muted fw-bold">@book.Price</p>
+
+                        <!-- Added Description Section -->
+                        <!-- Displays up to 2 lines of description, fading out with an ellipsis if it exceeds -->
+                        <p class="card-text small text-muted flex-grow-1"
+                           style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;"
+                           title="@book.Description">
+                            @book.Description
+                        </p>
+
+                        <p class="card-text text-dark fw-bold mt-2 mb-3">@book.Price</p>
 
                         <div class="mt-auto">
                             @if (User.IsInRole("Admin"))
