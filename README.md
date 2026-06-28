@@ -1,64 +1,78 @@
 # BookStore
 
-BookStore is an ASP.NET Core MVC web application that simulates a real-world online bookstore. Users can browse books, manage a shopping cart, place orders, and complete payments through Paymob. The project was built to practice backend development concepts such as layered architecture, authentication, authorization, Entity Framework Core, and payment gateway integration.
+BookStore is a web application designed to provide a complete online bookstore experience. It allows customers to browse and purchase books while providing administrators with tools to manage the bookstore's catalog and related data.
 
-## Features
-
-- User registration and authentication using ASP.NET Core Identity
-- Role-based authorization (Admin & Customer)
-- Browse books by category, publisher, and author
-- Shopping cart and checkout workflow
-- Order management
-- Paymob payment gateway integration
-- Book, Category, Author, and Publisher management
-- Responsive user interface
+### Key Features & Implementation
+* **Authentication & Authorization:** Implemented secure user authentication and Role-Based Access Control utilizing **ASP.NET Core Identity**.
+* **E-Commerce Workflow:** Developed a complete checkout pipeline including a dynamic shopping cart, order processing, and a comprehensive order management system.
+* **Payment Gateway Integration:** Integrated **Paymob API** for secure credit card processing, implementing **Webhooks** for real-time payment status synchronization and order validation.
+* **Advanced Search & Pagination:** Built an optimized product catalog supporting multi-criteria filtering (by Category, Publisher, and Author), text search, and server-side pagination to ensure high performance with large datasets.
+* **Admin Dashboard:** Created a secure administrative portal for complete CRUD operations on books, categories, inventory management, and user-role assignments.
+* **Database Architecture:** Designed a normalized relational database schema for complex data relations (Users, Orders, Payments, and Catalog) using **Entity Framework Core**.
+* **Media & Inventory Management:** Implemented file upload streams for book cover images alongside an automated inventory tracking system.
 
 ## Technologies
 
-- ASP.NET Core MVC
-- C#
-- Entity Framework Core
-- SQL Server
-- ASP.NET Core Identity
-- LINQ
-- Bootstrap
-- HTML, CSS, JavaScript
-- Paymob API
+### Backend
 
-## Architecture
+* ASP.NET Core MVC
+* C#
+* Entity Framework Core
+* LINQ
 
-The application separates business logic from controllers through a Service Layer.
+### Database
 
-```
-Controllers
-    │
-    ▼
-Services
-    │
-    ▼
-Entity Framework Core
-    │
-    ▼
-SQL Server
-```
+* SQL Server
+
+### Authentication & Authorization
+
+* ASP.NET Core Identity
+
+### Frontend
+
+* Bootstrap 5
+* HTML5
+* CSS3
+* JavaScript
+
+### Payment Integration
+
+* Paymob Payment Gateway
 
 ## Database
 
 The database schema is illustrated below.
 
-![Database Diagram](images/ERD.png)
+![Database Diagram](/BookStore/Docs/ERD.png)
 
 ## Project Structure
 
-```
+```text
 BookStore
+├── Areas
+│   ├── Admin
+│   │   ├── Controllers
+│   │   ├── Models
+│   │   └── Views
+│   └── Identity
+│       └── Pages
 ├── Controllers
 ├── Data
+│   └── Migrations
+├── DTOs
+│   └── Paymob
 ├── Models
 ├── Services
+│   ├── Interfaces
+│   └── Implementation
 ├── ViewModels
 ├── Views
-└── wwwroot
+├── wwwroot
+│   ├── css
+│   ├── Images
+│   ├── js
+│   └── lib
+└── Program.cs
 ```
 
 ## Getting Started
@@ -66,7 +80,7 @@ BookStore
 1. Clone the repository.
 
 ```bash
-git clone https://github.com/your-username/BookStore.git
+git clone https://github.com/Khaled91067/BookStore.git
 ```
 
 2. Update the connection string and Paymob configuration in `appsettings.json`.
@@ -87,30 +101,51 @@ dotnet run
 
 ### Home Page
 
-_Add screenshot_
+![Home Page](BookStore/Docs/Books.png)
 
 ### Book Details
 
-_Add screenshot_
+![Book Details](BookStore/Docs/BookDetails.png)
 
 ### Shopping Cart
 
-_Add screenshot_
+![Shoping Cart](BookStore/Docs/Cart.png)
 
 ### Checkout
 
-_Add screenshot_
+![Checkout](BookStore/Docs/Checkout.png)
+
+### Pay
+
+![Pay](BookStore/Docs/PaymobPayment.png)
+
+### Payment Result
+
+![Payment Result](BookStore/Docs/PaymentSuccess.png)
+
+### Manage Books
+
+![Book CRUD](BookStore/Docs/Add_Edit_Books.png)
+![Book CRUD](BookStore/Docs/Add_Edit_Books_Details.png)
+
+### Manage Roles
+![Roles CRUD](BookStore/Docs/Add_Edit_Roles.png)
 
 ## Future Improvements
 
-- Wishlist
-- Product reviews and ratings
-- Advanced search and filtering
 - Email notifications
+- Product reviews
+- Wishlist
 - Discount coupons
+- Docker support
+- Unit Testing
 
 ## Author
 
 **Khaled Ahmed**
 
-Computer Science Student | ASP.NET Core Backend Developer
+Software Developer
+
+LinkedIn: https://www.linkedin.com/in/khaled-ahmed-53a3a4295/
+
+GitHub: https://github.com/Khaled91067 
