@@ -75,15 +75,6 @@ namespace BookStore.Controllers
         [Authorize]
         public async Task<IActionResult> ViewOrders(string? searchTerm)
         {
-           /* var userId = _userManager.GetUserId(User);
-
-            var userOrders = await _context.Orders.Where(o => o.UserId == userId)
-                                                  .Include(o => o.OrderItems)
-                                                  .ThenInclude(i => i.Book)
-                                                  .ToListAsync();
-
-
-            return View("ViewOrders", userOrders);*/
            var user = await _userManager.GetUserAsync(User);
 
            if (user == null)

@@ -146,7 +146,10 @@ namespace BookStore.Services.Implementaion
                     OrderDate = o.OrderDate,
                     CustomerName = o.User.UserName,
                     TotalAmount = o.OrderItems.Sum(i => i.Price * i.Quantity),
-
+                    PaymentStatus = o.Payments.Where(p=>p.OrderId==o.OrderId&& p.PaymentStatus==PaymentStatus.Succeeded)                                             
+                                              .Select(p=>p.PaymentStatus)
+                                              .FirstOrDefault(),
+                       
                     OrderItems = o.OrderItems.Select(i => new OrderItemVM
                     {
                         ProductId = i.BookId,

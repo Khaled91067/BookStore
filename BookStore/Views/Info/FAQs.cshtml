@@ -1,0 +1,97 @@
+﻿@{
+    ViewData["Title"] = "Frequently Asked Questions";
+}
+
+<div class="container my-5" style="max-width: 850px;">
+    <!-- SECTION 1: HEADER -->
+    <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold text-dark mb-2">Frequently Asked Questions</h1>
+        <p class="lead text-muted">
+            Have questions? We're here to help. Find answers to the most common inquiries below.
+        </p>
+    </div>
+
+    <!-- SECTION 2: ACCORDION -->
+    <div class="accordion shadow-sm rounded-3 overflow-hidden" id="faqAccordion">
+
+        <!-- Question 1 -->
+        <div class="accordion-item border-bottom">
+            <h2 class="accordion-header" id="headingOne">
+                <button class="accordion-button fw-semibold text-dark py-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    <i class="bi bi-question-circle text-primary me-2"></i> How do I access my purchased eBooks?
+                </button>
+            </h2>
+            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                <div class="accordion-body text-secondary lh-base bg-light-subtle">
+                    Once your payment is confirmed, your eBooks will be immediately available under the "My Library" section of your account. You can read them directly via our web reader or download them in PDF/EPUB formats.
+                </div>
+            </div>
+        </div>
+
+        <!-- Question 2 -->
+        <div class="accordion-item border-bottom">
+            <h2 class="accordion-header" id="headingTwo">
+                <button class="accordion-button collapsed fw-semibold text-dark py-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    <i class="bi bi-truck text-primary me-2"></i> How long does physical book shipping take?
+                </button>
+            </h2>
+            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+                <div class="accordion-body text-secondary lh-base bg-light-subtle">
+                    Shipping times depend on your location. Domestic orders typically arrive within 3-5 business days, while international shipping can take between 7-14 business days. You will receive a tracking link via email as soon as your order ships.
+                </div>
+            </div>
+        </div>
+
+        <!-- Question 3 -->
+        <div class="accordion-item border-bottom">
+            <h2 class="accordion-header" id="headingThree">
+                <button class="accordion-button collapsed fw-semibold text-dark py-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                    <i class="bi bi-arrow-counterclockwise text-primary me-2"></i> Can I return or exchange a book?
+                </button>
+            </h2>
+            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+                <div class="accordion-body text-secondary lh-base bg-light-subtle">
+                    Yes, you can return physical books within 14 days of delivery, provided they are in their original unread condition. Please note that digital products (eBooks and Audiobooks) are non-refundable once downloaded or streamed.
+                </div>
+            </div>
+        </div>
+
+        <!-- Question 4 -->
+        <div class="accordion-item border-bottom">
+            <h2 class="accordion-header" id="headingFour">
+                <button class="accordion-button collapsed fw-semibold text-dark py-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                    <i class="bi bi-credit-card text-primary me-2"></i> What payment methods do you accept?
+                </button>
+            </h2>
+            <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#faqAccordion">
+                <div class="accordion-body text-secondary lh-base bg-light-subtle">
+                    We accept all major credit and debit cards (Visa, MasterCard, American Express), as well as PayPal and Apple Pay. Local cash-on-delivery options are also available depending on your shipping region.
+                </div>
+            </div>
+        </div>
+
+        <!-- Question 5 -->
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingFive">
+                <button class="accordion-button collapsed fw-semibold text-dark py-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                    <i class="bi bi-x-circle text-primary me-2"></i> How do I cancel my monthly subscription?
+                </button>
+            </h2>
+            <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#faqAccordion">
+                <div class="accordion-body text-secondary lh-base bg-light-subtle">
+                    You can cancel your subscription at any time by going to Account Settings -> Membership. You will retain full access to your subscription benefits until the end of your current billing period.
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- SECTION 3: STILL HAVE QUESTIONS -->
+    <div class="card border-0 bg-primary-subtle text-center p-4 mt-5 rounded-3 shadow-sm">
+        <div class="card-body">
+            <h4 class="fw-bold text-dark mb-2">Still have questions?</h4>
+            <p class="text-secondary small mb-3">If you couldn't find the answer you were looking for, please don't hesitate to reach out to our team.</p>
+            <a href="#" class="btn btn-primary px-4 fw-medium">Contact Support</a>
+        </div>
+    </div>
+</div>

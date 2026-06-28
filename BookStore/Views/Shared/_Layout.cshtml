@@ -105,22 +105,16 @@
       <footer class="py-5 container">
         <ul class="nav justify-content-center border-bottom pb-3 mb-3">
           <li class="nav-item">
-            <a href="#" class="nav-link px-2 text-body-white">Home</a>
+            <a asp-action="Index" class="nav-link px-2 text-body-white">Home</a>
           </li>
           <li class="nav-item">
-            <a href="#" class="nav-link px-2 text-body-white">Features</a>
+            <a asp-controller="Info" asp-action="FAQs" class="nav-link px-2 text-body-white">FAQs</a>
           </li>
           <li class="nav-item">
-            <a href="#" class="nav-link px-2 text-body-white">Pricing</a>
-          </li>
-          <li class="nav-item">
-            <a href="#" class="nav-link px-2 text-body-white">FAQs</a>
-          </li>
-          <li class="nav-item">
-            <a href="#" class="nav-link px-2 text-body-white">About</a>
+            <a asp-controller="Info" asp-action="About" class="nav-link px-2 text-body-white">About</a>
           </li>
         </ul>
-        <p class="text-center text-body-white">&copy; 2025 Company, Inc</p>
+        <p class="text-center text-body-white">&copy; Khaled BookStore</p>
       </footer>
     </div>
 

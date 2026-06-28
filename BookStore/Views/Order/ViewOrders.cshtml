@@ -48,66 +48,73 @@
         <div class="orders-list">
             @foreach (var order in Model)
             {
-                <!-- Master card for the whole order -->
-                <div class="order-card shadow-sm">
-                    <!-- Order Header (light gray box) - Uses placeholders where data isn't in model -->
-                    <div class="card-header">
-                        <div class="row align-items-center">
-                            <div class="col-md-8">
-                                <div class="row row-cols-auto g-0">
-                                    <div class="col">
-                                        <div class="order-header-label">Order Placed</div>
-                                        <div class="order-header-value">@order.OrderDate</div> 
-                                    </div>
-                                    <div class="col">
-                                        <div class="order-header-label">Total</div>
-                                        <div class="order-header-value">EGP @order.TotalAmount</div> 
-                                    </div>
-                                    <div class="col">
-                                        <div class="order-header-label">Ship To</div>
-                                        <div class="order-header-value"><a href="#">@order.CustomerName <i class="bi bi-chevron-down ms-1"></i></a></div> 
+                @if(order.PaymentStatus==PaymentStatus.Succeeded)
+                {
+
+                    <!-- Master card for the whole order -->
+                    <div class="order-card shadow-sm">
+                        <!-- Order Header (light gray box) - Uses placeholders where data isn't in model -->
+                        <div class="card-header">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <div class="row row-cols-auto g-0">
+                                        <div class="col">
+                                            <div class="order-header-label">Order Placed</div>
+                                            <div class="order-header-value">@order.OrderDate</div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="order-header-label">Total</div>
+                                            <div class="order-header-value">EGP @order.TotalAmount</div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="order-header-label">Ship To</div>
+                                            <div class="order-header-value"><a href="#">@order.CustomerName <i class="bi bi-chevron-down ms-1"></i></a></div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-md-4 text-md-end text-muted small mt-2 mt-md-0">
-                                <div class="order-header-id">Order # <span>@order.OrderId</span></div>
-                           
+                                <div class="col-md-4 text-md-end text-muted small mt-2 mt-md-0">
+                                    <div class="order-header-id">Order # <span>@order.OrderId</span></div>
+
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Inner Card Body containing product list -->
-                    <div class="order-item-list">
-                        @foreach (var item in order.OrderItems)
-                        {
-                            <div class="row align-items-center product-row">
-                                <div class="col-md-2 col-3 text-center">
-                                    <img src="~/Images/@item.ImageUrl" alt="@item.ProductName" class="book-thumb img-fluid shadow-sm">
-                                </div>
-                                <div class="col-md-7 col-9">
-                                    <h5 class="h6 product-title fw-normal mb-1">
-                                        <a href="#" class="text-decoration-none">@item.ProductName</a>
+                        <!-- Inner Card Body containing product list -->
+                        <div class="order-item-list">
+                            @foreach (var item in order.OrderItems)
+                            {
+                                <div class="row align-items-center product-row">
+                                    <div class="col-md-2 col-3 text-center">
+                                        <img src="~/Images/@item.ImageUrl" alt="@item.ProductName" class="book-thumb img-fluid shadow-sm">
                                     </div>
-                                    <p class="text-muted small mb-0">Qty: @item.Quantity</p>
-                                    <div class="d-flex align-items-center mt-3 gap-2">
-                                        <i class="bi bi-repeat fs-5 text-muted"></i>
-                                        <a href="#" class="btn btn-custom-pill">Buy it again</a>
+                                    <div class="col-md-7 col-9">
+                                        <h5 class="h6 product-title fw-normal mb-1">
+                                            <a href="#" class="text-decoration-none">@item.ProductName</a>
+                                        </div>
+                                        <p class="text-muted small mb-0">Qty: @item.Quantity</p>
+                                        <div class="d-flex align-items-center mt-3 gap-2">
+                                            <i class="bi bi-repeat fs-5 text-muted"></i>
+                                            <a href="#" class="btn btn-custom-pill">Buy it again</a>
 
-                                        @* <a asp-controller="Books"
+                                            @* <a asp-controller="Books"
                                            asp-action=""
                                            asp-route-id="@item.ProductId"
                                            class="btn btn-custom-pill">
                                             View your item
                                         </a> *@
 
-                                        <a asp-controller="Order" asp-action="AddToCart" asp-route-bookId="@item.ProductId" class="btn btn-custom-pill">Buy it again</a>
+                                            <a asp-controller="Order" asp-action="AddToCart" asp-route-bookId="@item.ProductId" class="btn btn-custom-pill">Buy it again</a>
+                                        </div>
                                     </div>
-                                </div>
+
                                 
-                           
-                        }
-                    </div>
-                </div>
+                                }
+                            </div>
+                        </div>
+
+                    
+                }
+
             }
         </div>
     }
