@@ -1,0 +1,39 @@
+[
+  {
+    "CustomerEmail": "customer@bookstore.com",
+    "OrderDateOffsetDays": -5,
+    "OrderItems": [
+      {
+        "BookTitle": "Clean Code",
+        "Quantity": 2,
+        "Price": 250.00
+      },
+      {
+        "BookTitle": "Design Patterns",
+        "Quantity": 1,
+        "Price": 300.00
+      }
+    ],
+    "Payment": {
+      "PaymentMethod": "Cash",
+      "PaymentStatus": "Succeeded",
+      "Amount": 800.00
+    }
+  },
+  {
+    "CustomerEmail": "customer@bookstore.com",
+    "OrderDateOffsetDays": -1,
+    "OrderItems": [
+      {
+        "BookTitle": "The Pragmatic Programmer",
+        "Quantity": 1,
+        "Price": 280.00
+      }
+    ],
+    "Payment": {
+      "PaymentMethod": "Cash",
+      "PaymentStatus": "Pending",
+      "Amount": 280.00
+    }
+  }
+]

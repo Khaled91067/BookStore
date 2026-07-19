@@ -111,7 +111,7 @@ namespace BookStore.Services.Implementaion
             {
 
 
-                var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "Images");
+                var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "Images/Books");
                 var newFileName = Guid.NewGuid().ToString() + "_" + vm.ImageFile.FileName;
                 string path = Path.Combine(uploadsFolder, newFileName);
 

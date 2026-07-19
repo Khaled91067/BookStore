@@ -22,11 +22,13 @@
     <PackageReference Include="NuGet.Common" Version="7.3.1" />
     <PackageReference Include="NuGet.Packaging" Version="7.3.1" />
     <PackageReference Include="NuGet.Protocol" Version="7.3.1" />
+    <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3" Version="2.1.12" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Areas\Admin\Data\" />
     <Folder Include="Docs\" />
+    <Folder Include="wwwroot\Images\Books\" />
   </ItemGroup>
 
 </Project>
