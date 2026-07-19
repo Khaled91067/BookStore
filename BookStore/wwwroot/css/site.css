@@ -19,6 +19,25 @@ html {
 
 body {
     margin: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: #f8fafc;
+    color: #1e293b;
+}
+
+.transition-all {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.text-indigo {
+    color: #4f46e5;
+}
+
+.hover-text-info {
+    transition: color 0.2s ease;
+}
+
+.hover-text-info:hover {
+    color: #0dcaf0 !important;
 }
 
 .form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
