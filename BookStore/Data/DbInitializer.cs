@@ -21,20 +21,39 @@ namespace BookStore.Data
             string seedDataPath = Path.Combine(Directory.GetCurrentDirectory(), "Data", "SeedData");
 
             // 1. Seed Categories
-            if (!await context.Categories.AnyAsync())
+            string categoriesPath = Path.Combine(seedDataPath, "categories.json");
+            if (File.Exists(categoriesPath))
             {
-                string categoriesPath = Path.Combine(seedDataPath, "categories.json");
-                if (File.Exists(categoriesPath))
+                var categoriesJson = await File.ReadAllTextAsync(categoriesPath);
+                var categories = JsonSerializer.Deserialize<List<Category>>(categoriesJson, jsonOptions);
+                if (categories != null)
                 {
-                    var categoriesJson = await File.ReadAllTextAsync(categoriesPath);
-                    var categories = JsonSerializer.Deserialize<List<Category>>(categoriesJson, jsonOptions);
-                    if (categories != null)
+                    if (!await context.Categories.AnyAsync())
                     {
                         await context.Categories.AddRangeAsync(categories);
                         await context.SaveChangesAsync();
                     }
+                    else
+                    {
+                        var existingCategories = await context.Categories.ToListAsync();
+                        bool changed = false;
+                        foreach (var cat in categories)
+                        {
+                            var existing = existingCategories.FirstOrDefault(c => c.Name == cat.Name);
+                            if (existing != null && existing.ImageUrl != cat.ImageUrl && !string.IsNullOrEmpty(cat.ImageUrl))
+                            {
+                                existing.ImageUrl = cat.ImageUrl;
+                                changed = true;
+                            }
+                        }
+                        if (changed)
+                        {
+                            await context.SaveChangesAsync();
+                        }
+                    }
                 }
             }
+
 
             // 2. Seed Publishers
             if (!await context.Publishers.AnyAsync())
@@ -53,17 +72,35 @@ namespace BookStore.Data
             }
 
             // 3. Seed Authors
-            if (!await context.Authors.AnyAsync())
+            string authorsPath = Path.Combine(seedDataPath, "authors.json");
+            if (File.Exists(authorsPath))
             {
-                string authorsPath = Path.Combine(seedDataPath, "authors.json");
-                if (File.Exists(authorsPath))
+                var authorsJson = await File.ReadAllTextAsync(authorsPath);
+                var authors = JsonSerializer.Deserialize<List<Author>>(authorsJson, jsonOptions);
+                if (authors != null)
                 {
-                    var authorsJson = await File.ReadAllTextAsync(authorsPath);
-                    var authors = JsonSerializer.Deserialize<List<Author>>(authorsJson, jsonOptions);
-                    if (authors != null)
+                    if (!await context.Authors.AnyAsync())
                     {
                         await context.Authors.AddRangeAsync(authors);
                         await context.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        var existingAuthors = await context.Authors.ToListAsync();
+                        bool changed = false;
+                        foreach (var author in authors)
+                        {
+                            var existing = existingAuthors.FirstOrDefault(a => a.Name == author.Name);
+                            if (existing != null && existing.ImageUrl != author.ImageUrl && !string.IsNullOrEmpty(author.ImageUrl))
+                            {
+                                existing.ImageUrl = author.ImageUrl;
+                                changed = true;
+                            }
+                        }
+                        if (changed)
+                        {
+                            await context.SaveChangesAsync();
+                        }
                     }
                 }
             }

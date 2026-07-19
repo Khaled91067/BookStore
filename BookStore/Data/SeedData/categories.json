@@ -1,23 +1,30 @@
 [
   {
-    "Name": "Programming"
+    "Name": "Programming",
+    "ImageUrl": "programming.png"
   },
   {
-    "Name": "Databases"
+    "Name": "Databases",
+    "ImageUrl": "databases.png"
   },
   {
-    "Name": "Networking"
+    "Name": "Networking",
+    "ImageUrl": "networking.jpg"
   },
   {
-    "Name": "Algorithms & Data Structures"
+    "Name": "Algorithms & Data Structures",
+    "ImageUrl": "algorithms.png"
   },
   {
-    "Name": "Philosophy"
+    "Name": "Philosophy",
+    "ImageUrl": "philosophy.jpg"
   },
   {
-    "Name": "Classic Literature"
+    "Name": "Classic Literature",
+    "ImageUrl": "classic_literature.jpg"
   },
   {
-    "Name": "Political Fiction"
+    "Name": "Political Fiction",
+    "ImageUrl": "political_fiction.png"
   }
 ]

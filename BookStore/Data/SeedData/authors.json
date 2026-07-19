@@ -1,54 +1,70 @@
 [
   {
-    "Name": "Robert C. Martin"
+    "Name": "Robert C. Martin",
+    "ImageUrl": "robert_martin.png"
   },
   {
-    "Name": "Andrew Hunt"
+    "Name": "Andrew Hunt",
+    "ImageUrl": "andrew_hunt.png"
   },
   {
-    "Name": "David Thomas"
+    "Name": "David Thomas",
+    "ImageUrl": "david_thomas.png"
   },
   {
-    "Name": "Erich Gamma"
+    "Name": "Erich Gamma",
+    "ImageUrl": "erich_gamma.png"
   },
   {
-    "Name": "Richard Helm"
+    "Name": "Richard Helm",
+    "ImageUrl": "richard_helm.png"
   },
   {
-    "Name": "Ralph Johnson"
+    "Name": "Ralph Johnson",
+    "ImageUrl": "ralph_johnson.png"
   },
   {
-    "Name": "John Vlissides"
+    "Name": "John Vlissides",
+    "ImageUrl": "john_vlissides.jpg"
   },
   {
-    "Name": "Thomas H. Cormen"
+    "Name": "Thomas H. Cormen",
+    "ImageUrl": "thomas_cormen.png"
   },
   {
-    "Name": "Charles E. Leiserson"
+    "Name": "Charles E. Leiserson",
+    "ImageUrl": "charles_leiserson.jpg"
   },
   {
-    "Name": "Ronald L. Rivest"
+    "Name": "Ronald L. Rivest",
+    "ImageUrl": "ronald_rivest.jpg"
   },
   {
-    "Name": "Clifford Stein"
+    "Name": "Clifford Stein",
+    "ImageUrl": "clifford_stein.jpg"
   },
   {
-    "Name": "Martin Fowler"
+    "Name": "Martin Fowler",
+    "ImageUrl": "martin_fowler.png"
   },
   {
-    "Name": "Fyodor Dostoevsky"
+    "Name": "Fyodor Dostoevsky",
+    "ImageUrl": "fyodor_dostoevsky.png"
   },
   {
-    "Name": "Albert Camus"
+    "Name": "Albert Camus",
+    "ImageUrl": "albert_camus.jpg"
   },
   {
-    "Name": "George Orwell"
+    "Name": "George Orwell",
+    "ImageUrl": "george_orwell.png"
   },
   {
-    "Name": "Friedrich Nietzsche"
+    "Name": "Friedrich Nietzsche",
+    "ImageUrl": "friedrich_nietzsche.png"
   },
   {
-    "Name": "بشار جمال فيروز"
+    "Name": "بشار جمال فيروز",
+    "ImageUrl": "bashar_fayrouz.jpg"
   }
-
 ]
