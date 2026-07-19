@@ -28,7 +28,6 @@
   <ItemGroup>
     <Folder Include="Areas\Admin\Data\" />
     <Folder Include="Docs\" />
-    <Folder Include="wwwroot\Images\Books\" />
   </ItemGroup>
 
 </Project>

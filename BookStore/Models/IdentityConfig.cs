@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿/*using Microsoft.AspNetCore.Identity;
 
 namespace BookStore.Models
 {
@@ -10,7 +10,7 @@ namespace BookStore.Models
             var userManager = provider.GetRequiredService<UserManager<ApplicationUser>>();
 
             string username = "admin@bookstore.com";
-            string password = "#Bengobega1";
+            string password = "#Bengobega";
             string roleName = "Admin";
 
             if(await roleManger.FindByNameAsync(roleName)==null)
@@ -31,3 +31,4 @@ namespace BookStore.Models
         }
     }
 }
+*/

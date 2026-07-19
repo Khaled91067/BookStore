@@ -7,7 +7,7 @@
     "PublisherName": "Pearson",
     "StockQuantity": 40,
     "Description": "A handbook of agile software craftsmanship that teaches you how to write code that is clean, readable, and maintainable.",
-    "AuthorNames": ["Robert C. Martin"]
+    "AuthorNames": [ "Robert C. Martin" ]
   },
   {
     "Title": "The Pragmatic Programmer",
@@ -17,7 +17,7 @@
     "PublisherName": "Addison-Wesley",
     "StockQuantity": 30,
     "Description": "One of the most significant books on software development, covering career advice, technical practices, and methodologies.",
-    "AuthorNames": ["Andrew Hunt", "David Thomas"]
+    "AuthorNames": [ "Andrew Hunt", "David Thomas" ]
   },
   {
     "Title": "Design Patterns",
@@ -27,7 +27,7 @@
     "PublisherName": "Addison-Wesley",
     "StockQuantity": 25,
     "Description": "The legendary book that introduced design patterns to software engineering, outlining 23 classic solutions to common design problems.",
-    "AuthorNames": ["Erich Gamma", "Richard Helm", "Ralph Johnson", "John Vlissides"]
+    "AuthorNames": [ "Erich Gamma", "Richard Helm", "Ralph Johnson", "John Vlissides" ]
   },
   {
     "Title": "Introduction to Algorithms",
@@ -37,7 +37,7 @@
     "PublisherName": "MIT Press",
     "StockQuantity": 15,
     "Description": "The comprehensive textbook and professional reference on computer algorithms, covering sorting, data structures, and graph theory.",
-    "AuthorNames": ["Thomas H. Cormen", "Charles E. Leiserson", "Ronald L. Rivest", "Clifford Stein"]
+    "AuthorNames": [ "Thomas H. Cormen", "Charles E. Leiserson", "Ronald L. Rivest", "Clifford Stein" ]
   },
   {
     "Title": "Refactoring",
@@ -47,7 +47,7 @@
     "PublisherName": "Addison-Wesley",
     "StockQuantity": 20,
     "Description": "The definitive guide to refactoring code, illustrating the principles and best practices with step-by-step examples.",
-    "AuthorNames": ["Martin Fowler"]
+    "AuthorNames": [ "Martin Fowler" ]
   },
   {
     "Title": "Crime and Punishment",
@@ -57,7 +57,7 @@
     "PublisherName": "Penguin Books",
     "StockQuantity": 40,
     "Description": "A masterpiece of Russian literature exploring morality, guilt, and redemption.",
-    "AuthorNames": ["Fyodor Dostoevsky"]
+    "AuthorNames": [ "Fyodor Dostoevsky" ]
   },
   {
     "Title": "The Brothers Karamazov",
@@ -67,7 +67,7 @@
     "PublisherName": "Penguin Books",
     "StockQuantity": 25,
     "Description": "A complex philosophical novel that enters deeply into questions of God, free will, and morality.",
-    "AuthorNames": ["Fyodor Dostoevsky"]
+    "AuthorNames": [ "Fyodor Dostoevsky" ]
   },
   {
     "Title": "The Idiot",
@@ -77,7 +77,7 @@
     "PublisherName": "Penguin Books",
     "StockQuantity": 30,
     "Description": "A novel exploring the impacts of a truly good and innocent man in a corrupt society.",
-    "AuthorNames": ["Fyodor Dostoevsky"]
+    "AuthorNames": [ "Fyodor Dostoevsky" ]
   },
   {
     "Title": "Notes from Underground",
@@ -87,7 +87,7 @@
     "PublisherName": "Penguin Books",
     "StockQuantity": 35,
     "Description": "Considered by many to be one of the first existentialist novels, exploring alienation and human nature.",
-    "AuthorNames": ["Fyodor Dostoevsky"]
+    "AuthorNames": [ "Fyodor Dostoevsky" ]
   },
   {
     "Title": "The Stranger",
@@ -97,7 +97,7 @@
     "PublisherName": "Penguin Books",
     "StockQuantity": 35,
     "Description": "A classic existentialist novel exploring the absurdity of human life through Meursault.",
-    "AuthorNames": ["Albert Camus"]
+    "AuthorNames": [ "Albert Camus" ]
   },
   {
     "Title": "The Plague",
@@ -107,7 +107,7 @@
     "PublisherName": "Penguin Books",
     "StockQuantity": 30,
     "Description": "A novel about a plague ravaging the Algerian city of Oran, exploring human resilience.",
-    "AuthorNames": ["Albert Camus"]
+    "AuthorNames": [ "Albert Camus" ]
   },
   {
     "Title": "The Myth of Sisyphus",
@@ -117,7 +117,7 @@
     "PublisherName": "Penguin Books",
     "StockQuantity": 20,
     "Description": "A philosophical essay introducing Camus's concept of the absurd and the value of existence.",
-    "AuthorNames": ["Albert Camus"]
+    "AuthorNames": [ "Albert Camus" ]
   },
   {
     "Title": "The Fall",
@@ -127,7 +127,7 @@
     "PublisherName": "Penguin Books",
     "StockQuantity": 25,
     "Description": "A philosophical novel written in the form of a dramatic monologue exploring guilt, freedom, and judgment.",
-    "AuthorNames": ["Albert Camus"]
+    "AuthorNames": [ "Albert Camus" ]
   },
   {
     "Title": "1984",
@@ -137,7 +137,7 @@
     "PublisherName": "HarperCollins",
     "StockQuantity": 60,
     "Description": "A dystopian social science fiction novel about totalitarianism, surveillance, and individual freedom.",
-    "AuthorNames": ["George Orwell"]
+    "AuthorNames": [ "George Orwell" ]
   },
   {
     "Title": "Animal Farm",
@@ -147,7 +147,7 @@
     "PublisherName": "HarperCollins",
     "StockQuantity": 55,
     "Description": "A satirical allegorical novella reflecting events leading up to the Russian Revolution.",
-    "AuthorNames": ["George Orwell"]
+    "AuthorNames": [ "George Orwell" ]
   },
   {
     "Title": "Homage to Catalonia",
@@ -157,7 +157,7 @@
     "PublisherName": "HarperCollins",
     "StockQuantity": 15,
     "Description": "Orwell's personal account of his experiences during the Spanish Civil War.",
-    "AuthorNames": ["George Orwell"]
+    "AuthorNames": [ "George Orwell" ]
   },
   {
     "Title": "Down and Out in Paris and London",
@@ -167,7 +167,7 @@
     "PublisherName": "HarperCollins",
     "StockQuantity": 22,
     "Description": "A memoir about poverty in the two cities, reflecting Orwell's early struggles and social critiques.",
-    "AuthorNames": ["George Orwell"]
+    "AuthorNames": [ "George Orwell" ]
   },
   {
     "Title": "Thus Spoke Zarathustra",
@@ -177,7 +177,7 @@
     "PublisherName": "HarperCollins",
     "StockQuantity": 20,
     "Description": "A philosophical novel containing ideas of the Ubermensch and the death of God.",
-    "AuthorNames": ["Friedrich Nietzsche"]
+    "AuthorNames": [ "Friedrich Nietzsche" ]
   },
   {
     "Title": "Beyond Good and Evil",
@@ -187,7 +187,7 @@
     "PublisherName": "HarperCollins",
     "StockQuantity": 25,
     "Description": "A work that accuses past philosophers of lacking critical sense and blindly accepting dogmas.",
-    "AuthorNames": ["Friedrich Nietzsche"]
+    "AuthorNames": [ "Friedrich Nietzsche" ]
   },
   {
     "Title": "The Antichrist",
@@ -197,7 +197,7 @@
     "PublisherName": "HarperCollins",
     "StockQuantity": 15,
     "Description": "A critique of Christianity and its moral values from a philosophical standpoint.",
-    "AuthorNames": ["Friedrich Nietzsche"]
+    "AuthorNames": [ "Friedrich Nietzsche" ]
   },
   {
     "Title": "The Will to Power",
@@ -207,6 +207,17 @@
     "PublisherName": "HarperCollins",
     "StockQuantity": 18,
     "Description": "A book compiled from Nietzsche's notebooks outlining his thoughts on the will to power and nihilism.",
-    "AuthorNames": ["Friedrich Nietzsche"]
+    "AuthorNames": [ "Friedrich Nietzsche" ]
+  },
+  {
+    "Title": "الزيبق",
+    "Price": 190.00,
+    "ImageUrl": "الزيبق.png",
+    "CategoryName": "Political Fiction",
+    "PublisherName": "غيوم",
+    "StockQuantity": 20,
+    "Description": "في منطقة من العالم يسودها الفساد وتحديدا في دولة منعزلة عن دول المنطقة تسمى تجينو، تحمل بباطنها خير كنوز الأرض وأعلاهم علماء سيطر الطمع وعبادة المال على نفوس الطبقة الحاكمة والموالين أدى إلى تعاونهم مع مملكة الشمال لمحو ذاكرة الشعب لتزداد هذه الطبقة ثراء دون مقاومة بعد أن نفذ الاحتلال الكيميائي الذي استمر لعقود… حتى ظهور الزييق",
+    "AuthorNames": [ "بشار جمال فيروز" ]
   }
+
 ]
