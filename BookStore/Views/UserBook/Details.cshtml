@@ -1,107 +1,156 @@
-﻿@model BookStore.ViewModels.BookDetailsVM
+@model BookStore.ViewModels.BookDetailsVM
 
 @{
     ViewData["Title"] = Model.Title;
 }
 
-<div class="container my-5">
-    <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+@section Styles {
+    <style>
+        .font-outfit {
+            font-family: 'Outfit', sans-serif;
+        }
+        .text-indigo {
+            color: #4f46e5;
+        }
+        .bg-indigo-soft {
+            background-color: rgba(79, 70, 229, 0.04);
+        }
+        .btn-info-custom {
+            background-color: #0dcaf0;
+            color: #000;
+            transition: all 0.2s ease;
+        }
+        .btn-info-custom:hover {
+            background-color: #0bacce;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(13, 202, 240, 0.3);
+        }
+        .book-cover-container {
+            position: relative;
+            border-radius: 1rem;
+            overflow: hidden;
+            background: #f8f9fa;
+        }
+        .book-cover-container::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.04);
+            pointer-events: none;
+            border-radius: 1rem;
+        }
+        .hover-text-info:hover {
+            color: #0dcaf0 !important;
+        }
+    </style>
+}
+
+<div class="container my-4 my-md-5">
+    <div class="mb-4">
+        <a asp-action="Index" class="text-decoration-none text-secondary hover-text-info fw-semibold">
+            <i class="bi bi-arrow-left me-1"></i> Back to Catalog
+        </a>
+    </div>
+
+    <div class="card border-0 shadow rounded-4 overflow-hidden bg-white">
         <div class="card-body p-4 p-lg-5">
             <div class="row gx-4 gx-lg-5 align-items-center">
 
-                <div class="col-md-5 col-lg-4 mb-5 mb-md-0 text-center">
-                    <img src="~/Images/@Model.ImageUrl"
-                         alt="Cover of @Model.Title"
-                         class="img-fluid rounded-3 shadow"
-                         style="max-height: 550px; object-fit: cover;" />
-                </div>
-
-                <div class="col-md-7 col-lg-8">
-
-                    <div class="mb-3">
-                        <span class="badge bg-light text-secondary border px-3 py-2 text-uppercase tracking-wide">
-                            @Model.CategoryName
-                        </span>
-                    </div>
-
-                    <h1 class="display-6 fw-bold text-dark mb-2">@Model.Title</h1>
-
-                    <div class="fs-6 mb-4 text-secondary">
-                        <span class="me-3">
-                            By
-                            <span class="fw-semibold text-dark">
-                                @string.Join(", ", Model.Authors)
-                            </span>
-                        </span>
-
-                        <span class="text-muted">|</span>
-
-                        <span class="ms-3">
-                            Publisher:
-                            <span class="text-dark">
-                                @Model.PublisherName
-                            </span>
-                        </span>
-                    </div>
-
-                    <div class="mb-4">
-                        <span class="fs-2 fw-bolder text-primary">@Model.Price.ToString("C")</span>
-                    </div>
-
-                    <div class="mb-4">
-                        @if (Model.StockQuantity > 0)
+                <!-- Image Section -->
+                <div class="col-md-5 col-lg-4 mb-4 mb-md-0 text-center">
+                    <div class="book-cover-container p-4 shadow-sm h-100 d-flex align-items-center justify-content-center">
+                        @if (!string.IsNullOrEmpty(Model.ImageUrl))
                         {
-                            <div class="d-flex align-items-center text-success fs-6 fw-semibold">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-check-circle-fill me-2" viewBox="0 0 16 16">
-                                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
-                                </svg>
-                                In Stock
-                                <span class="text-muted ms-2 fw-normal">(@Model.StockQuantity available)</span>
-                            </div>
+                            <img src="~/Images/Books/@Model.ImageUrl"
+                                 alt="Cover of @Model.Title"
+                                 class="img-fluid rounded-3"
+                                 style="max-height: 500px; object-fit: contain;" />
                         }
                         else
                         {
-                            <div class="d-flex align-items-center text-danger fs-6 fw-semibold">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-x-circle-fill me-2" viewBox="0 0 16 16">
-                                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z" />
-                                </svg>
-                                Out of Stock
+                            <div class="text-muted py-5">
+                                <i class="bi bi-book-half display-1 mb-3 text-secondary opacity-50"></i>
+                                <p class="mb-0">No Cover Available</p>
                             </div>
                         }
+                    </div>
+                </div>
+
+                <!-- Details Section -->
+                <div class="col-md-7 col-lg-8">
+
+                    <div class="d-flex align-items-center mb-3 gap-2 flex-wrap">
+                        <span class="badge bg-dark bg-opacity-75 px-3 py-2 rounded-pill text-uppercase tracking-wider fs-7">
+                            @(string.IsNullOrEmpty(Model.CategoryName) ? "General" : Model.CategoryName)
+                        </span>
+                        @if (Model.StockQuantity > 0)
+                        {
+                            <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill fs-7 border border-success border-opacity-25">
+                                <i class="bi bi-check-circle-fill me-1"></i> In Stock (@Model.StockQuantity)
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger bg-opacity-10 text-danger px-3 py-2 rounded-pill fs-7 border border-danger border-opacity-25">
+                                <i class="bi bi-x-circle-fill me-1"></i> Out of Stock
+                            </span>
+                        }
+                    </div>
+
+                    <h1 class="display-5 fw-bold text-dark font-outfit mb-2">@Model.Title</h1>
+
+                    <div class="d-flex flex-wrap align-items-center fs-6 mb-4 text-secondary gap-2 gap-md-4">
+                        <div>
+                            <i class="bi bi-pen text-info me-1"></i>
+                            By <span class="fw-semibold text-dark">@(Model.Authors != null && Model.Authors.Any() ? string.Join(", ", Model.Authors) : "Unknown Author")</span>
+                        </div>
+                        <div class="d-none d-md-block text-muted opacity-50">|</div>
+                        <div>
+                            <i class="bi bi-building text-info me-1"></i>
+                            Publisher: <span class="text-dark">@(string.IsNullOrEmpty(Model.PublisherName) ? "Unknown" : Model.PublisherName)</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <span class="display-6 fw-bold text-indigo">@Model.Price.ToString("C")</span>
                     </div>
 
                     <hr class="text-muted opacity-25 my-4" />
 
                     <div class="mb-5">
-                        <h5 class="fw-bold mb-3 text-dark">Description</h5>
+                        <h5 class="fw-bold mb-3 text-dark font-outfit">Description</h5>
                         <p class="text-secondary" style="line-height: 1.8; font-size: 1.05rem;">
-                            @Model.Description
+                            @(string.IsNullOrEmpty(Model.Description) ? "No description available for this book." : Model.Description)
                         </p>
                     </div>
 
-                    <form asp-controller="Order" asp-action="AddToCart" asp-route-bookId="@Model.BookId" method="post">
-
-                        <div class="d-flex flex-column flex-sm-row gap-3">
+                    <!-- Add to Cart Form -->
+                    <form asp-controller="Order" asp-action="AddToCart" asp-route-bookId="@Model.BookId" method="post" class="bg-indigo-soft p-4 rounded-4 border border-primary border-opacity-10">
+                        <div class="d-flex flex-column flex-sm-row gap-3 align-items-sm-center">
                             @if (Model.StockQuantity > 0)
                             {
-                                <div class="input-group" style="max-width: 140px;">
-                                    <span class="input-group-text bg-white border-secondary-subtle">Qty</span>
-                                    <input type="number" name="quantity" class="form-control border-secondary-subtle text-center" value="1" min="1" max="@Model.StockQuantity" />
+                                <div class="d-flex align-items-center me-sm-3">
+                                    <label for="quantity" class="fw-bold text-dark me-3 mb-0">Quantity</label>
+                                    <div class="input-group shadow-sm" style="width: 140px;">
+                                        <button class="btn btn-light border border-secondary border-opacity-25 bg-white" type="button" onclick="document.getElementById('quantity').stepDown()">
+                                            <i class="bi bi-dash"></i>
+                                        </button>
+                                        <input type="number" id="quantity" name="quantity" class="form-control border-secondary border-opacity-25 text-center fw-bold bg-white" value="1" min="1" max="@Model.StockQuantity" />
+                                        <button class="btn btn-light border border-secondary border-opacity-25 bg-white" type="button" onclick="document.getElementById('quantity').stepUp()">
+                                            <i class="bi bi-plus"></i>
+                                        </button>
+                                    </div>
                                 </div>
 
-                                <button type="submit" class="btn btn-primary btn-lg px-5 shadow-sm d-flex align-items-center justify-content-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-cart-plus me-2" viewBox="0 0 16 16">
-                                        <path d="M9 5.5a.5.5 0 0 0-1 0V7H6.5a.5.5 0 0 0 0 1H8v1.5a.5.5 0 0 0 1 0V8h1.5a.5.5 0 0 0 0-1H9V5.5z" />
-                                        <path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1H.5zm3.915 10L3.102 4h10.796l-1.313 7h-8.17zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
-                                    </svg>
-                                    Add to Cart
+                                <button type="submit" class="btn btn-info-custom btn-lg px-5 shadow-sm fw-bold rounded-pill flex-grow-1 flex-sm-grow-0">
+                                    <i class="bi bi-cart-plus me-2 fs-5 align-middle"></i> Add to Cart
                                 </button>
                             }
                             else
                             {
-                                <button type="button" class="btn btn-secondary btn-lg px-5" disabled>
-                                    Unavailable
-                                </button>
+                                <div class="alert alert-danger mb-0 flex-grow-1 rounded-pill text-center border-0 py-3 fw-semibold">
+                                    This book is currently unavailable.
+                                </div>
                             }
                         </div>
                     </form>

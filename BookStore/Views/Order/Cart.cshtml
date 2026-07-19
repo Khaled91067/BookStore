@@ -1,4 +1,4 @@
-﻿
+
 @using BookStore.ViewModels
 @model List<OrderItemVM>
 
@@ -7,21 +7,71 @@
     decimal total = Model?.Sum(x => x.Price * x.Quantity) ?? 0;
 }
 
-<div class="container mt-5 mb-5">
+@section Styles {
+    <style>
+        .font-outfit {
+            font-family: 'Outfit', sans-serif;
+        }
+        .text-indigo {
+            color: #4f46e5;
+        }
+        .bg-indigo-soft {
+            background-color: rgba(79, 70, 229, 0.04);
+        }
+        .btn-indigo {
+            background-color: #4f46e5;
+            color: white;
+            transition: all 0.2s ease;
+        }
+        .btn-indigo:hover {
+            background-color: #4338ca;
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+        .btn-outline-indigo {
+            border-color: #4f46e5;
+            color: #4f46e5;
+            transition: all 0.2s ease;
+        }
+        .btn-outline-indigo:hover {
+            background-color: #4f46e5;
+            color: white;
+        }
+        .cart-card {
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            border-radius: 1rem;
+        }
+    </style>
+}
+
+<div class="container mt-4 mt-md-5 mb-5">
     <div class="row justify-content-center">
         <div class="col-lg-10">
 
-            <div class="card shadow-sm border-0 rounded-3">
-                <div class="card-header bg-white border-bottom pt-4 pb-3">
-                    <h3 class="mb-0 text-primary">Shopping Cart</h3>
+            <div class="card cart-card shadow-sm border-0 overflow-hidden bg-white">
+                <div class="card-header bg-white border-bottom-0 pt-4 pb-2 px-4 d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="text-info fw-bold text-uppercase tracking-wider small">Your Selection</span>
+                        <h2 class="h3 fw-bold font-outfit mt-1 mb-0 text-dark">Shopping Cart</h2>
+                    </div>
+                    <span class="badge bg-dark bg-opacity-75 rounded-pill px-3 py-2 fs-7">
+                        @(Model?.Count ?? 0) Items
+                    </span>
                 </div>
 
                 <div class="card-body p-0">
                     @if (Model == null || !Model.Any())
                     {
-                        <div class="p-5 text-center">
-                            <h5 class="text-muted">Your cart is currently empty.</h5>
-                            <a asp-action="Index" asp-controller="UserBook" class="btn btn-outline-primary mt-3">Browse Books</a>
+                        <div class="p-5 text-center my-4">
+                            <div class="mb-4">
+                                <i class="bi bi-cart-x display-1 text-muted opacity-50"></i>
+                            </div>
+                            <h4 class="fw-bold font-outfit text-dark">Your cart is currently empty</h4>
+                            <p class="text-secondary col-md-6 mx-auto mt-2">Before you proceed to checkout, you must add some books to your shopping cart. You will find a lot of interesting books in our shop.</p>
+                            <a asp-action="Index" asp-controller="UserBook" class="btn btn-info text-dark fw-bold rounded-pill px-4 py-2 mt-3 shadow-sm">
+                                <i class="bi bi-book-half me-1"></i> Browse Catalog
+                            </a>
                         </div>
                     }
                     else
@@ -29,32 +79,32 @@
                         <form asp-action="PlaceOrder" method="post">
                             <div class="table-responsive">
                                 <table class="table table-hover align-middle mb-0">
-                                    <thead class="table-light">
+                                    <thead class="bg-light border-bottom text-uppercase fs-7 tracking-wider text-secondary">
                                         <tr>
-                                            <th scope="col" class="ps-4">Book</th>
-                                            <th scope="col">Price</th>
-                                            <th scope="col" class="text-center">Quantity</th>
-                                            <th scope="col">Subtotal</th>
-                                            <th scope="col" class="text-end pe-4">Action</th>
+                                            <th scope="col" class="ps-4 py-3">Book Name</th>
+                                            <th scope="col" class="py-3">Price</th>
+                                            <th scope="col" class="text-center py-3">Quantity</th>
+                                            <th scope="col" class="py-3">Subtotal</th>
+                                            <th scope="col" class="text-end pe-4 py-3">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach (var item in Model)
                                         {
                                             <tr>
-                                                <td class="ps-4 fw-semibold">@item.ProductName</td>
-                                                <td>@item.Price.ToString("0.00") EGP</td>
-                                                <td class="text-center">
-                                                    <span class="badge bg-secondary rounded-pill fs-6 px-3">@item.Quantity</span>
+                                                <td class="ps-4 py-3 fw-semibold text-dark">@item.ProductName</td>
+                                                <td class="py-3 text-secondary">@item.Price.ToString("0.00") EGP</td>
+                                                <td class="text-center py-3">
+                                                    <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25 rounded-pill fs-6 px-3 py-1 fw-medium">@item.Quantity</span>
                                                 </td>
-                                                <td class="fw-bold text-success">
-                                                    @( (item.Price * item.Quantity).ToString("0.00") ) EGP
+                                                <td class="fw-bold text-indigo py-3">
+                                                    @((item.Price * item.Quantity).ToString("0.00")) EGP
                                                 </td>
-                                                <td class="text-end pe-4">
+                                                <td class="text-end pe-4 py-3">
                                                     <a asp-action="RemoveFromCart"
                                                        asp-route-bookId="@item.ProductId"
-                                                       class="btn btn-outline-danger btn-sm">
-                                                        Remove
+                                                       class="btn btn-outline-danger btn-sm rounded-pill px-3">
+                                                        <i class="bi bi-trash me-1"></i> Remove
                                                     </a>
                                                 </td>
                                             </tr>
@@ -63,17 +113,19 @@
                                 </table>
                             </div>
 
-                            <div class="card-footer bg-white border-top-0 p-4">
+                            <div class="card-footer bg-white border-top p-4">
                                 <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
-                                    <h4 class="text-muted mb-0">Order Total:</h4>
-                                    <h3 class="text-primary fw-bold mb-0">@total.ToString("0.00") EGP</h3>
+                                    <h4 class="text-secondary font-outfit mb-0 fw-semibold">Order Total:</h4>
+                                    <h3 class="text-indigo fw-bold mb-0 display-6 fs-3">@total.ToString("0.00") EGP</h3>
                                 </div>
 
-                                <div class="d-flex justify-content-end gap-3">
-                                    <a asp-action="Index" asp-controller="UserBook" class="btn btn-light border shadow-sm">Continue Shopping</a>
+                                <div class="d-flex flex-column flex-sm-row justify-content-end gap-3">
+                                    <a asp-action="Index" asp-controller="UserBook" class="btn btn-outline-secondary rounded-pill px-4 py-2 order-2 order-sm-1">
+                                        <i class="bi bi-arrow-left me-1"></i> Continue Shopping
+                                    </a>
 
-                                    <button type="submit" class="btn btn-primary px-5 shadow-sm fw-bold">
-                                        Place Order
+                                    <button type="submit" class="btn btn-info text-dark fw-bold rounded-pill px-5 py-2 shadow-sm order-1 order-sm-2">
+                                        Place Order <i class="bi bi-arrow-right ms-1"></i>
                                     </button>
                                 </div>
                             </div>
