@@ -1,0 +1,212 @@
+[
+  {
+    "Title": "Clean Code",
+    "Price": 250.00,
+    "ImageUrl": "clean_code.jpg",
+    "CategoryName": "Programming",
+    "PublisherName": "Pearson",
+    "StockQuantity": 40,
+    "Description": "A handbook of agile software craftsmanship that teaches you how to write code that is clean, readable, and maintainable.",
+    "AuthorNames": ["Robert C. Martin"]
+  },
+  {
+    "Title": "The Pragmatic Programmer",
+    "Price": 280.00,
+    "ImageUrl": "pragmatic_programmer.jpg",
+    "CategoryName": "Programming",
+    "PublisherName": "Addison-Wesley",
+    "StockQuantity": 30,
+    "Description": "One of the most significant books on software development, covering career advice, technical practices, and methodologies.",
+    "AuthorNames": ["Andrew Hunt", "David Thomas"]
+  },
+  {
+    "Title": "Design Patterns",
+    "Price": 300.00,
+    "ImageUrl": "design_patterns.jpg",
+    "CategoryName": "Programming",
+    "PublisherName": "Addison-Wesley",
+    "StockQuantity": 25,
+    "Description": "The legendary book that introduced design patterns to software engineering, outlining 23 classic solutions to common design problems.",
+    "AuthorNames": ["Erich Gamma", "Richard Helm", "Ralph Johnson", "John Vlissides"]
+  },
+  {
+    "Title": "Introduction to Algorithms",
+    "Price": 350.00,
+    "ImageUrl": "clrs_algorithms.jpg",
+    "CategoryName": "Algorithms & Data Structures",
+    "PublisherName": "MIT Press",
+    "StockQuantity": 15,
+    "Description": "The comprehensive textbook and professional reference on computer algorithms, covering sorting, data structures, and graph theory.",
+    "AuthorNames": ["Thomas H. Cormen", "Charles E. Leiserson", "Ronald L. Rivest", "Clifford Stein"]
+  },
+  {
+    "Title": "Refactoring",
+    "Price": 260.00,
+    "ImageUrl": "refactoring.jpg",
+    "CategoryName": "Programming",
+    "PublisherName": "Addison-Wesley",
+    "StockQuantity": 20,
+    "Description": "The definitive guide to refactoring code, illustrating the principles and best practices with step-by-step examples.",
+    "AuthorNames": ["Martin Fowler"]
+  },
+  {
+    "Title": "Crime and Punishment",
+    "Price": 190.00,
+    "ImageUrl": "crime_and_punishment.jpg",
+    "CategoryName": "Classic Literature",
+    "PublisherName": "Penguin Books",
+    "StockQuantity": 40,
+    "Description": "A masterpiece of Russian literature exploring morality, guilt, and redemption.",
+    "AuthorNames": ["Fyodor Dostoevsky"]
+  },
+  {
+    "Title": "The Brothers Karamazov",
+    "Price": 220.00,
+    "ImageUrl": "brothers_karamazov.jpg",
+    "CategoryName": "Classic Literature",
+    "PublisherName": "Penguin Books",
+    "StockQuantity": 25,
+    "Description": "A complex philosophical novel that enters deeply into questions of God, free will, and morality.",
+    "AuthorNames": ["Fyodor Dostoevsky"]
+  },
+  {
+    "Title": "The Idiot",
+    "Price": 200.00,
+    "ImageUrl": "the_idiot.jpg",
+    "CategoryName": "Classic Literature",
+    "PublisherName": "Penguin Books",
+    "StockQuantity": 30,
+    "Description": "A novel exploring the impacts of a truly good and innocent man in a corrupt society.",
+    "AuthorNames": ["Fyodor Dostoevsky"]
+  },
+  {
+    "Title": "Notes from Underground",
+    "Price": 150.00,
+    "ImageUrl": "notes_from_underground.jpg",
+    "CategoryName": "Philosophy",
+    "PublisherName": "Penguin Books",
+    "StockQuantity": 35,
+    "Description": "Considered by many to be one of the first existentialist novels, exploring alienation and human nature.",
+    "AuthorNames": ["Fyodor Dostoevsky"]
+  },
+  {
+    "Title": "The Stranger",
+    "Price": 140.00,
+    "ImageUrl": "the_stranger.jpg",
+    "CategoryName": "Philosophy",
+    "PublisherName": "Penguin Books",
+    "StockQuantity": 35,
+    "Description": "A classic existentialist novel exploring the absurdity of human life through Meursault.",
+    "AuthorNames": ["Albert Camus"]
+  },
+  {
+    "Title": "The Plague",
+    "Price": 160.00,
+    "ImageUrl": "the_plague.jpg",
+    "CategoryName": "Philosophy",
+    "PublisherName": "Penguin Books",
+    "StockQuantity": 30,
+    "Description": "A novel about a plague ravaging the Algerian city of Oran, exploring human resilience.",
+    "AuthorNames": ["Albert Camus"]
+  },
+  {
+    "Title": "The Myth of Sisyphus",
+    "Price": 170.00,
+    "ImageUrl": "myth_of_sisyphus.jpg",
+    "CategoryName": "Philosophy",
+    "PublisherName": "Penguin Books",
+    "StockQuantity": 20,
+    "Description": "A philosophical essay introducing Camus's concept of the absurd and the value of existence.",
+    "AuthorNames": ["Albert Camus"]
+  },
+  {
+    "Title": "The Fall",
+    "Price": 160.00,
+    "ImageUrl": "the_fall.jpg",
+    "CategoryName": "Philosophy",
+    "PublisherName": "Penguin Books",
+    "StockQuantity": 25,
+    "Description": "A philosophical novel written in the form of a dramatic monologue exploring guilt, freedom, and judgment.",
+    "AuthorNames": ["Albert Camus"]
+  },
+  {
+    "Title": "1984",
+    "Price": 150.00,
+    "ImageUrl": "1984.jpg",
+    "CategoryName": "Political Fiction",
+    "PublisherName": "HarperCollins",
+    "StockQuantity": 60,
+    "Description": "A dystopian social science fiction novel about totalitarianism, surveillance, and individual freedom.",
+    "AuthorNames": ["George Orwell"]
+  },
+  {
+    "Title": "Animal Farm",
+    "Price": 110.00,
+    "ImageUrl": "animal_farm.jpg",
+    "CategoryName": "Political Fiction",
+    "PublisherName": "HarperCollins",
+    "StockQuantity": 55,
+    "Description": "A satirical allegorical novella reflecting events leading up to the Russian Revolution.",
+    "AuthorNames": ["George Orwell"]
+  },
+  {
+    "Title": "Homage to Catalonia",
+    "Price": 180.00,
+    "ImageUrl": "homage_to_catalonia.jpg",
+    "CategoryName": "Political Fiction",
+    "PublisherName": "HarperCollins",
+    "StockQuantity": 15,
+    "Description": "Orwell's personal account of his experiences during the Spanish Civil War.",
+    "AuthorNames": ["George Orwell"]
+  },
+  {
+    "Title": "Down and Out in Paris and London",
+    "Price": 140.00,
+    "ImageUrl": "down_and_out.jpg",
+    "CategoryName": "Classic Literature",
+    "PublisherName": "HarperCollins",
+    "StockQuantity": 22,
+    "Description": "A memoir about poverty in the two cities, reflecting Orwell's early struggles and social critiques.",
+    "AuthorNames": ["George Orwell"]
+  },
+  {
+    "Title": "Thus Spoke Zarathustra",
+    "Price": 200.00,
+    "ImageUrl": "zarathustra.jpg",
+    "CategoryName": "Philosophy",
+    "PublisherName": "HarperCollins",
+    "StockQuantity": 20,
+    "Description": "A philosophical novel containing ideas of the Ubermensch and the death of God.",
+    "AuthorNames": ["Friedrich Nietzsche"]
+  },
+  {
+    "Title": "Beyond Good and Evil",
+    "Price": 180.00,
+    "ImageUrl": "beyond_good_and_evil.jpg",
+    "CategoryName": "Philosophy",
+    "PublisherName": "HarperCollins",
+    "StockQuantity": 25,
+    "Description": "A work that accuses past philosophers of lacking critical sense and blindly accepting dogmas.",
+    "AuthorNames": ["Friedrich Nietzsche"]
+  },
+  {
+    "Title": "The Antichrist",
+    "Price": 190.00,
+    "ImageUrl": "the_antichrist.jpg",
+    "CategoryName": "Philosophy",
+    "PublisherName": "HarperCollins",
+    "StockQuantity": 15,
+    "Description": "A critique of Christianity and its moral values from a philosophical standpoint.",
+    "AuthorNames": ["Friedrich Nietzsche"]
+  },
+  {
+    "Title": "The Will to Power",
+    "Price": 210.00,
+    "ImageUrl": "will_to_power.jpg",
+    "CategoryName": "Philosophy",
+    "PublisherName": "HarperCollins",
+    "StockQuantity": 18,
+    "Description": "A book compiled from Nietzsche's notebooks outlining his thoughts on the will to power and nihilism.",
+    "AuthorNames": ["Friedrich Nietzsche"]
+  }
+]
