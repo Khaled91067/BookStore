@@ -1,5 +1,4 @@
-﻿@using BookStore.ViewModels
-
+@using BookStore.ViewModels
 @model List<OrderVM>
 @{
     ViewData["Title"] = "Your Orders";
@@ -7,40 +6,136 @@
 @section Styles
 {
     <link rel="stylesheet" href="~/css/ViewOrders.css" asp-append-version="true" />
+    <style>
+        .font-outfit {
+            font-family: 'Outfit', sans-serif;
+        }
+        .text-indigo {
+            color: #4f46e5;
+        }
+        .order-card {
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 1rem;
+            overflow: hidden;
+            background-color: #fff;
+            margin-bottom: 2rem;
+            transition: box-shadow 0.3s ease;
+        }
+        .order-card:hover {
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05) !important;
+        }
+        .order-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            padding: 1.25rem 1.5rem;
+        }
+        .order-header-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #6c757d;
+            font-weight: 600;
+        }
+        .order-header-value {
+            font-size: 0.9rem;
+            color: #212529;
+            font-weight: 500;
+            margin-top: 0.25rem;
+        }
+        .product-row {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        }
+        .product-row:last-child {
+            border-bottom: none;
+        }
+        .book-thumb-container {
+            width: 80px;
+            height: 100px;
+            background-color: #f8f9fa;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        .btn-custom-pill {
+            border-radius: 50rem;
+            padding: 0.4rem 1.2rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        .btn-view-item {
+            background-color: #fff;
+            border: 1px solid #ced4da;
+            color: #495057;
+        }
+        .btn-view-item:hover {
+            background-color: #f8f9fa;
+            border-color: #adb5bd;
+            color: #212529;
+        }
+        .btn-buy-again {
+            background-color: #0dcaf0;
+            border: 1px solid #0dcaf0;
+            color: #000;
+        }
+        .btn-buy-again:hover {
+            background-color: #0bacce;
+            border-color: #0bacce;
+            box-shadow: 0 4px 10px rgba(13, 202, 240, 0.25);
+        }
+        .search-btn {
+            background-color: #4f46e5;
+            border-color: #4f46e5;
+            color: #fff;
+            transition: all 0.2s ease;
+        }
+        .search-btn:hover {
+            background-color: #4338ca;
+            border-color: #4338ca;
+            color: #fff;
+        }
+    </style>
 }
 
-<div class="container mt-4 amazon-orders-view">
+<div class="container mt-4 mt-md-5 amazon-orders-view mb-5">
+    
     <!-- Top breadcrumbs and title section -->
-    <div class="row align-items-center mb-4">
+    <div class="row align-items-center mb-4 g-3">
         <div class="col-md-7">
             <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a asp-area="Identity" asp-page="/Account/Manage/Index" class="text-decoration-none">Your Account</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Your Orders</li>
+                <ol class="breadcrumb mb-2">
+                    <li class="breadcrumb-item"><a asp-area="Identity" asp-page="/Account/Manage/Index" class="text-decoration-none text-secondary">Your Account</a></li>
+                    <li class="breadcrumb-item active text-dark fw-semibold" aria-current="page">Your Orders</li>
                 </ol>
             </nav>
-            <h1 class="h2 fw-bold">Your Orders</h1>
+            <h1 class="h2 fw-bold font-outfit text-dark mb-0">Your Orders</h1>
         </div>
-        <div class="col-md-5 d-flex align-items-center">
+        <div class="col-md-5">
             <form asp-action="ViewOrders" method="get">
-
-                <div class="input-group">
-                    <input type="text" name="searchTerm" value="@Context.Request.Query["searchTerm"]" class="form-control" placeholder="Search all orders" aria-label="Search" aria-describedby="button-addon2">
-                    <button class="btn btn-dark ms-2 text-white px-3" type="submit" id="button-addon2">Search Orders</button>
+                <div class="input-group shadow-sm rounded-pill overflow-hidden">
+                    <span class="input-group-text bg-white border-end-0 ps-3 text-muted"><i class="bi bi-search"></i></span>
+                    <input type="text" name="searchTerm" value="@Context.Request.Query["searchTerm"]" class="form-control border-start-0 py-2" placeholder="Search all orders" aria-label="Search">
+                    <button class="btn search-btn px-4 fw-bold" type="submit">Search</button>
                 </div>
             </form>
-
         </div>
     </div>
 
-    <!-- Sub-navigation tabs like in image_0.png -->
-   
-
     @if (!Model.Any())
     {
-        <div class="text-center mt-5 py-5 border rounded bg-light shadow-sm">
-            <h3>No Orders Found</h3>
-            <p class="text-muted">You haven't placed any orders yet.</p>
+        <div class="text-center mt-5 py-5 border rounded-4 bg-white shadow-sm my-5">
+            <div class="mb-4">
+                <i class="bi bi-receipt-cutoff display-1 text-muted opacity-50"></i>
+            </div>
+            <h3 class="fw-bold font-outfit text-dark">No Orders Found</h3>
+            <p class="text-muted col-md-6 mx-auto">You haven't placed any orders yet, or no orders match your search criteria.</p>
+            <a asp-controller="UserBook" asp-action="Index" class="btn btn-info text-dark fw-bold rounded-pill px-4 py-2 mt-3 shadow-sm">
+                Start Shopping
+            </a>
         </div>
     }
     else
@@ -48,33 +143,34 @@
         <div class="orders-list">
             @foreach (var order in Model)
             {
-                @if(order.PaymentStatus==PaymentStatus.Succeeded)
+                @if (order.PaymentStatus == PaymentStatus.Succeeded)
                 {
-
                     <!-- Master card for the whole order -->
                     <div class="order-card shadow-sm">
-                        <!-- Order Header (light gray box) - Uses placeholders where data isn't in model -->
-                        <div class="card-header">
-                            <div class="row align-items-center">
-                                <div class="col-md-8">
-                                    <div class="row row-cols-auto g-0">
+                        <!-- Order Header -->
+                        <div class="order-header">
+                            <div class="row align-items-center g-3">
+                                <div class="col-sm-9">
+                                    <div class="row row-cols-2 row-cols-sm-4 g-3">
                                         <div class="col">
                                             <div class="order-header-label">Order Placed</div>
-                                            <div class="order-header-value">@order.OrderDate</div>
+                                            <div class="order-header-value">@order.OrderDate.ToString("MMMM dd, yyyy")</div>
                                         </div>
                                         <div class="col">
                                             <div class="order-header-label">Total</div>
-                                            <div class="order-header-value">EGP @order.TotalAmount</div>
+                                            <div class="order-header-value text-indigo fw-bold">@order.TotalAmount.ToString("0.00") EGP</div>
                                         </div>
-                                        <div class="col">
+                                        <div class="col col-sm-6">
                                             <div class="order-header-label">Ship To</div>
-                                            <div class="order-header-value"><a href="#">@order.CustomerName <i class="bi bi-chevron-down ms-1"></i></a></div>
+                                            <div class="order-header-value">
+                                                <span class="text-dark fw-semibold">@order.CustomerName</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-4 text-md-end text-muted small mt-2 mt-md-0">
-                                    <div class="order-header-id">Order # <span>@order.OrderId</span></div>
-
+                                <div class="col-sm-3 text-sm-end text-muted small">
+                                    <div class="order-header-label mb-1">Order ID</div>
+                                    <div class="text-dark fw-mono font-monospace small">#@order.OrderId</div>
                                 </div>
                             </div>
                         </div>
@@ -83,37 +179,45 @@
                         <div class="order-item-list">
                             @foreach (var item in order.OrderItems)
                             {
-                                <div class="row align-items-center product-row">
-                                    <div class="col-md-2 col-3 text-center">
-                                        <img src="~/Images/@item.ImageUrl" alt="@item.ProductName" class="book-thumb img-fluid shadow-sm">
+                                <div class="row align-items-center product-row g-3">
+                                    <div class="col-md-2 col-3 d-flex justify-content-center">
+                                        <div class="book-thumb-container shadow-sm">
+                                            @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                            {
+                                                <img src="~/Images/Books/@item.ImageUrl" alt="@item.ProductName" class="img-fluid object-fit-contain p-1" style="max-height: 90px;">
+                                            }
+                                            else
+                                            {
+                                                <i class="bi bi-book-half text-secondary opacity-50 fs-3"></i>
+                                            }
+                                        </div>
                                     </div>
                                     <div class="col-md-7 col-9">
-                                        <h5 class="h6 product-title fw-normal mb-1">
-                                            <a href="#" class="text-decoration-none">@item.ProductName</a>
-                                        </div>
-                                        <p class="text-muted small mb-0">Qty: @item.Quantity</p>
-                                        <div class="d-flex align-items-center mt-3 gap-2">
-                                            <i class="bi bi-repeat fs-5 text-muted"></i>
-
-                                            <a asp-controller="UserBook"
+                                        <h5 class="h6 product-title fw-bold text-dark mb-1">
+                                            <a asp-controller="UserBook" asp-action="Details" asp-route-Id="@item.ProductId" class="text-decoration-none text-dark hover-text-info">@item.ProductName</a>
+                                        </h5>
+                                        <p class="text-muted small mb-0">Quantity: <span class="fw-semibold text-dark">@item.Quantity</span></p>
+                                    </div>
+                                    <div class="col-md-3 col-12 d-flex flex-md-column gap-2 justify-content-start align-items-md-end">
+                                        <a asp-controller="UserBook"
                                            asp-action="Details"
                                            asp-route-Id="@item.ProductId"
-                                           class="btn btn-custom-pill">
-                                            View your item
-                                            </a>
+                                           class="btn btn-custom-pill btn-view-item w-100 text-center">
+                                            <i class="bi bi-eye me-1"></i> View Item
+                                        </a>
 
-                                            <a asp-controller="Order" asp-action="AddToCart" asp-route-bookId="@item.ProductId" class="btn btn-custom-pill">Buy it again</a>
-                                        </div>
+                                        <a asp-controller="Order" 
+                                           asp-action="AddToCart" 
+                                           asp-route-bookId="@item.ProductId" 
+                                           class="btn btn-custom-pill btn-buy-again w-100 text-center fw-bold">
+                                            <i class="bi bi-cart-plus me-1"></i> Buy It Again
+                                        </a>
                                     </div>
-
-                                
-                                }
-                            </div>
+                                </div>
+                            }
                         </div>
-
-                    
+                    </div>
                 }
-
             }
         </div>
     }

@@ -1,289 +1,164 @@
-﻿@model BookStore.ViewModels.CheckOutVM
+@model BookStore.ViewModels.CheckOutVM
 
 @{
     ViewData["Title"] = "Checkout";
     decimal total = Model.OrderItems.Sum(x => x.Price * x.Quantity);
 }
-  
-<style>
-    .bd-placeholder-img {
-        font-size: 1.125rem;
-        text-anchor: middle;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        user-select: none;
-    }
-    @@media (min-width: 768px) {
-        .bd-placeholder-img-lg {
-            font-size: 3.5rem;
+
+@section Styles {
+    <style>
+        .font-outfit {
+            font-family: 'Outfit', sans-serif;
         }
-    }
-
-    .b-example-divider {
-        width: 100%;
-        height: 3rem;
-        background-color: #0000001a;
-        border: solid rgba(0, 0, 0, 0.15);
-        border-width: 1px 0;
-        box-shadow: inset 0 0.5em 1.5em #0000001a, inset 0 0.125em 0.5em #00000026;
-    }
-
-    .b-example-vr {
-        flex-shrink: 0;
-        width: 1.5rem;
-        height: 100vh;
-    }
-
-    .bi {
-        vertical-align: -0.125em;
-        fill: currentColor;
-    }
-
-    .nav-scroller {
-        position: relative;
-        z-index: 2;
-        height: 2.75rem;
-        overflow-y: hidden;
-    }
-
-        .nav-scroller .nav {
+        .text-indigo {
+            color: #4f46e5;
+        }
+        .bg-indigo-soft {
+            background-color: rgba(79, 70, 229, 0.04);
+        }
+        .checkout-card {
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            border-radius: 1rem;
+        }
+        .checkout-img-container {
+            width: 70px;
+            height: 85px;
+            flex-shrink: 0;
+            background-color: #f8f9fa;
+            border-radius: 0.5rem;
+            overflow: hidden;
             display: flex;
-            flex-wrap: nowrap;
-            padding-bottom: 1rem;
-            margin-top: -1px;
-            overflow-x: auto;
-            text-align: center;
-            white-space: nowrap;
-            -webkit-overflow-scrolling: touch;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
-
-    .btn-bd-primary {
-        --bd-violet-bg: #712cf9;
-        --bd-violet-rgb: 112.520718, 44.062154, 249.437846;
-        --bs-btn-font-weight: 600;
-        --bs-btn-color: var(--bs-white);
-        --bs-btn-bg: var(--bd-violet-bg);
-        --bs-btn-border-color: var(--bd-violet-bg);
-        --bs-btn-hover-color: var(--bs-white);
-        --bs-btn-hover-bg: #6528e0;
-        --bs-btn-hover-border-color: #6528e0;
-        --bs-btn-focus-shadow-rgb: var(--bd-violet-rgb);
-        --bs-btn-active-color: var(--bs-btn-hover-color);
-        --bs-btn-active-bg: #5a23c8;
-        --bs-btn-active-border-color: #5a23c8;
-    }
-
-    .bd-mode-toggle {
-        z-index: 1500;
-    }
-
-        .bd-mode-toggle .bi {
-            width: 1em;
-            height: 1em;
+        .form-control:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 0.25rem rgba(79, 70, 229, 0.15);
         }
-
-        .bd-mode-toggle .dropdown-menu .active .bi {
-            display: block !important;
+        .form-check-input:checked {
+            background-color: #4f46e5;
+            border-color: #4f46e5;
         }
-</style>
+        .btn-info-custom {
+            background-color: #0dcaf0;
+            color: #000;
+            transition: all 0.2s ease;
+        }
+        .btn-info-custom:hover {
+            background-color: #0bacce;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(13, 202, 240, 0.3);
+        }
+    </style>
+}
 
-
-  <div class="bg-body-tertiary">
-    <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
-      <symbol id="check2" viewBox="0 0 16 16">
-        <path
-          d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"
-        ></path>
-      </symbol>
-      <symbol id="circle-half" viewBox="0 0 16 16">
-        <path
-          d="M8 15A7 7 0 1 0 8 1v14zm0 1A8 8 0 1 1 8 0a8 8 0 0 1 0 16z"
-        ></path>
-      </symbol>
-      <symbol id="moon-stars-fill" viewBox="0 0 16 16">
-        <path
-          d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z"
-        ></path>
-        <path
-          d="M10.794 3.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387a1.734 1.734 0 0 0-1.097 1.097l-.387 1.162a.217.217 0 0 1-.412 0l-.387-1.162A1.734 1.734 0 0 0 9.31 6.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387a1.734 1.734 0 0 0 1.097-1.097l.387-1.162zM13.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.156 1.156 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.156 1.156 0 0 0-.732-.732l-.774-.258a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732L13.863.1z"
-        ></path>
-      </symbol>
-      <symbol id="sun-fill" viewBox="0 0 16 16">
-        <path
-          d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"
-        ></path>
-      </symbol>
-    </svg>
-    
-    
-    <div class="container">
-      <main>
-            <form asp-controller="Order" asp-action="Checkout" asp-route-orderId="@Model.OrderId" method="post">
-
-        
-        <div class="row g-5 py-3">
-          <div class="col-md-5 col-lg-4 order-md-last">
-
-                    
-
-            <h4 class="d-flex justify-content-between align-items-center mb-3">
-              <span class="text-primary">Your cart</span>
-              <span class="badge bg-primary rounded-pill">3</span>
-            </h4>
-
-                    <ul class="list-group mb-3">
-                    @foreach (var item in Model.OrderItems)
-                    {
-                            <li class="d-flex  ">
-                                <div class="card" style="width: 540px; ">
-                                    <div class="row g-0 ">
-                                        <div class="col-md-4 position-relative" style="height:130px;">
-                                            <img src="/Images/@item.ImageUrl" class="img-fluid rounded-start object-fit-cover " style="height:130px;" alt="...">
-                                            <div class="z-3 position-absolute rounded-3 px-2 m-1 start-0 bottom-0 bg-white"><span>@item.Quantity</span></div>
-                                        </div>
-                                        <div class="col-md-8">
-                                            <div class="card-body">
-                                                <h5 class="card-title">@item.ProductName </h5>
-                                                <p class="card-text">@item.Price</p>
-                                                <p class="card-text"><small class="text-body-secondary">Last updated 3 mins ago</small></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </li>
-                             
-                    }
-                        
-                    <li class="list-group-item d-flex justify-content-between">
-                             <span>Total (EGP)</span> <strong>@total</strong>
-                        </li>
-                    </ul>
-              
-                    <button class="w-100 btn btn-primary btn-lg" type="submit">
-                        Checkout
-                    </button>
-            
-          </div>
-
-
-          <div class="col-md-7 col-lg-8">
-            <h4 class="mb-3">Billing address</h4>
-
-              <div class="row g-3">
-
-                <div class="col-sm-6">
-
-                  <label asp-for="FirstName" class="form-label">First name</label>
-
-                  <input
-                    asp-for="FirstName"
-                    class="form-control"
-                    placeholder=""
-                  />
-
-                  <div class="invalid-feedback">
-                    Valid first name is required.
-                  </div>
-                </div>
-
-                <div class="col-sm-6">
-                  <label for="lastName" class="form-label">Last name</label>
-                  <input
-                   asp-for="LastName"
-                   class="form-control"
-                   placeholder=""
-                  />
-
-                  <div class="invalid-feedback">
-                    Valid last name is required.
-                  </div>
-                </div>
-
-              
-                <div class="col-12">
-                  <label for="Email" class="form-label"
-                    >Email
-                    <span class="text-body-secondary"></span></label
-                  >
-                  <input
-                    asp-for="Email"
-                    
-                    class="form-control"
-     
-                    placeholder="you@example.com"
-                  />
-
-                  <div class="invalid-feedback">
-                    Please enter a valid email address for shipping updates.
-                  </div>
-                </div>
-                <div class="col-12">
-                  <label asp-for="PhoneNumber" class="form-label"
-                    >Phone
-                    <span class="text-body-secondary"></span>
-                </label>
-
-                  <input
-                    asp-for="PhoneNumber" class="form-control" placeholder="+20xxxxxx"/>
-
-                  <div class="invalid-feedback">
-                    Please enter a valid Phone number.
-                  </div>
-                </div>
-
-                <div class="col-12">
-                  <label asp-for="Address" class="form-label">Address</label>
-                  <input
-                    asp-for="Address"
-                    
-                    class="form-control"
-              
-                    placeholder="1234 Main St"
-                 
-                  />
-                  <div class="invalid-feedback">
-                    Please enter your shipping address.
-                  </div>
-                </div>
-
+<div class="container my-4 my-md-5">
+    <main>
+        <form asp-controller="Order" asp-action="Checkout" asp-route-orderId="@Model.OrderId" method="post">
+            <div class="row g-4 g-lg-5">
                 
-              <hr class="my-4" />
-              <div class="form-check">
-                <input
-                  type="checkbox"
-                  class="form-check-input"
-                  id="same-address"
-                />
-                <label class="form-check-label" for="same-address"
-                  >Shipping address is the same as my billing address</label
-                >
-              </div>
-              <div class="form-check">
-                <input
-                  type="checkbox"
-                  class="form-check-input"
-                  id="save-info"
-                />
-                <label class="form-check-label" for="save-info"
-                  >Save this information for next time</label
-                >
-              </div>
-              <hr class="my-4" />
+                <!-- Order Summary (Right on Desktop, Top on Mobile) -->
+                <div class="col-md-5 col-lg-4 order-md-last">
+                    <h4 class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="font-outfit fw-bold text-dark h5 mb-0">Order Summary</span>
+                        <span class="badge bg-dark bg-opacity-75 rounded-pill px-3 py-2 fs-7">@Model.OrderItems.Count Items</span>
+                    </h4>
 
+                    <div class="card checkout-card shadow-sm bg-white overflow-hidden mb-4">
+                        <div class="card-body p-3">
+                            <ul class="list-unstyled mb-0 d-flex flex-column gap-3">
+                                @foreach (var item in Model.OrderItems)
+                                {
+                                    <li class="d-flex gap-3 align-items-center pb-3 border-bottom">
+                                        <div class="checkout-img-container position-relative">
+                                            @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                            {
+                                                <img src="~/Images/Books/@item.ImageUrl" class="w-100 h-100 object-fit-contain p-1" alt="@item.ProductName">
+                                            }
+                                            else
+                                            {
+                                                <i class="bi bi-book-half text-secondary opacity-50 fs-3"></i>
+                                            }
+                                            <span class="position-absolute bottom-0 end-0 bg-dark text-white rounded-circle fs-8 fw-bold d-flex align-items-center justify-content-center" style="width: 20px; height: 20px; transform: translate(5px, 5px);">
+                                                @item.Quantity
+                                            </span>
+                                        </div>
+                                        <div class="flex-grow-1 min-w-0">
+                                            <h6 class="mb-1 text-truncate text-dark fw-semibold small" title="@item.ProductName">@item.ProductName</h6>
+                                            <p class="mb-0 text-muted small">@item.Price.ToString("0.00") EGP</p>
+                                        </div>
+                                        <div class="text-end fw-bold text-dark small">
+                                            @((item.Price * item.Quantity).ToString("0.00")) EGP
+                                        </div>
+                                    </li>
+                                }
+                                
+                                <li class="d-flex justify-content-between align-items-center pt-2">
+                                    <span class="text-secondary fw-semibold">Total (EGP)</span>
+                                    <strong class="text-indigo fs-4 font-outfit">@total.ToString("0.00") EGP</strong>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
 
-                            
-          
-          </div>
-            
-      </form>
+                    <button class="w-100 btn btn-info-custom btn-lg fw-bold rounded-pill shadow-sm" type="submit">
+                        Complete Order <i class="bi bi-shield-check ms-1"></i>
+                    </button>
+                </div>
 
-         </div>
-        </div>
+                <!-- Billing Address Form (Left) -->
+                <div class="col-md-7 col-lg-8">
+                    <div class="card checkout-card shadow-sm bg-white p-4 p-lg-5">
+                        <h4 class="mb-4 font-outfit fw-bold text-dark border-bottom pb-3">Billing & Shipping Details</h4>
 
-      </main>
-     
-    </div>
+                        <div class="row g-3">
+                            <div class="col-sm-6">
+                                <label asp-for="FirstName" class="form-label fw-semibold text-secondary small">First Name</label>
+                                <input asp-for="FirstName" class="form-control rounded-3 py-2" placeholder="e.g. John" required />
+                                <span asp-validation-for="FirstName" class="invalid-feedback">Valid first name is required.</span>
+                            </div>
 
-  </div>
+                            <div class="col-sm-6">
+                                <label asp-for="LastName" class="form-label fw-semibold text-secondary small">Last Name</label>
+                                <input asp-for="LastName" class="form-control rounded-3 py-2" placeholder="e.g. Doe" required />
+                                <span asp-validation-for="LastName" class="invalid-feedback">Valid last name is required.</span>
+                            </div>
+
+                            <div class="col-12">
+                                <label asp-for="Email" class="form-label fw-semibold text-secondary small">Email Address</label>
+                                <input asp-for="Email" type="email" class="form-control rounded-3 py-2" placeholder="you@example.com" required />
+                                <span asp-validation-for="Email" class="invalid-feedback">Please enter a valid email address.</span>
+                            </div>
+
+                            <div class="col-12">
+                                <label asp-for="PhoneNumber" class="form-label fw-semibold text-secondary small">Phone Number</label>
+                                <input asp-for="PhoneNumber" class="form-control rounded-3 py-2" placeholder="+20 1xxxxxxxxx" required />
+                                <span asp-validation-for="PhoneNumber" class="invalid-feedback">Please enter a valid phone number.</span>
+                            </div>
+
+                            <div class="col-12">
+                                <label asp-for="Address" class="form-label fw-semibold text-secondary small">Full Address</label>
+                                <input asp-for="Address" class="form-control rounded-3 py-2" placeholder="1234 Main St, Apartment, City" required />
+                                <span asp-validation-for="Address" class="invalid-feedback">Please enter your shipping address.</span>
+                            </div>
+                        </div>
+
+                        <hr class="my-4 text-muted opacity-25" />
+
+                        <div class="form-check mb-2">
+                            <input type="checkbox" class="form-check-input" id="same-address" checked />
+                            <label class="form-check-label text-secondary small" for="same-address">Shipping address is the same as my billing address</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="save-info" />
+                            <label class="form-check-label text-secondary small" for="save-info">Save this information for next time</label>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </main>
+</div>
 
