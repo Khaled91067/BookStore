@@ -1,0 +1,138 @@
+@{
+    ViewData["Title"] = "Dashboard Overview";
+    Layout = "_AdminLayout";
+}
+
+<style>
+    .stat-card {
+        background: var(--admin-surface);
+        border: 1px solid var(--admin-border);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        transition: transform 0.2s, box-shadow 0.2s;
+        position: relative;
+        overflow: hidden;
+    }
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+    .stat-icon {
+        position: absolute;
+        right: -10px;
+        bottom: -20px;
+        font-size: 6rem;
+        opacity: 0.05;
+        color: var(--admin-text);
+        transition: transform 0.3s ease;
+    }
+    .stat-card:hover .stat-icon {
+        transform: scale(1.1) rotate(-5deg);
+    }
+    .feature-card {
+        background: linear-gradient(145deg, var(--admin-surface) 0%, rgba(30, 41, 59, 0.5) 100%);
+        border: 1px solid var(--admin-border);
+        border-radius: 1rem;
+        padding: 2rem;
+        text-align: center;
+        text-decoration: none;
+        color: var(--admin-text);
+        transition: all 0.3s ease;
+        display: block;
+    }
+    .feature-card:hover {
+        border-color: var(--admin-primary);
+        background: rgba(59, 130, 246, 0.05);
+        color: var(--admin-text);
+    }
+    .feature-icon-wrapper {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem auto;
+        font-size: 1.5rem;
+    }
+</style>
+
+<div class="d-flex justify-content-between align-items-end mb-4">
+    <div>
+        <h2 class="fw-bold mb-1">Welcome back, @User.Identity?.Name!</h2>
+        <p class="text-muted mb-0">Here's what's happening with your store today.</p>
+    </div>
+    <div>
+        <a asp-action="V1" class="btn btn-outline-secondary btn-sm rounded-pill px-3">Switch to Classic V1</a>
+    </div>
+</div>
+
+<!-- Stats Row -->
+<div class="row g-4 mb-5">
+    <div class="col-md-4">
+        <div class="stat-card">
+            <h6 class="text-muted text-uppercase fw-semibold mb-3" style="letter-spacing: 1px;">Total Revenue</h6>
+            <h2 class="fw-bold mb-0 text-success">$12,450</h2>
+            <div class="mt-2 text-success small"><i class="bi bi-arrow-up-right me-1"></i> +14.5% this month</div>
+            <i class="bi bi-currency-dollar stat-icon"></i>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card">
+            <h6 class="text-muted text-uppercase fw-semibold mb-3" style="letter-spacing: 1px;">Total Orders</h6>
+            <h2 class="fw-bold mb-0 text-primary">342</h2>
+            <div class="mt-2 text-primary small"><i class="bi bi-arrow-up-right me-1"></i> +5.2% this month</div>
+            <i class="bi bi-cart-check stat-icon"></i>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card">
+            <h6 class="text-muted text-uppercase fw-semibold mb-3" style="letter-spacing: 1px;">Active Users</h6>
+            <h2 class="fw-bold mb-0 text-warning">1,204</h2>
+            <div class="mt-2 text-muted small">Registered customers</div>
+            <i class="bi bi-people stat-icon"></i>
+        </div>
+    </div>
+</div>
+
+<h4 class="fw-bold mb-4">Quick Management</h4>
+
+<!-- Features Row -->
+<div class="row g-4">
+    <div class="col-md-6 col-xl-3">
+        <a asp-controller="AdminBook" asp-action="Index" class="feature-card">
+            <div class="feature-icon-wrapper" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">
+                <i class="bi bi-book"></i>
+            </div>
+            <h5 class="fw-bold mb-2">Books</h5>
+            <p class="text-muted small mb-0">Manage catalog and inventory</p>
+        </a>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <a asp-controller="Category" asp-action="Index" class="feature-card">
+            <div class="feature-icon-wrapper" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
+                <i class="bi bi-tags"></i>
+            </div>
+            <h5 class="fw-bold mb-2">Categories</h5>
+            <p class="text-muted small mb-0">Organize your store genres</p>
+        </a>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <a asp-controller="Author" asp-action="Index" class="feature-card">
+            <div class="feature-icon-wrapper" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;">
+                <i class="bi bi-people"></i>
+            </div>
+            <h5 class="fw-bold mb-2">Authors</h5>
+            <p class="text-muted small mb-0">Manage authors and profiles</p>
+        </a>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <a asp-controller="User" asp-action="Index" class="feature-card">
+            <div class="feature-icon-wrapper" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">
+                <i class="bi bi-shield-lock"></i>
+            </div>
+            <h5 class="fw-bold mb-2">Users</h5>
+            <p class="text-muted small mb-0">Manage roles and access</p>
+        </a>
+    </div>
+</div>

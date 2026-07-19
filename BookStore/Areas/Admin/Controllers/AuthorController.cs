@@ -11,13 +11,12 @@ namespace BookStore.Areas.Admin.Controllers
 {
     [Authorize(Roles = "Admin")]
     [Area("Admin")]
-
-    public class CategoryController : Controller
+    public class AuthorController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public CategoryController(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment)
+        public AuthorController(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
             _webHostEnvironment = webHostEnvironment;
@@ -25,24 +24,23 @@ namespace BookStore.Areas.Admin.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var categories = await _context.Categories.ToListAsync();
-
-            return View(categories);
+            var authors = await _context.Authors.ToListAsync();
+            return View(authors);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add(string catName, IFormFile? imageFile)
+        public async Task<IActionResult> Add(string authorName, IFormFile? imageFile)
         {
-            if (!string.IsNullOrWhiteSpace(catName))
+            if (!string.IsNullOrWhiteSpace(authorName))
             {
-                var category = new Category
+                var author = new Author
                 {
-                    Name = catName
+                    Name = authorName
                 };
 
                 if (imageFile != null && imageFile.Length > 0)
                 {
-                    string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images", "categories");
+                    string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images", "authors");
                     if (!Directory.Exists(uploadsFolder))
                         Directory.CreateDirectory(uploadsFolder);
 
@@ -54,11 +52,10 @@ namespace BookStore.Areas.Admin.Controllers
                         await imageFile.CopyToAsync(fileStream);
                     }
 
-                    category.ImageUrl = uniqueFileName;
+                    author.ImageUrl = uniqueFileName;
                 }
 
-                _context.Categories.Add(category);
-
+                _context.Authors.Add(author);
                 await _context.SaveChangesAsync();
             }
 
@@ -68,29 +65,26 @@ namespace BookStore.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
-            var category = await _context.Categories.FindAsync(id);
+            var author = await _context.Authors.FindAsync(id);
 
-            if (category != null)
+            if (author != null)
             {
-                if (!string.IsNullOrEmpty(category.ImageUrl))
+                if (!string.IsNullOrEmpty(author.ImageUrl))
                 {
-                    var imagePath = category.ImageUrl.Contains("/")
-                        ? Path.Combine(_webHostEnvironment.WebRootPath, category.ImageUrl.TrimStart('/'))
-                        : Path.Combine(_webHostEnvironment.WebRootPath, "images", "categories", category.ImageUrl);
+                    var imagePath = author.ImageUrl.Contains("/")
+                        ? Path.Combine(_webHostEnvironment.WebRootPath, author.ImageUrl.TrimStart('/'))
+                        : Path.Combine(_webHostEnvironment.WebRootPath, "images", "authors", author.ImageUrl);
                     if (System.IO.File.Exists(imagePath))
                     {
                         System.IO.File.Delete(imagePath);
                     }
                 }
 
-                _context.Categories.Remove(category);
-
+                _context.Authors.Remove(author);
                 await _context.SaveChangesAsync();
             }
 
             return RedirectToAction("Index");
         }
-
-
     }
 }

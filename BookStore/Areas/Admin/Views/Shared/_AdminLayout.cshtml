@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Admin V2</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    
+    <style>
+        :root {
+            --admin-bg: #0f172a;
+            --admin-surface: #1e293b;
+            --admin-primary: #3b82f6;
+            --admin-text: #f8fafc;
+            --admin-text-muted: #94a3b8;
+            --admin-border: #334155;
+            --sidebar-width: 260px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--admin-bg);
+            color: var(--admin-text);
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        /* Sidebar Styles */
+        .admin-sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--admin-surface);
+            border-right: 1px solid var(--admin-border);
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-brand {
+            padding: 1.5rem;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--admin-text);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid var(--admin-border);
+        }
+
+        .sidebar-brand i {
+            color: var(--admin-primary);
+        }
+
+        .sidebar-nav {
+            padding: 1rem 0;
+            list-style: none;
+            margin: 0;
+        }
+
+        .sidebar-nav-item {
+            padding: 0.25rem 1rem;
+        }
+
+        .sidebar-nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: var(--admin-text-muted);
+            text-decoration: none;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+
+        .sidebar-nav-link:hover, .sidebar-nav-link.active {
+            background-color: rgba(59, 130, 246, 0.1);
+            color: var(--admin-primary);
+        }
+
+        .sidebar-nav-link i {
+            margin-right: 0.75rem;
+            font-size: 1.2rem;
+        }
+
+        /* Main Content */
+        .admin-main {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Topbar */
+        .admin-topbar {
+            height: 70px;
+            background-color: var(--admin-surface);
+            border-bottom: 1px solid var(--admin-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+
+        .topbar-btn {
+            background: none;
+            border: none;
+            color: var(--admin-text-muted);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        
+        .topbar-btn:hover {
+            color: var(--admin-text);
+        }
+
+        /* Content Area */
+        .admin-content {
+            padding: 2rem;
+            flex-grow: 1;
+        }
+
+        @@media (max-width: 991px) {
+            .admin-sidebar {
+                transform: translateX(-100%);
+            }
+            .admin-main {
+                margin-left: 0;
+            }
+        }
+    </style>
+    @RenderSection("Styles", required: false)
+</head>
+<body>
+    
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+        <a asp-area="" asp-controller="Home" asp-action="Index" class="sidebar-brand">
+            <i class="bi bi-book-half me-2"></i> BookStore
+        </a>
+        <ul class="sidebar-nav">
+            <li class="sidebar-nav-item">
+                <a asp-controller="Dashboard" asp-action="V2" class="sidebar-nav-link @(ViewContext.RouteData.Values["Action"].ToString() == "V2" ? "active" : "")">
+                    <i class="bi bi-grid-1x2-fill"></i> Dashboard V2
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a asp-controller="Dashboard" asp-action="V1" class="sidebar-nav-link">
+                    <i class="bi bi-arrow-left-circle"></i> Switch to V1
+                </a>
+            </li>
+            <li class="sidebar-nav-item mt-4 mb-2 px-3">
+                <span class="text-uppercase small fw-bold text-muted" style="letter-spacing: 1px;">Management</span>
+            </li>
+            <li class="sidebar-nav-item">
+                <a asp-controller="AdminBook" asp-action="Index" class="sidebar-nav-link">
+                    <i class="bi bi-book"></i> Books
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a asp-controller="Category" asp-action="Index" class="sidebar-nav-link">
+                    <i class="bi bi-tags"></i> Categories
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a asp-controller="Author" asp-action="Index" class="sidebar-nav-link">
+                    <i class="bi bi-people"></i> Authors
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a asp-controller="User" asp-action="Index" class="sidebar-nav-link">
+                    <i class="bi bi-shield-lock"></i> Users
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- Main Wrapper -->
+    <div class="admin-main">
+        
+        <!-- Topbar -->
+        <header class="admin-topbar">
+            <div>
+                <!-- Mobile Toggle button could go here -->
+                <h5 class="mb-0 fw-bold d-none d-md-block">Admin Panel</h5>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <a asp-area="" asp-controller="Home" asp-action="Index" class="btn btn-sm btn-outline-light rounded-pill px-3">
+                    <i class="bi bi-box-arrow-up-right me-1"></i> View Store
+                </a>
+                <div class="dropdown">
+                    <button class="d-flex align-items-center gap-2 bg-transparent border-0 text-white" type="button" data-bs-toggle="dropdown">
+                        <img src="https://ui-avatars.com/api/?name=Admin&background=3b82f6&color=fff" alt="Admin" class="rounded-circle" width="32" height="32">
+                        <span class="fw-medium d-none d-md-inline">@User.Identity?.Name</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark shadow">
+                        <li><a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index">Profile</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="/">
+                                <button type="submit" class="dropdown-item text-danger">Logout</button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </header>
+
+        <!-- Content -->
+        <main class="admin-content">
+            @RenderBody()
+        </main>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

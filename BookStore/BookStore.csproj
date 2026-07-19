@@ -28,6 +28,8 @@
   <ItemGroup>
     <Folder Include="Areas\Admin\Data\" />
     <Folder Include="Docs\" />
+    <Folder Include="wwwroot\Images\Categories\" />
+    <Folder Include="wwwroot\Images\Authors\" />
   </ItemGroup>
 
 </Project>
