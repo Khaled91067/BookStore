@@ -43,69 +43,130 @@
 		.hover-text-info:hover {
 			color: #0dcaf0 !important;
 		}
+		
+		/* Premium Header Search Bar styles */
+		.search-container-header {
+			position: relative;
+			transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+		}
+		.search-input-header {
+			background-color: rgba(255, 255, 255, 0.06) !important;
+			border: 1px solid rgba(255, 255, 255, 0.12) !important;
+			color: #ffffff !important;
+			transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+			font-family: 'Outfit', sans-serif;
+		}
+		.search-input-header::placeholder {
+			color: rgba(255, 255, 255, 0.45) !important;
+		}
+		.search-input-header:focus {
+			background-color: rgba(255, 255, 255, 0.12) !important;
+			border-color: #0dcaf0 !important;
+			box-shadow: 0 0 10px rgba(13, 202, 240, 0.25) !important;
+		}
+		.search-btn-header {
+			color: rgba(255, 255, 255, 0.6) !important;
+			transition: color 0.2s ease, transform 0.2s ease;
+		}
+		.search-btn-header:hover {
+			color: #0dcaf0 !important;
+			transform: scale(1.05);
+		}
+		.responsive-nav-text {
+			display: inline-block;
+			max-width: 200px;
+			opacity: 1;
+			overflow: hidden;
+			white-space: nowrap;
+			vertical-align: middle;
+			transition: max-width 0.3s ease, opacity 0.3s ease, margin-left 0.3s ease;
+			margin-left: 6px;
+		}
+		@@media (max-width: 1200px) {
+			.responsive-nav-text {
+				max-width: 0;
+				opacity: 0;
+				margin-left: 0;
+			}
+		}
+		@@media (max-width: 576px) {
+			.navbar-custom .nav-link {
+				padding-left: 4px !important;
+				padding-right: 4px !important;
+				font-size: 0.9rem !important;
+			}
+			.navbar-brand {
+				font-size: 1.1rem !important;
+				margin-right: 0 !important;
+			}
+		}
 	</style>
 </head>
 <body class="d-flex flex-column min-vh-100">
 	<header>
-		<nav class="navbar navbar-expand-lg navbar-dark navbar-custom border-bottom border-secondary border-opacity-25 py-2">
-			<div class="container-fluid">
+		<nav class="navbar navbar-dark navbar-custom border-bottom border-secondary border-opacity-25 py-2">
+			<div class="container-fluid d-flex align-items-center justify-content-between flex-nowrap gap-1 gap-sm-2 gap-md-3">
 				
-				<a class="navbar-brand fw-bold fs-4 text-white d-flex align-items-center font-outfit" asp-area="" asp-controller="Home" asp-action="Index">
-					<i class="bi bi-book-half text-info me-2"></i> BookStore
+				<a class="navbar-brand fw-bold fs-5 text-white d-none d-sm-flex align-items-center font-outfit m-0" asp-area="" asp-controller="Home" asp-action="Index" style="flex-shrink: 0;" title="BookStore">
+					<i class="bi bi-book-half text-info"></i>
+					<span class="ms-2">BookStore</span>
 				</a>
 				
-				<button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-						aria-expanded="false" aria-label="Toggle navigation">
-					<span class="navbar-toggler-icon"></span>
-				</button>
-				
-				<div class="navbar-collapse collapse d-lg-inline-flex justify-content-between align-items-center">
-					
-					<ul class="navbar-nav flex-grow-1 mb-2 mb-lg-0 gap-2">
+				<div class="d-flex align-items-center flex-nowrap">
+					<ul class="navbar-nav d-flex flex-row align-items-center gap-1 gap-sm-2 mb-0">
 						<li class="nav-item">
-							<a class="nav-link px-2" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+							<a class="nav-link px-1 px-sm-2 d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Index" title="Home">
+								<i class="bi bi-house-door"></i>
+								<span class="responsive-nav-text">Home</span>
+							</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link px-2" asp-area="" asp-controller="UserBook" asp-action="Index">Books</a>
+							<a class="nav-link px-1 px-sm-2 d-flex align-items-center" asp-area="" asp-controller="UserBook" asp-action="Index" title="Books">
+								<i class="bi bi-book"></i>
+								<span class="responsive-nav-text">Books</span>
+							</a>
 						</li>
 						@if(!User.IsInRole("Admin"))
 						{
 							 <li class="nav-item">
-								 <a class="nav-link px-2" asp-area="" asp-controller="Order" asp-action="ViewOrders">View Orders</a>
+								 <a class="nav-link px-1 px-sm-2 d-flex align-items-center" asp-area="" asp-controller="Order" asp-action="ViewOrders" title="View Orders">
+									 <i class="bi bi-bag-check"></i>
+									 <span class="responsive-nav-text">View Orders</span>
+								 </a>
 							 </li>
 						}
 						
 						@if (User.IsInRole("Admin"))
 						{
 							<li class="nav-item">
-								<a class="nav-link text-warning fw-semibold px-2" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">
-									<i class="bi bi-speedometer2 me-1"></i> Admin Dashboard
+								<a class="nav-link text-warning fw-semibold px-1 px-sm-2 d-flex align-items-center" asp-area="Admin" asp-controller="Dashboard" asp-action="Index" title="Admin Dashboard">
+									<i class="bi bi-speedometer2"></i>
+									<span class="responsive-nav-text">Admin Dashboard</span>
 								</a>
 							</li>
 						}
 					</ul>
-					
-					<div class="d-flex flex-column flex-lg-row align-items-lg-center gap-3 mt-3 mt-lg-0">
-						
-						<form asp-controller="UserBook" asp-action="Index" method="get" role="search" class="d-flex">
-							<div class="input-group input-group-sm rounded-pill overflow-hidden border border-secondary border-opacity-50">
-								<input class="form-control bg-white text-white border-0 py-2 ps-3 shadow-none"
-									   type="search"
-									   name="search"
-									   placeholder="Search by Title, Author, or Genre"
-									   aria-label="Search"
-									   style="min-width: 180px; font-size: 0.85rem;" />
-								<button class="btn btn-outline-dark border-0 text-info pe-3" type="submit">
-									<i class="bi bi-search"></i>
-								</button>
-							</div>
-						</form>
-
-						<div class="d-flex align-items-center">
-							<partial name="_LoginPartial" />
+				</div>
+				
+				<!-- Search Bar: takes the maximum available width, centered, and shrinks with smaller views -->
+				<div class="flex-grow-1 mx-1 mx-sm-2 mx-md-4 d-flex justify-content-center" style="max-width: 500px; min-width: 80px;">
+					<form asp-controller="UserBook" asp-action="Index" method="get" role="search" class="w-100">
+						<div class="input-group input-group-sm rounded-pill overflow-hidden search-container-header">
+							<input class="form-control border-0 py-1.5 ps-2 ps-sm-3 shadow-none search-input-header"
+								   type="search"
+								   name="search"
+								   placeholder="Search..."
+								   aria-label="Search"
+								   style="font-size: 0.8rem;" />
+							<button class="btn btn-outline-dark border-0 pe-2 pe-sm-3 search-btn-header bg-transparent" type="submit">
+								<i class="bi bi-search" style="font-size: 0.8rem;"></i>
+							</button>
 						</div>
-						
-					</div>
+					</form>
+				</div>
+
+				<div class="d-flex align-items-center flex-shrink-0">
+					<partial name="_LoginPartial" />
 				</div>
 			</div>
 		</nav>
