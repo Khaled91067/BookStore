@@ -1,8 +1,7 @@
 @page
-@model LoginModel
-
+@model RegisterModel
 @{
-    ViewData["Title"] = "Log in";
+    ViewData["Title"] = "Register";
 }
 
 @section Styles {
@@ -68,46 +67,39 @@
                 <div class="auth-icon mb-2">
                     <i class="bi bi-book-half display-4 text-info"></i>
                 </div>
-                <h2 class="h3 fw-bold font-outfit text-dark mb-1">Welcome Back</h2>
-                <p class="text-muted small">Log in to your BookStore account to continue</p>
+                <h2 class="h3 fw-bold font-outfit text-dark mb-1">Create Account</h2>
+                <p class="text-muted small">Join our book community to manage and buy your favorite reads</p>
             </div>
             
-            <form id="account" method="post">
+            <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
                 <div asp-validation-summary="ModelOnly" class="text-danger mb-3" role="alert"></div>
                 
                 <div class="form-floating mb-3">
                     <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
-                    <label asp-for="Input.Email" class="form-label">Email Address</label>
+                    <label asp-for="Input.Email">Email Address</label>
                     <span asp-validation-for="Input.Email" class="text-danger small"></span>
                 </div>
                 
                 <div class="form-floating mb-3">
-                    <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" />
-                    <label asp-for="Input.Password" class="form-label">Password</label>
+                    <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                    <label asp-for="Input.Password">Password</label>
                     <span asp-validation-for="Input.Password" class="text-danger small"></span>
                 </div>
                 
-                <div class="d-flex align-items-center justify-content-between mb-4">
-                    <div class="form-check m-0">
-                        <input class="form-check-input" asp-for="Input.RememberMe" />
-                        <label class="form-check-label text-muted small" asp-for="Input.RememberMe">
-                            Remember me
-                        </label>
-                    </div>
-                    <a id="forgot-password" asp-page="./ForgotPassword" class="text-info text-decoration-none small fw-semibold hover-underline">Forgot?</a>
+                <div class="form-floating mb-4">
+                    <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                    <label asp-for="Input.ConfirmPassword">Confirm Password</label>
+                    <span asp-validation-for="Input.ConfirmPassword" class="text-danger small"></span>
                 </div>
                 
-                <button id="login-submit" type="submit" class="w-100 btn btn-info text-dark fw-bold py-2.5 rounded-pill shadow-sm mb-3">
-                    <i class="bi bi-box-arrow-in-right me-2"></i> Log in
+                <button id="registerSubmit" type="submit" class="w-100 btn btn-info text-dark fw-bold py-2.5 rounded-pill shadow-sm mb-3">
+                    <i class="bi bi-person-plus me-2"></i> Register
                 </button>
                 
                 <div class="text-center mt-3">
                     <p class="text-muted small mb-0">
-                        Don't have an account? 
-                        <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" class="text-info text-decoration-none fw-semibold hover-underline">Register</a>
-                    </p>
-                    <p class="mt-2 mb-0">
-                        <a id="resend-confirmation" asp-page="./ResendEmailConfirmation" class="text-secondary text-decoration-none small hover-underline">Resend email confirmation</a>
+                        Already have an account? 
+                        <a asp-page="./Login" class="text-info text-decoration-none fw-semibold hover-underline">Log in</a>
                     </p>
                 </div>
             </form>

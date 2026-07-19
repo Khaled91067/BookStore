@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using BookStore.Data;
+using System.ComponentModel.DataAnnotations;
 
 namespace BookStore.Models
 {

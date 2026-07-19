@@ -1,4 +1,5 @@
-﻿using BookStore.Models;
+﻿using BookStore.Data;
+using BookStore.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace BookStore.Areas.Admin.Models

@@ -1,0 +1,104 @@
+@page
+@model ConfirmEmailModel
+@{
+    ViewData["Title"] = "Confirm email";
+}
+
+@section Styles {
+    <style>
+        .auth-wrapper {
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%);
+            position: relative;
+            overflow: hidden;
+            min-height: calc(100vh - 120px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .auth-wrapper::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, transparent 60%);
+            pointer-events: none;
+            animation: rotateHero 25s linear infinite;
+        }
+
+        @@keyframes rotateHero {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .auth-card {
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3) !important;
+            z-index: 2;
+        }
+
+        .font-outfit {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .icon-circle-success {
+            width: 80px;
+            height: 80px;
+            background-color: rgba(25, 135, 84, 0.1);
+            color: #198754;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .icon-circle-danger {
+            width: 80px;
+            height: 80px;
+            background-color: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+    </style>
+}
+
+<div class="auth-wrapper py-5 px-3">
+    <div class="container d-flex justify-content-center align-items-center">
+        <div class="card auth-card border-0 shadow-lg p-4 p-sm-5 rounded-4 bg-white text-center" style="width: 100%; max-width: 500px;">
+            @{
+                var isError = Model.StatusMessage?.StartsWith("Error") == true;
+                if (isError)
+                {
+                    <div class="icon-circle-danger">
+                        <i class="bi bi-shield-x-fill"></i>
+                    </div>
+                    <h2 class="h3 fw-bold font-outfit text-dark mb-3">Confirmation Failed</h2>
+                }
+                else
+                {
+                    <div class="icon-circle-success">
+                        <i class="bi bi-patch-check-fill"></i>
+                    </div>
+                    <h2 class="h3 fw-bold font-outfit text-dark mb-3">Email Confirmed!</h2>
+                }
+            }
+
+            <div class="mb-4">
+                <partial name="_StatusMessage" model="Model.StatusMessage" />
+            </div>
+
+            <a asp-page="./Login" class="w-100 btn btn-info text-dark fw-bold py-2.5 rounded-pill shadow-sm mb-2">
+                <i class="bi bi-box-arrow-in-right me-1"></i> Log In Now
+            </a>
+        </div>
+    </div>
+</div>

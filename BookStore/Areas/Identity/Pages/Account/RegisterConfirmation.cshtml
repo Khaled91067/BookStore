@@ -1,0 +1,95 @@
+@page
+@model RegisterConfirmationModel
+@{
+    ViewData["Title"] = "Register confirmation";
+}
+
+@section Styles {
+    <style>
+        .auth-wrapper {
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%);
+            position: relative;
+            overflow: hidden;
+            min-height: calc(100vh - 120px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .auth-wrapper::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, transparent 60%);
+            pointer-events: none;
+            animation: rotateHero 25s linear infinite;
+        }
+
+        @@keyframes rotateHero {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .auth-card {
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3) !important;
+            z-index: 2;
+        }
+
+        .font-outfit {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .icon-circle {
+            width: 80px;
+            height: 80px;
+            background-color: rgba(13, 202, 240, 0.1);
+            color: #0dcaf0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+    </style>
+}
+
+<div class="auth-wrapper py-5 px-3">
+    <div class="container d-flex justify-content-center align-items-center">
+        <div class="card auth-card border-0 shadow-lg p-4 p-sm-5 rounded-4 bg-white text-center" style="width: 100%; max-width: 500px;">
+            <div class="icon-circle">
+                <i class="bi bi-envelope-check-fill"></i>
+            </div>
+            
+            <h2 class="h3 fw-bold font-outfit text-dark mb-3">Confirm Your Email</h2>
+            
+            @{
+                if (Model.DisplayConfirmAccountLink)
+                {
+                    <p class="text-secondary small mb-4">
+                        This application does not currently have a real email sender registered. In a production environment, a confirmation link would be sent to your email.
+                    </p>
+                    <div class="alert alert-warning border-0 rounded-3 text-start small mb-4">
+                        <i class="bi bi-info-circle-fill me-2 text-warning"></i> Developer Mode: You can confirm your account immediately by clicking the button below.
+                    </div>
+                    <a id="confirm-link" href="@Model.EmailConfirmationUrl" class="w-100 btn btn-info text-dark fw-bold py-2.5 rounded-pill shadow-sm mb-3">
+                        <i class="bi bi-check2-circle me-1"></i> Confirm Account
+                    </a>
+                }
+                else
+                {
+                    <p class="text-secondary mb-4">
+                        We've sent a confirmation link to your email address. Please check your inbox and click the link to activate your account.
+                    </p>
+                    <a asp-controller="Home" asp-action="Index" class="w-100 btn btn-outline-secondary fw-semibold py-2.5 rounded-pill mb-3">
+                        Back to Home
+                    </a>
+                }
+            }
+        </div>
+    </div>
+</div>

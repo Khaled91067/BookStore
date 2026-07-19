@@ -1,13 +1,13 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System.ComponentModel.DataAnnotations;
+using BookStore.Models;
+using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace BookStore.Models
+namespace BookStore.Data
 {
     public class ApplicationUser : IdentityUser
     {
         public string? FirstName { get; set; }
-        public string? LastName {  get; set; }
+        public string? LastName { get; set; }
         public string? Address { get; set; }
 
         public ICollection<Order> Orders { get; set; } = new List<Order>();
