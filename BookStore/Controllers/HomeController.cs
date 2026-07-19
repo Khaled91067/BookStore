@@ -30,10 +30,16 @@ namespace BookStore.Controllers
                 .Include(c => c.Books)
                 .ToListAsync();
 
+            var featuredAuthors = await _context.Authors
+                .Include(a => a.BookAuthors)
+                .Take(4)
+                .ToListAsync();
+
             var viewModel = new HomeVM
             {
                 FeaturedBooks = featuredBooks,
-                Categories = categories
+                Categories = categories,
+                FeaturedAuthors = featuredAuthors
             };
 
             return View(viewModel);

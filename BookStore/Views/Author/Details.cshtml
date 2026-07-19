@@ -1,0 +1,145 @@
+@model BookStore.ViewModels.AuthorDetailsVM
+
+@{
+    ViewData["Title"] = Model.Name + " - Author Profile";
+}
+
+@section Styles {
+    <style>
+        .font-outfit {
+            font-family: 'Outfit', sans-serif;
+        }
+        .text-indigo {
+            color: #4f46e5;
+        }
+        .hover-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+        }
+        .hover-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+            border-color: rgba(99, 102, 241, 0.2);
+        }
+        .author-avatar {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border: 4px solid #fff;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        .hover-text-info:hover {
+            color: #0dcaf0 !important;
+        }
+    </style>
+}
+
+<div class="container my-4 my-md-5">
+    <div class="mb-4">
+        <a asp-controller="UserBook" asp-action="Index" class="text-decoration-none text-secondary hover-text-info fw-semibold">
+            <i class="bi bi-arrow-left me-1"></i> Back to Catalog
+        </a>
+    </div>
+
+    <!-- Author Profile Header -->
+    <div class="card border-0 shadow rounded-4 overflow-hidden bg-white mb-5">
+        <div class="card-body p-4 p-md-5">
+            <div class="row align-items-center">
+                <!-- Avatar Section -->
+                <div class="col-md-auto mb-4 mb-md-0 text-center text-md-start">
+                    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                    {
+                        var authorImgUrl = Model.ImageUrl.Contains("/") ? Model.ImageUrl : $"/images/authors/{Model.ImageUrl}";
+                        <img src="@authorImgUrl" alt="@Model.Name" class="rounded-circle author-avatar" />
+                    }
+                    else
+                    {
+                        <div class="rounded-circle bg-info bg-opacity-10 text-info d-flex align-items-center justify-content-center mx-auto mx-md-0 author-avatar">
+                            <i class="bi bi-person-fill display-3"></i>
+                        </div>
+                    }
+                </div>
+                <!-- Info Section -->
+                <div class="col-md text-center text-md-start ps-md-4">
+                    <span class="text-indigo fw-bold text-uppercase tracking-wider small">Author Profile</span>
+                    <h1 class="display-5 fw-bold text-dark font-outfit mt-1 mb-2">@Model.Name</h1>
+                    <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-start gap-3">
+                        <span class="badge bg-secondary bg-opacity-10 text-secondary px-3 py-2 rounded-pill fs-7">
+                            <i class="bi bi-book-half me-1"></i> @Model.Books.Count Books in Store
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Author's Books Section -->
+    <div class="mb-4">
+        <h3 class="fw-bold text-dark font-outfit">Books by @Model.Name</h3>
+        <p class="text-muted">Explore the collection of works written by this author.</p>
+    </div>
+
+    <div class="row g-4">
+        @if (Model.Books != null && Model.Books.Any())
+        {
+            @foreach (var book in Model.Books)
+            {
+                <div class="col-6 col-md-4 col-lg-3 d-flex">
+                    <div class="card hover-card border-0 bg-white rounded-4 shadow-sm w-100 d-flex flex-column overflow-hidden">
+                        
+                        <!-- Book Cover -->
+                        <a asp-controller="UserBook" asp-action="Details" asp-route-id="@book.BookId" class="position-relative d-block bg-light flex-shrink-0 book-card-cover" style="height: 280px;">
+                            @if (!string.IsNullOrEmpty(book.ImageUrl))
+                            {
+                                <img src="~/Images/Books/@book.ImageUrl" class="w-100 h-100 object-fit-contain p-4" alt="@book.Title" />
+                            }
+                            else
+                            {
+                                <div class="w-100 h-100 d-flex flex-column align-items-center justify-content-center text-muted">
+                                    <i class="bi bi-book-half display-3 mb-2 text-secondary"></i>
+                                    <span class="small">No Cover</span>
+                                </div>
+                            }
+                        </a>
+
+                        <!-- Book Content -->
+                        <div class="card-body p-4 d-flex flex-column flex-grow-1 book-card-body">
+                            <h5 class="card-title fw-bold mb-3 book-card-title">
+                                <a asp-controller="UserBook" asp-action="Details" asp-route-id="@book.BookId" class="text-decoration-none text-dark hover-text-info">
+                                    @book.Title
+                                </a>
+                            </h5>
+
+                            <p class="card-text text-secondary small flex-grow-1 book-card-description" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;" title="@book.Description">
+                                @book.Description
+                            </p>
+
+                            <div class="d-flex align-items-center justify-content-between mt-4 book-card-footer flex-wrap gap-2">
+                                <span class="h4 fw-bold text-indigo mb-0 book-card-price">$@book.Price.ToString("F2")</span>
+
+                                @if (book.StockQuantity > 0)
+                                {
+                                    <a asp-controller="Order" asp-action="AddToCart" asp-route-bookId="@book.BookId" class="btn btn-info text-dark fw-bold btn-sm px-4 rounded-pill shadow-sm book-card-btn ms-auto">
+                                        <i class="bi bi-cart-plus me-1"></i> Buy
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger bg-opacity-10 text-danger px-3 py-2 rounded-pill small book-card-btn ms-auto">Out of Stock</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12 text-center py-5">
+                <i class="bi bi-journal-x display-4 text-muted"></i>
+                <p class="lead mt-3 text-muted">No books found for this author yet.</p>
+                <a asp-controller="UserBook" asp-action="Index" class="btn btn-outline-info rounded-pill px-4 mt-2">Browse Catalog</a>
+            </div>
+        }
+    </div>
+</div>

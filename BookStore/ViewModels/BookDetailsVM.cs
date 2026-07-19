@@ -1,4 +1,4 @@
-﻿namespace BookStore.ViewModels
+namespace BookStore.ViewModels
 {
     public class BookDetailsVM
     {
@@ -18,6 +18,6 @@
 
         public string PublisherName { get; set; } = string.Empty;
 
-        public List<string> Authors { get; set; } = [];
+        public List<AuthorDto> Authors { get; set; } = [];
     }
 }

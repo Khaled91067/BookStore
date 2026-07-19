@@ -7,5 +7,6 @@ namespace BookStore.ViewModels
     {
         public List<Book> FeaturedBooks { get; set; } = new();
         public List<Category> Categories { get; set; } = new();
+        public List<Author> FeaturedAuthors { get; set; } = new();
     }
 }

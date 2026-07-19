@@ -102,7 +102,24 @@
                     <div class="d-flex flex-wrap align-items-center fs-6 mb-4 text-secondary gap-2 gap-md-4">
                         <div>
                             <i class="bi bi-pen text-info me-1"></i>
-                            By <span class="fw-semibold text-dark">@(Model.Authors != null && Model.Authors.Any() ? string.Join(", ", Model.Authors) : "Unknown Author")</span>
+                            By <span class="fw-semibold text-dark">
+                                @if (Model.Authors != null && Model.Authors.Any())
+                                {
+                                    for (int i = 0; i < Model.Authors.Count; i++)
+                                    {
+                                        var author = Model.Authors[i];
+                                        <a asp-controller="Author" asp-action="Details" asp-route-id="@author.AuthorId" class="text-indigo hover-text-info text-decoration-none">@author.Name</a>
+                                        @if (i < Model.Authors.Count - 1)
+                                        {
+                                            <span>, </span>
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    <span>Unknown Author</span>
+                                }
+                            </span>
                         </div>
                         <div class="d-none d-md-block text-muted opacity-50">|</div>
                         <div>

@@ -1,4 +1,4 @@
-﻿using BookStore.Data;
+using BookStore.Data;
 using BookStore.Models;
 using BookStore.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -226,7 +226,11 @@ namespace BookStore.Services.Implementaion
                     CategoryName = b.Category.Name,
                     PublisherName = b.Publisher.Name,
                     Authors = b.BookAuthors
-                                .Select(ba => ba.Author.Name)
+                                .Select(ba => new AuthorDto
+                                {
+                                    AuthorId = ba.AuthorId,
+                                    Name = ba.Author.Name
+                                })
                                 .ToList()
                 })
                 .FirstOrDefaultAsync();
