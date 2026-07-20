@@ -68,6 +68,13 @@ namespace BookStore.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
+            var hasBooks = await _context.Books.AnyAsync(b => b.CategoryId == id);
+            if (hasBooks)
+            {
+                TempData["Error"] = "Cannot delete category because it has books associated with it.";
+                return RedirectToAction("Index");
+            }
+
             var category = await _context.Categories.FindAsync(id);
 
             if (category != null)

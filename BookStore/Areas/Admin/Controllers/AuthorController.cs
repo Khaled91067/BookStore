@@ -65,6 +65,13 @@ namespace BookStore.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
+            var hasBooks = await _context.BookAuthors.AnyAsync(ba => ba.AuthorId == id);
+            if (hasBooks)
+            {
+                TempData["Error"] = "Cannot delete author because they have books associated with them.";
+                return RedirectToAction("Index");
+            }
+
             var author = await _context.Authors.FindAsync(id);
 
             if (author != null)
