@@ -27,7 +27,7 @@ namespace BookStore.Controllers
                 .Include(b => b.Category)
                 .Include(b => b.BookAuthors)
                 .ThenInclude(ba => ba.Author)
-                .OrderByDescending(b => b.BookId) // Display 6 newest books as featured
+                .OrderByDescending(b => b.BookId) // Display 4 newest books as featured
                 .Take(4)
                 .ToListAsync();
 

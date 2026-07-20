@@ -1,4 +1,4 @@
-﻿using BookStore.Data;
+using BookStore.Data;
 using BookStore.Models;
 using BookStore.ViewModels;
 using Microsoft.AspNetCore.Identity;
@@ -55,6 +55,19 @@ namespace BookStore.Services.Implementaion
             if (cart == null || !cart.Any())
                 return null;
 
+            foreach (var item in cart)
+            {
+                var book = await _context.Books.FindAsync(item.ProductId);
+
+                if (book is null)
+                    return null;
+
+                if (book.StockQuantity < item.Quantity)
+                    return null;
+
+                book.StockQuantity -= item.Quantity;
+            }
+
             Order order = new Order
             {
                 OrderDate = DateTime.UtcNow,
@@ -72,17 +85,17 @@ namespace BookStore.Services.Implementaion
                 });
             }
 
-            _context.Orders.Add(order);
-            await _context.SaveChangesAsync();
-
             Payment payment = new Payment
             {
-                OrderId = order.OrderId,
+                Order = order,
                 Amount = order.OrderItems.Sum(i => i.Price * i.Quantity),
                 PaymentStatus = PaymentStatus.Pending,
                 PaymentMethod = PaymentMethod.Cash
             };
 
+            order.TotalAmount = order.OrderItems.Sum(i => i.Price * i.Quantity);
+
+            _context.Orders.Add(order);
             _context.Payments.Add(payment);
 
             await _context.SaveChangesAsync();
@@ -93,7 +106,7 @@ namespace BookStore.Services.Implementaion
 
         public async Task<CheckOutVM> PrepareCheckOutVMAsync(int id, ApplicationUser user)
         {
-            var order = await _context.Orders.Where(o => o.OrderId == id)
+            var order = await _context.Orders.Where(o => o.OrderId == id && o.UserId == user.Id)
                                              .Include(o => o.OrderItems)
                                              .ThenInclude(i => i.Book)
                                              .FirstOrDefaultAsync();

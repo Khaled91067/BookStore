@@ -1,4 +1,4 @@
-﻿using BookStore.Data;
+using BookStore.Data;
 using BookStore.DTOs.Paymob;
 using BookStore.Models;
 using BookStore.Services.Interfaces;
@@ -121,6 +121,10 @@ namespace BookStore.Services.Implementaion
                 .FirstOrDefaultAsync(p =>p.ProviderReference == paymobOrderId.ToString());
 
             if (payment == null)
+                return ;
+
+            // Verify callback amount matches expected payment amount (in cents)
+            if (webhook.Obj.AmountCents != (long)Math.Round(payment.Amount * 100))
                 return ;
 
             if (success)

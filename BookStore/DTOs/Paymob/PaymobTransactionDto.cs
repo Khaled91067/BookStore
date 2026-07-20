@@ -12,5 +12,8 @@ namespace BookStore.DTOs.Paymob
 
         [JsonPropertyName("order")]
         public PaymobOrderDto Order { get; set; }
+
+        [JsonPropertyName("amount_cents")]
+        public long AmountCents { get; set; }
     }
 }

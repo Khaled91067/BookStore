@@ -1,4 +1,4 @@
-﻿using BookStore.Data;
+using BookStore.Data;
 using BookStore.Models;
 using BookStore.Services.Implementaion;
 using BookStore.Services.Interfaces;
@@ -59,11 +59,20 @@ namespace BookStore.Controllers
         public async Task<IActionResult> PlaceOrder()
         {
             var cart = HttpContext.Session.Get<List<OrderItemVM>>("Cart");
+            if (cart == null || !cart.Any())
+            {
+                TempData["Error"] = "Your cart is empty. Please add items to your cart before placing an order.";
+                return RedirectToAction("Cart");
+            }
+
             var userId = _userManager.GetUserId(User);
             int? orderId = await _orderService.PlaceOrder(userId, cart);
 
             if (!orderId.HasValue)
+            {
+                TempData["Error"] = "Could not place the order. Please try again.";
                 return RedirectToAction("Cart");
+            }
 
             HttpContext.Session.Remove("Cart");
 
@@ -91,6 +100,13 @@ namespace BookStore.Controllers
         [Authorize]
         public async Task<IActionResult> Checkout(int id)
         {
+            var isPaid = await _context.Payments.AnyAsync(p => p.OrderId == id && p.PaymentStatus == PaymentStatus.Succeeded);
+            if (isPaid)
+            {
+                TempData["Success"] = "This order has already been paid successfully.";
+                return RedirectToAction("ViewOrders");
+            }
+
             var user = await _userManager.GetUserAsync(User);
 
             var vm = await _orderService.PrepareCheckOutVMAsync(id, user);
@@ -107,6 +123,13 @@ namespace BookStore.Controllers
         [Authorize]
         public async Task<IActionResult> Checkout(CheckOutVM vm,int orderId)
         {
+            var isPaid = await _context.Payments.AnyAsync(p => p.OrderId == orderId && p.PaymentStatus == PaymentStatus.Succeeded);
+            if (isPaid)
+            {
+                TempData["Success"] = "This order has already been paid successfully.";
+                return RedirectToAction("ViewOrders");
+            }
+
             var user = await _userManager.GetUserAsync(User);
 
             if (!ModelState.IsValid)
