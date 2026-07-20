@@ -1,4 +1,4 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
+// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
 // for details on configuring this project to bundle and minify static web assets.
 
 // Write your JavaScript code.
@@ -25,17 +25,12 @@
 })()
 
 document.addEventListener("DOMContentLoaded", function () {
-    // Find the toast element by its ID
-    var toastElement = document.getElementById('cartToast');
-
-    // If the element exists (meaning TempData wasn't null), show it
-    if (toastElement) {
-        // Initialize the toast with a 3-second delay before it auto-hides
-        var toast = new bootstrap.Toast(toastElement, {
-            delay: 3000
+    // Find all toast elements
+    var toastElements = document.querySelectorAll('.toast');
+    toastElements.forEach(function (toastEl) {
+        var toast = new bootstrap.Toast(toastEl, {
+            delay: 4000
         });
-
-        // Show the toast
         toast.show();
-    }
+    });
 });
