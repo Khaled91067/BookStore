@@ -18,6 +18,11 @@ namespace BookStore.Controllers
 
         public async Task<IActionResult> Index()
         {
+            if (User.IsInRole("Admin"))
+            {
+                return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+            }
+
             var featuredBooks = await _context.Books
                 .Include(b => b.Category)
                 .Include(b => b.BookAuthors)

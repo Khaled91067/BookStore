@@ -341,7 +341,7 @@
 
                                 @if (User.IsInRole("Admin"))
                                 {
-                                    <a asp-controller="AdminBook" asp-area="Admin" asp-action="AddEdit" asp-route-Id="@book.BookId" class="btn btn-outline-secondary btn-sm px-3 rounded-pill book-card-btn">Edit</a>
+                                    <a asp-controller="Book" asp-area="Admin" asp-action="AddEdit" asp-route-Id="@book.BookId" asp-route-returnUrl="@Context.Request.Path@Context.Request.QueryString" class="btn btn-outline-secondary btn-sm px-3 rounded-pill book-card-btn">Edit</a>
                                 }
                                 else
                                 {
