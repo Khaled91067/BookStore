@@ -80,8 +80,8 @@ namespace BookStore.Services.Implementaion
                     PhoneNumber = order.User.PhoneNumber,
                     Address = order.User.Address
                 },
-                NotificationUrl = "https://backup-ambition-certified.ngrok-free.dev/Payment/Webhook",
-                RedirectionUrl = $"https://backup-ambition-certified.ngrok-free.dev/Payment/PaymentResult?orderId={order.OrderId}"
+                NotificationUrl = "https://bookstore.khaled303.dev/Payment/Webhook",
+                RedirectionUrl = $"https://bookstore.khaled303.dev/Payment/PaymentResult?orderId={order.OrderId}"
             };
 
             var json = JsonSerializer.Serialize(body);
