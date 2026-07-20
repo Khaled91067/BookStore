@@ -9,34 +9,36 @@ namespace BookStore.Services.Implementaion
     public class OrderService
     {
         private readonly ApplicationDbContext _context;
-       
+        private readonly ILogger<OrderService> _logger;
 
-        public OrderService(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public OrderService(ApplicationDbContext context, UserManager<ApplicationUser> userManager, ILogger<OrderService> logger)
         {
             _context = context;
-            
+            _logger = logger;
         }
 
         public async Task<bool> AddToCart(int bookId, List<OrderItemVM> cart)
         {
-
             var book = await _context.Books.FindAsync(bookId);
 
             if (book == null)
+            {
+                _logger.LogWarning("AddToCart: Book not found {BookId}", bookId);
                 return false;
-
-
+            }
 
             var item = cart.FirstOrDefault(x => x.ProductId == bookId);
 
             if (item != null)
             {
                 if (item.Quantity >= book.StockQuantity)
+                {
+                    _logger.LogWarning("AddToCart blocked for book {BookId} '{Title}': stock limit {StockQuantity}", bookId, book.Title, book.StockQuantity);
                     return false;
+                }
 
                 item.Quantity++;
             }
-
             else
             {
                 cart.Add(new OrderItemVM
@@ -47,23 +49,37 @@ namespace BookStore.Services.Implementaion
                     Quantity = 1
                 });
             }
+
+            _logger.LogDebug("Book {BookId} '{Title}' added/updated in cart", bookId, book.Title);
             return true;
         }
 
         public async Task<int?> PlaceOrder(string userId, List<OrderItemVM> cart)
         {
             if (cart == null || !cart.Any())
+            {
+                _logger.LogWarning("PlaceOrder called with empty cart for user {UserId}", userId);
                 return null;
+            }
+
+            _logger.LogInformation("Placing order for user {UserId}, {ItemCount} item(s)", userId, cart.Count);
 
             foreach (var item in cart)
             {
                 var book = await _context.Books.FindAsync(item.ProductId);
 
                 if (book is null)
+                {
+                    _logger.LogWarning("PlaceOrder aborted: book {BookId} not found", item.ProductId);
                     return null;
+                }
 
                 if (book.StockQuantity < item.Quantity)
+                {
+                    _logger.LogWarning("PlaceOrder rejected: insufficient stock for book {BookId} '{Title}' (requested {Requested}, available {Available})",
+                        item.ProductId, book.Title, item.Quantity, book.StockQuantity);
                     return null;
+                }
 
                 book.StockQuantity -= item.Quantity;
             }
@@ -99,9 +115,9 @@ namespace BookStore.Services.Implementaion
             _context.Payments.Add(payment);
 
             await _context.SaveChangesAsync();
-           
-            return order.OrderId;
 
+            _logger.LogInformation("Order {OrderId} placed for user {UserId}, total {TotalAmount:C}", order.OrderId, userId, order.TotalAmount);
+            return order.OrderId;
         }
 
         public async Task<CheckOutVM> PrepareCheckOutVMAsync(int id, ApplicationUser user)
@@ -111,7 +127,10 @@ namespace BookStore.Services.Implementaion
                                              .ThenInclude(i => i.Book)
                                              .FirstOrDefaultAsync();
             if (order == null)
+            {
+                _logger.LogWarning("Checkout order {OrderId} not found or does not belong to user {UserId}", id, user.Id);
                 return null;
+            }
 
             CheckOutVM vm = new CheckOutVM
             {
@@ -122,25 +141,20 @@ namespace BookStore.Services.Implementaion
                 FirstName = user.FirstName,
                 LastName = user.LastName,
 
-
                 OrderItems = order.OrderItems.Select(i => new OrderItemVM
                 {
-
                     ProductId = i.BookId,
                     ProductName = i.Book.Title,
                     ImageUrl = i.Book.ImageUrl,
                     Price = i.Price,
                     Quantity = i.Quantity
-
                 }).ToList()
-
             };
 
             return vm;
-
         }
 
-        public async Task<List<OrderVM>> GetUserOrdersAsync(string userId,string? searchTerm)
+        public async Task<List<OrderVM>> GetUserOrdersAsync(string userId, string? searchTerm)
         {
             var query = _context.Orders
                .Where(o => o.UserId == userId);
@@ -159,10 +173,10 @@ namespace BookStore.Services.Implementaion
                     OrderDate = o.OrderDate,
                     CustomerName = o.User.UserName,
                     TotalAmount = o.OrderItems.Sum(i => i.Price * i.Quantity),
-                    PaymentStatus = o.Payments.Where(p=>p.OrderId==o.OrderId&& p.PaymentStatus==PaymentStatus.Succeeded)                                             
-                                              .Select(p=>p.PaymentStatus)
+                    PaymentStatus = o.Payments.Where(p => p.OrderId == o.OrderId && p.PaymentStatus == PaymentStatus.Succeeded)
+                                              .Select(p => p.PaymentStatus)
                                               .FirstOrDefault(),
-                       
+
                     OrderItems = o.OrderItems.Select(i => new OrderItemVM
                     {
                         ProductId = i.BookId,
@@ -173,9 +187,6 @@ namespace BookStore.Services.Implementaion
                     }).ToList()
                 })
                 .ToListAsync();
-
         }
-
-
     }
 }

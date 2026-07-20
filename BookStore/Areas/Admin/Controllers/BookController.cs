@@ -13,10 +13,12 @@ namespace BookStore.Areas.Admin.Controllers
     public class BookController : Controller
     {
         private readonly BookService _bookService;
+        private readonly ILogger<BookController> _logger;
 
-        public BookController(BookService bookService)
+        public BookController(BookService bookService, ILogger<BookController> logger)
         {
             _bookService = bookService;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -43,6 +45,11 @@ namespace BookStore.Areas.Admin.Controllers
         {
             if (!ModelState.IsValid)
             {
+                var errors = string.Join("; ", ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage));
+                _logger.LogWarning("Book AddEdit validation failed for book {BookId}: {Errors}", vm.BookId, errors);
+
                 await _bookService.LoadDataAsync(vm);
                 ViewBag.ReturnUrl = returnUrl;
                 return View(vm);

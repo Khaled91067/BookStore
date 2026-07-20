@@ -11,22 +11,22 @@ namespace BookStore.Areas.Admin.Controllers
 {
     [Authorize(Roles = "Admin")]
     [Area("Admin")]
-
     public class CategoryController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly ILogger<CategoryController> _logger;
 
-        public CategoryController(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment)
+        public CategoryController(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment, ILogger<CategoryController> logger)
         {
             _context = context;
             _webHostEnvironment = webHostEnvironment;
+            _logger = logger;
         }
 
         public async Task<IActionResult> Index()
         {
             var categories = await _context.Categories.ToListAsync();
-
             return View(categories);
         }
 
@@ -55,11 +55,13 @@ namespace BookStore.Areas.Admin.Controllers
                     }
 
                     category.ImageUrl = uniqueFileName;
+                    _logger.LogDebug("Category image saved: {FilePath}", filePath);
                 }
 
                 _context.Categories.Add(category);
-
                 await _context.SaveChangesAsync();
+
+                _logger.LogInformation("Category created: {CategoryId} '{CategoryName}'", category.CategoryId, catName);
             }
 
             return RedirectToAction("Index");
@@ -71,6 +73,7 @@ namespace BookStore.Areas.Admin.Controllers
             var hasBooks = await _context.Books.AnyAsync(b => b.CategoryId == id);
             if (hasBooks)
             {
+                _logger.LogWarning("Delete category {CategoryId} blocked: category has associated books", id);
                 TempData["Error"] = "Cannot delete category because it has books associated with it.";
                 return RedirectToAction("Index");
             }
@@ -91,13 +94,12 @@ namespace BookStore.Areas.Admin.Controllers
                 }
 
                 _context.Categories.Remove(category);
-
                 await _context.SaveChangesAsync();
+
+                _logger.LogInformation("Category deleted: {CategoryId} '{CategoryName}'", id, category.Name);
             }
 
             return RedirectToAction("Index");
         }
-
-
     }
 }

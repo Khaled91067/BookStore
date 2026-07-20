@@ -1,5 +1,6 @@
 using BookStore.Data;
 using BookStore.DTOs.Paymob;
+using BookStore.Helpers;
 using BookStore.Models;
 using BookStore.Services.Interfaces;
 using BookStore.ViewModels;
@@ -14,11 +15,14 @@ namespace BookStore.Services.Implementaion
         private readonly HttpClient _httpClient;
         private readonly IConfiguration _configuration;
         private readonly ApplicationDbContext _context;
-        public PaymobService(HttpClient httpClient,IConfiguration configuration,ApplicationDbContext context)
+        private readonly ILogger<PaymobService> _logger;
+
+        public PaymobService(HttpClient httpClient, IConfiguration configuration, ApplicationDbContext context, ILogger<PaymobService> logger)
         {
             _httpClient = httpClient;
             _configuration = configuration;
             _context = context;
+            _logger = logger;
         }
 
         public async Task<OrderVM> GetPaymentResultAsync(int orderId)
@@ -29,7 +33,10 @@ namespace BookStore.Services.Implementaion
                 .FirstOrDefaultAsync();
 
             if (payment == null)
+            {
+                _logger.LogWarning("GetPaymentResult: no payment found for order {OrderId}", orderId);
                 return null;
+            }
 
             var vm = new OrderVM
             {
@@ -42,6 +49,8 @@ namespace BookStore.Services.Implementaion
 
         public async Task<string> CreateIntentionAsync(int orderId)
         {
+            _logger.LogInformation("Creating Paymob payment intention for order {OrderId}", orderId);
+
             var order = await _context.Orders
                 .Include(o => o.User)
                 .Include(o => o.OrderItems)
@@ -49,15 +58,20 @@ namespace BookStore.Services.Implementaion
                 .FirstOrDefaultAsync(o => o.OrderId == orderId);
 
             if (order == null)
+            {
+                _logger.LogError("CreateIntention failed: order {OrderId} not found", orderId);
                 throw new Exception("Order not found");
-
+            }
 
             var payment = order.Payments
                  .OrderByDescending(p => p.PaymentId)
                  .FirstOrDefault();
 
             if (payment == null)
+            {
+                _logger.LogError("CreateIntention failed: no payment record for order {OrderId}", orderId);
                 throw new Exception("Payment not found");
+            }
 
             var request = new HttpRequestMessage(HttpMethod.Post, "https://accept.paymob.com/v1/intention/");
             var secretKey = _configuration["Paymob:SecretKey"];
@@ -76,7 +90,7 @@ namespace BookStore.Services.Implementaion
                 {
                     FirstName = order.User.FirstName,
                     LastName = order.User.LastName,
-                    Email = order.User.Email,
+                    Email = order.User.Email,       // not logged — masked elsewhere
                     PhoneNumber = order.User.PhoneNumber,
                     Address = order.User.Address
                 },
@@ -85,29 +99,32 @@ namespace BookStore.Services.Implementaion
             };
 
             var json = JsonSerializer.Serialize(body);
-
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-
             request.Content = content;
+
             var response = await _httpClient.SendAsync(request);
 
-            response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogError("Paymob API call failed for order {OrderId}: HTTP {StatusCode}", orderId, (int)response.StatusCode);
+                response.EnsureSuccessStatusCode(); // rethrows
+            }
 
             var result = await response.Content.ReadAsStringAsync();
-
             var publicKey = _configuration["Paymob:PublicKey"];
-
             var intentionResponse = JsonSerializer.Deserialize<CreateIntentionResponseDto>(result);
 
             var clientSecret = intentionResponse.ClientSecret;
-
             var paymobOrderId = intentionResponse.IntentionOrderId;
 
             var checkoutUrl = $"https://accept.paymob.com/unifiedcheckout/?publicKey={publicKey}&clientSecret={clientSecret}";
 
             payment.ProviderReference = paymobOrderId.ToString();
-
             await _context.SaveChangesAsync();
+
+            _logger.LogInformation("Paymob intention created for order {OrderId}, provider reference {ProviderReference}",
+                orderId, LogMask.TransactionId(paymobOrderId.ToString()));
+
             return checkoutUrl;
         }
 
@@ -117,30 +134,45 @@ namespace BookStore.Services.Implementaion
             var paymobOrderId = webhook.Obj.Order.Id;
             var transactionId = webhook.Obj.Id;
 
+            _logger.LogInformation("Paymob webhook received: paymobOrderId {PaymobOrderId}, success={Success}",
+                LogMask.TransactionId(paymobOrderId.ToString()), success);
+
             var payment = await _context.Payments
-                .FirstOrDefaultAsync(p =>p.ProviderReference == paymobOrderId.ToString());
+                .FirstOrDefaultAsync(p => p.ProviderReference == paymobOrderId.ToString());
 
             if (payment == null)
-                return ;
+            {
+                _logger.LogWarning("Webhook: no payment found for provider reference {ProviderReference}",
+                    LogMask.TransactionId(paymobOrderId.ToString()));
+                return;
+            }
 
             // Verify callback amount matches expected payment amount (in cents)
-            if (webhook.Obj.AmountCents != (long)Math.Round(payment.Amount * 100))
-                return ;
+            var expectedCents = (long)Math.Round(payment.Amount * 100);
+            if (webhook.Obj.AmountCents != expectedCents)
+            {
+                _logger.LogWarning("Webhook amount mismatch for order {OrderId}: expected {Expected} cents, received {Received} cents",
+                    payment.OrderId, expectedCents, webhook.Obj.AmountCents);
+                return;
+            }
 
             if (success)
             {
                 payment.PaymentStatus = PaymentStatus.Succeeded;
                 payment.TransactionId = transactionId.ToString();
                 payment.PaymentMethod = PaymentMethod.Paymob;
+
+                _logger.LogInformation("Payment SUCCEEDED for order {OrderId}, transaction {TransactionId}",
+                    payment.OrderId, LogMask.TransactionId(transactionId.ToString()));
             }
             else
             {
                 payment.PaymentStatus = PaymentStatus.Failed;
+                _logger.LogWarning("Payment FAILED for order {OrderId}, transaction {TransactionId}",
+                    payment.OrderId, LogMask.TransactionId(transactionId.ToString()));
             }
 
             await _context.SaveChangesAsync();
-
         }
-
     }
 }
