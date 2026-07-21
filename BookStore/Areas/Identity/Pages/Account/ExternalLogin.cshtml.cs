@@ -29,13 +29,15 @@ public class ExternalLoginModel : PageModel
     private readonly IUserEmailStore<ApplicationUser> _emailStore;
     private readonly IEmailSender _emailSender;
     private readonly ILogger<ExternalLoginModel> _logger;
+    private readonly RoleManager<IdentityRole> _roleManager;
 
     public ExternalLoginModel(
         SignInManager<ApplicationUser> signInManager,
         UserManager<ApplicationUser> userManager,
         IUserStore<ApplicationUser> userStore,
         ILogger<ExternalLoginModel> logger,
-        IEmailSender emailSender)
+        IEmailSender emailSender,
+        RoleManager<IdentityRole> roleManager)
     {
         _signInManager = signInManager;
         _userManager = userManager;
@@ -43,6 +45,7 @@ public class ExternalLoginModel : PageModel
         _emailStore = GetEmailStore();
         _logger = logger;
         _emailSender = emailSender;
+        _roleManager = roleManager;
     }
 
     /// <summary>
@@ -98,7 +101,7 @@ public class ExternalLoginModel : PageModel
 
     public async Task<IActionResult> OnGetCallbackAsync(string? returnUrl = null, string? remoteError = null)
     {
-        returnUrl = returnUrl ?? Url.Content("~/");
+        returnUrl ??= Url.Content("~/");
         if (remoteError != null)
         {
             ErrorMessage = $"Error from external provider: {remoteError}";
@@ -140,7 +143,7 @@ public class ExternalLoginModel : PageModel
 
     public async Task<IActionResult> OnPostConfirmationAsync(string? returnUrl = null)
     {
-        returnUrl = returnUrl ?? Url.Content("~/");
+        returnUrl ??= Url.Content("~/");
         // Get the information about the user from the external login provider
         var info = await _signInManager.GetExternalLoginInfoAsync();
         if (info == null)
@@ -159,6 +162,12 @@ public class ExternalLoginModel : PageModel
             var result = await _userManager.CreateAsync(user);
             if (result.Succeeded)
             {
+                if (!await _roleManager.RoleExistsAsync("Customer"))
+                {
+                    await _roleManager.CreateAsync(new IdentityRole("Customer"));
+                }
+                await _userManager.AddToRoleAsync(user, "Customer");
+
                 result = await _userManager.AddLoginAsync(user, info);
                 if (result.Succeeded)
                 {
