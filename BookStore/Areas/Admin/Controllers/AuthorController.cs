@@ -15,11 +15,13 @@ namespace BookStore.Areas.Admin.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly ILogger<AuthorController> _logger;
 
-        public AuthorController(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment)
+        public AuthorController(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment, ILogger<AuthorController> logger)
         {
             _context = context;
             _webHostEnvironment = webHostEnvironment;
+            _logger = logger;
         }
 
         public async Task<IActionResult> Index()
@@ -53,10 +55,13 @@ namespace BookStore.Areas.Admin.Controllers
                     }
 
                     author.ImageUrl = uniqueFileName;
+                    _logger.LogDebug("Author image saved: {FilePath}", filePath);
                 }
 
                 _context.Authors.Add(author);
                 await _context.SaveChangesAsync();
+
+                _logger.LogInformation("Author created: {AuthorId} '{AuthorName}'", author.AuthorId, authorName);
             }
 
             return RedirectToAction("Index");
@@ -68,6 +73,7 @@ namespace BookStore.Areas.Admin.Controllers
             var hasBooks = await _context.BookAuthors.AnyAsync(ba => ba.AuthorId == id);
             if (hasBooks)
             {
+                _logger.LogWarning("Delete author {AuthorId} blocked: author has associated books", id);
                 TempData["Error"] = "Cannot delete author because they have books associated with them.";
                 return RedirectToAction("Index");
             }
@@ -89,6 +95,8 @@ namespace BookStore.Areas.Admin.Controllers
 
                 _context.Authors.Remove(author);
                 await _context.SaveChangesAsync();
+
+                _logger.LogInformation("Author deleted: {AuthorId} '{AuthorName}'", id, author.Name);
             }
 
             return RedirectToAction("Index");

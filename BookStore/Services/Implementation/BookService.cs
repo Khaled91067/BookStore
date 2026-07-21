@@ -12,14 +12,16 @@ namespace BookStore.Services.Implementaion
     {
         private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly ILogger<BookService> _logger;
 
-        public BookService(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment)
+        public BookService(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment, ILogger<BookService> logger)
         {
             _context = context;
             _webHostEnvironment = webHostEnvironment;
+            _logger = logger;
         }
 
-        public async Task<BooksPageVM> GetAllBooksAsync(string? search ,int page)
+        public async Task<BooksPageVM> GetAllBooksAsync(string? search, int page)
         {
             const int pageSize = 8;
 
@@ -27,6 +29,7 @@ namespace BookStore.Services.Implementaion
 
             if (!string.IsNullOrWhiteSpace(search))
             {
+                _logger.LogDebug("Searching books with term: {SearchTerm}", search);
                 booksQuery = booksQuery.Where(b =>
 
                     b.Title.Contains(search) ||
@@ -66,8 +69,9 @@ namespace BookStore.Services.Implementaion
                 SearchTerm = search,
                 CurrentPage = page,
                 TotalPages = (int)Math.Ceiling(totalBooks / (double)pageSize)
-            }; 
+            };
         }
+
         public async Task<BookVM?> GetAddEdit(int id)
         {
             BookVM vm = new BookVM();
@@ -82,7 +86,10 @@ namespace BookStore.Services.Implementaion
                     .FirstOrDefaultAsync(b => b.BookId == id);
 
                 if (book == null)
+                {
+                    _logger.LogWarning("Book not found for edit: {BookId}", id);
                     return null;
+                }
 
                 vm.BookId = book.BookId;
                 vm.Title = book.Title;
@@ -96,21 +103,18 @@ namespace BookStore.Services.Implementaion
                 vm.SelectedAuthorIds = book.BookAuthors
                     .Select(ba => ba.AuthorId)
                     .ToList();
-
             }
             /*ModelState.Clear();*/
 
             return vm;
         }
+
         public async Task<bool> SaveAsync(BookVM vm)
         {
-
             string? fileName = vm.ImageUrl;
 
             if (vm.ImageFile != null)
             {
-
-
                 var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "Images/Books");
                 var newFileName = Guid.NewGuid().ToString() + "_" + vm.ImageFile.FileName;
                 string path = Path.Combine(uploadsFolder, newFileName);
@@ -120,15 +124,13 @@ namespace BookStore.Services.Implementaion
                     vm.ImageFile.CopyTo(stream);
                 }
                 fileName = newFileName;
-
-
+                _logger.LogDebug("Book image saved: {ImagePath}", path);
             }
 
             if (vm.BookId == 0)
             {
                 var book = new Book
                 {
-
                     Title = vm.Title,
                     Price = vm.Price,
                     ImageUrl = fileName,
@@ -136,8 +138,6 @@ namespace BookStore.Services.Implementaion
                     Description = vm.Description,
                     StockQuantity = vm.StockQuantity,
                     PublisherId = vm.PublisherId
-
-
                 };
                 _context.Books.Add(book);
 
@@ -151,13 +151,18 @@ namespace BookStore.Services.Implementaion
                         AuthorId = authorId
                     });
                 }
+
+                _logger.LogInformation("Book created: {BookId} '{Title}'", book.BookId, book.Title);
             }
             else
             {
                 var book = _context.Books.Find(vm.BookId);
 
                 if (book == null)
+                {
+                    _logger.LogWarning("Book not found for update: {BookId}", vm.BookId);
                     return false;
+                }
 
                 book.Title = vm.Title;
                 book.Price = vm.Price;
@@ -180,18 +185,23 @@ namespace BookStore.Services.Implementaion
                         AuthorId = authorId
                     });
                 }
+
+                _logger.LogInformation("Book updated: {BookId} '{Title}'", book.BookId, book.Title);
             }
+
             await _context.SaveChangesAsync();
             return true;
-            
         }
+
         public async Task<bool> DeleteAsync(int id)
         {
             var book = await _context.Books.FindAsync(id);
 
             if (book == null)
+            {
+                _logger.LogWarning("Book not found for deletion: {BookId}", id);
                 return false;
-
+            }
 
             if (!string.IsNullOrEmpty(book.ImageUrl))
             {
@@ -199,17 +209,21 @@ namespace BookStore.Services.Implementaion
 
                 if (System.IO.File.Exists(path))
                     System.IO.File.Delete(path);
+                else
+                    _logger.LogWarning("Image file not found during book deletion: {ImagePath}", path);
             }
 
             _context.Books.Remove(book);
             await _context.SaveChangesAsync();
+
+            _logger.LogInformation("Book deleted: {BookId} '{Title}'", id, book.Title);
             return true;
         }
 
         public async Task<BookDetailsVM> GetBookDetailsAsync(int id)
         {
             // TODO: Resolve nullable reference warnings (CS8600, CS8602)
-            return await _context.Books
+            var result = await _context.Books
                 .Include(b => b.Category)
                 .Include(b => b.Publisher)
                 .Include(b => b.BookAuthors)
@@ -234,6 +248,11 @@ namespace BookStore.Services.Implementaion
                                 .ToList()
                 })
                 .FirstOrDefaultAsync();
+
+            if (result == null)
+                _logger.LogWarning("Book details not found: {BookId}", id);
+
+            return result;
         }
 
         public async Task LoadDataAsync(BookVM vm)
@@ -248,6 +267,5 @@ namespace BookStore.Services.Implementaion
                 })
                 .ToListAsync();
         }
-    
     }
 }

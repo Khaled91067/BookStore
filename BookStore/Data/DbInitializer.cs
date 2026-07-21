@@ -12,10 +12,11 @@ namespace BookStore.Data
 {
     public static class DbInitializer
     {
-        public static async Task SeedDataAsync(ApplicationDbContext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        public static async Task SeedDataAsync(ApplicationDbContext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, ILogger logger)
         {
-            // Ensure the database is migrated and exists
+            logger.LogInformation("Applying pending database migrations");
             await context.Database.MigrateAsync();
+            logger.LogInformation("Database migration complete");
 
             var jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             string seedDataPath = Path.Combine(Directory.GetCurrentDirectory(), "Data", "SeedData");
@@ -32,6 +33,7 @@ namespace BookStore.Data
                     {
                         await context.Categories.AddRangeAsync(categories);
                         await context.SaveChangesAsync();
+                        logger.LogInformation("Seeded {Count} categories", categories.Count);
                     }
                     else
                     {
@@ -49,9 +51,18 @@ namespace BookStore.Data
                         if (changed)
                         {
                             await context.SaveChangesAsync();
+                            logger.LogInformation("Updated category images from seed data");
+                        }
+                        else
+                        {
+                            logger.LogDebug("Categories already seeded — skipping");
                         }
                     }
                 }
+            }
+            else
+            {
+                logger.LogWarning("Seed file not found: {FilePath}", categoriesPath);
             }
 
 
@@ -67,8 +78,17 @@ namespace BookStore.Data
                     {
                         await context.Publishers.AddRangeAsync(publishers);
                         await context.SaveChangesAsync();
+                        logger.LogInformation("Seeded {Count} publishers", publishers.Count);
                     }
                 }
+                else
+                {
+                    logger.LogWarning("Seed file not found: {FilePath}", Path.Combine(seedDataPath, "publishers.json"));
+                }
+            }
+            else
+            {
+                logger.LogDebug("Publishers already seeded — skipping");
             }
 
             // 3. Seed Authors
@@ -83,6 +103,7 @@ namespace BookStore.Data
                     {
                         await context.Authors.AddRangeAsync(authors);
                         await context.SaveChangesAsync();
+                        logger.LogInformation("Seeded {Count} authors", authors.Count);
                     }
                     else
                     {
@@ -100,6 +121,11 @@ namespace BookStore.Data
                         if (changed)
                         {
                             await context.SaveChangesAsync();
+                            logger.LogInformation("Updated author images from seed data");
+                        }
+                        else
+                        {
+                            logger.LogDebug("Authors already seeded — skipping");
                         }
                     }
                 }
@@ -108,6 +134,7 @@ namespace BookStore.Data
             // 4. Seed Books and BookAuthors
             if (!await context.Books.AnyAsync())
             {
+                logger.LogInformation("Seeding books and book-author relationships");
                 string booksPath = Path.Combine(seedDataPath, "books.json");
                 if (File.Exists(booksPath))
                 {
@@ -173,6 +200,7 @@ namespace BookStore.Data
                         if (!await roleManager.RoleExistsAsync(dto.Role))
                         {
                             await roleManager.CreateAsync(new IdentityRole(dto.Role));
+                            logger.LogInformation("Seeded role '{RoleName}'", dto.Role);
                         }
 
                         // Ensure User Exists
@@ -194,6 +222,12 @@ namespace BookStore.Data
                             if (result.Succeeded)
                             {
                                 await userManager.AddToRoleAsync(user, dto.Role);
+                                logger.LogInformation("Seeded user '{UserName}' with role '{Role}'", dto.UserName, dto.Role);
+                            }
+                            else
+                            {
+                                logger.LogWarning("Failed to seed user '{UserName}': {Errors}", dto.UserName,
+                                    string.Join(", ", result.Errors.Select(e => e.Description)));
                             }
                         }
                     }

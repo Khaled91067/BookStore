@@ -1,9 +1,11 @@
 using BookStore.Data;
+using BookStore.Middleware;
 using BookStore.Models;
 using BookStore.Services.Implementaion;
 using BookStore.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace BookStore
 {
@@ -11,85 +13,118 @@ namespace BookStore
     {
         public static async Task Main(string[] args)
         {
-            var builder = WebApplication.CreateBuilder(args);
+            // Bootstrap logger captures startup errors before the host is built
+            Log.Logger = new LoggerConfiguration()
+                .WriteTo.Console()
+                .CreateBootstrapLogger();
 
-            // Add services to the container.
-            var connectionString = builder.Configuration
-                .GetConnectionString("DefaultConnection") ?? 
-                    throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-           
-            builder.Services.AddDbContext<ApplicationDbContext>(options => options
-                            .UseSqlServer(connectionString));
-            
-            builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-
-            builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                            .AddRoles<IdentityRole>()
-                            .AddEntityFrameworkStores<ApplicationDbContext>();
-            
-            builder.Services.AddControllersWithViews();
-
-            builder.Services.AddSession(option =>
+            try
             {
-                option.IdleTimeout = TimeSpan.FromMinutes(30);
-                //option.Cookie.HttpOnly = true;
-                //option.Cookie.IsEssential = true;
-            });
+                Log.Information("BookStore application starting up");
 
-            builder.Services.AddScoped<BookService>();
-            builder.Services.AddScoped<OrderService>();
-            builder.Services.AddHttpClient<IPaymobService, PaymobService>();
+                var builder = WebApplication.CreateBuilder(args);
 
-            var app = builder.Build();
+                // Replace the default logging provider with Serilog, reading config from appsettings
+                builder.Host.UseSerilog((ctx, services, cfg) =>
+                    cfg.ReadFrom.Configuration(ctx.Configuration)
+                       .ReadFrom.Services(services)
+                       .Enrich.FromLogContext());
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseMigrationsEndPoint();
+                // Add services to the container.
+                var connectionString = builder.Configuration
+                    .GetConnectionString("DefaultConnection") ??
+                        throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
+                builder.Services.AddDbContext<ApplicationDbContext>(options =>
+                                options.UseSqlServer(connectionString));
+
+                builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+                builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                                .AddRoles<IdentityRole>()
+                                .AddEntityFrameworkStores<ApplicationDbContext>();
+
+                builder.Services.AddControllersWithViews();
+
+                builder.Services.AddSession(option =>
+                {
+                    option.IdleTimeout = TimeSpan.FromMinutes(30);
+                    //option.Cookie.HttpOnly = true;
+                    //option.Cookie.IsEssential = true;
+                });
+
+                builder.Services.AddScoped<BookService>();
+                builder.Services.AddScoped<OrderService>();
+                builder.Services.AddScoped<UserService>();
+                builder.Services.AddHttpClient<IPaymobService, PaymobService>();
+
+                var app = builder.Build();
+
+                // Global exception handler — logs and redirects; registered before routing
+                app.UseMiddleware<ExceptionHandlingMiddleware>();
+
+                // Serilog HTTP request logging — one structured line per request
+                app.UseSerilogRequestLogging(opts =>
+                {
+                    opts.MessageTemplate = "HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms";
+                });
+
+                // Configure the HTTP request pipeline.
+                if (app.Environment.IsDevelopment())
+                {
+                    app.UseMigrationsEndPoint();
+                }
+                else
+                {
+                    app.UseExceptionHandler("/Home/Error");
+                    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                    app.UseHsts();
+                }
+
+                app.UseHttpsRedirection();
+                app.UseRouting();
+
+                app.UseAuthentication();
+                app.UseAuthorization();
+
+                using (var scope = app.Services.CreateScope())
+                {
+                    var services = scope.ServiceProvider;
+                    var context = services.GetRequiredService<ApplicationDbContext>();
+                    var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+                    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+                    var loggerFactory = services.GetRequiredService<ILoggerFactory>();
+                    var dbLogger = loggerFactory.CreateLogger("BookStore.Data.DbInitializer");
+                    await DbInitializer.SeedDataAsync(context, userManager, roleManager, dbLogger);
+                }
+
+                app.UseSession();//
+
+                app.MapStaticAssets();
+
+                app.MapControllerRoute(
+                    name: "areas",
+                    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+
+                app.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}")
+                    .WithStaticAssets();
+
+                app.MapRazorPages()
+                   .WithStaticAssets();
+
+                app.Run();
             }
-            else
+            catch (Exception ex) when (ex is not HostAbortedException)
             {
-                app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
+                Log.Fatal(ex, "BookStore application terminated unexpectedly");
             }
-
-            app.UseHttpsRedirection();
-            app.UseRouting();
-            
-            app.UseAuthentication();
-            app.UseAuthorization();
-
-            
-
-
-            using (var scope = app.Services.CreateScope())
+            finally
             {
-                var services = scope.ServiceProvider;
-                var context = services.GetRequiredService<ApplicationDbContext>();
-                var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
-                var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-                await DbInitializer.SeedDataAsync(context, userManager, roleManager);
+                Log.Information("BookStore application shutting down");
+                await Log.CloseAndFlushAsync();
             }
-
-            app.UseSession();//
-
-
-            app.MapStaticAssets();
-
-            app.MapControllerRoute(
-                name: "areas",
-                pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
-
-            app.MapControllerRoute(
-                name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}")
-                .WithStaticAssets();
-            
-            app.MapRazorPages()
-               .WithStaticAssets();
-
-            app.Run();
         }
     }
 }
