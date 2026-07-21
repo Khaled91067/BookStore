@@ -1,10 +1,7 @@
-using BookStore.Data;
-using BookStore.Models;
 using BookStore.Services.Implementaion;
 using BookStore.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace BookStore.Areas.Admin.Controllers
 {

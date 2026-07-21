@@ -6,28 +6,22 @@ using BookStore.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using System.Globalization;
 
 namespace BookStore.Controllers
 {
     public class OrderController : Controller
     {
         private readonly IPaymobService _paymobService;
-        private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly OrderService _orderService;
         private readonly ILogger<OrderController> _logger;
 
         public OrderController(
-            ApplicationDbContext context,
             UserManager<ApplicationUser> userManager,
             OrderService orderService,
             IPaymobService paymobService,
             ILogger<OrderController> logger)
         {
-            _context = context;
             _userManager = userManager;
             _orderService = orderService;
             _paymobService = paymobService;
@@ -56,7 +50,7 @@ namespace BookStore.Controllers
             }
 
             HttpContext.Session.Set("Cart", cart);
-            
+
             var totalCount = cart.Sum(x => x.Quantity);
             TempData["Success"] = "Book added to cart successfully.";
 
@@ -78,6 +72,23 @@ namespace BookStore.Controllers
         {
             var cart = HttpContext.Session.Get<List<OrderItemVM>>("Cart") ?? new List<OrderItemVM>();
             return View(cart);
+        }
+
+        [Authorize]
+        public IActionResult RemoveFromCart(int bookId)
+        {
+            var cart = HttpContext.Session.Get<List<OrderItemVM>>("Cart") ?? new List<OrderItemVM>();
+
+            if (!_orderService.RemoveFromCart(bookId, cart))
+            {
+                _logger.LogWarning("RemoveFromCart failed for book {BookId} (user {UserId})", bookId, _userManager.GetUserId(User));
+                TempData["Error"] = "Could not remove item from cart.";
+                return RedirectToAction("Cart");
+            }
+
+            HttpContext.Session.Set("Cart", cart);
+            TempData["Success"] = "Item removed from cart.";
+            return RedirectToAction("Cart");
         }
 
         [Authorize]
@@ -124,8 +135,7 @@ namespace BookStore.Controllers
         [Authorize]
         public async Task<IActionResult> Checkout(int id)
         {
-            var isPaid = await _context.Payments.AnyAsync(p => p.OrderId == id && p.PaymentStatus == PaymentStatus.Succeeded);
-            if (isPaid)
+            if (await _orderService.IsOrderPaidAsync(id))
             {
                 _logger.LogInformation("Checkout: order {OrderId} already paid — redirecting user {UserId}", id, _userManager.GetUserId(User));
                 TempData["Success"] = "This order has already been paid successfully.";
@@ -148,8 +158,7 @@ namespace BookStore.Controllers
         [Authorize]
         public async Task<IActionResult> Checkout(CheckOutVM vm, int orderId)
         {
-            var isPaid = await _context.Payments.AnyAsync(p => p.OrderId == orderId && p.PaymentStatus == PaymentStatus.Succeeded);
-            if (isPaid)
+            if (await _orderService.IsOrderPaidAsync(orderId))
             {
                 _logger.LogInformation("Checkout POST: order {OrderId} already paid — redirecting user {UserId}", orderId, _userManager.GetUserId(User));
                 TempData["Success"] = "This order has already been paid successfully.";

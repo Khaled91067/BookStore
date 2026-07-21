@@ -60,6 +60,20 @@ namespace BookStore.Services.Implementaion
             return true;
         }
 
+        public bool RemoveFromCart(int bookId, List<OrderItemVM> cart)
+        {
+            var item = cart.FirstOrDefault(x => x.ProductId == bookId);
+            if (item == null)
+            {
+                _logger.LogWarning("RemoveFromCart: item {BookId} not found in cart", bookId);
+                return false;
+            }
+
+            cart.Remove(item);
+            _logger.LogDebug("Book {BookId} removed from cart", bookId);
+            return true;
+        }
+
         public async Task<int?> PlaceOrder(string userId, List<OrderItemVM> cart)
         {
             if (cart == null || !cart.Any())
@@ -193,6 +207,12 @@ namespace BookStore.Services.Implementaion
                     }).ToList()
                 })
                 .ToListAsync();
+        }
+
+        public async Task<bool> IsOrderPaidAsync(int orderId)
+        {
+            return await _context.Payments
+                .AnyAsync(p => p.OrderId == orderId && p.PaymentStatus == PaymentStatus.Succeeded);
         }
     }
 }

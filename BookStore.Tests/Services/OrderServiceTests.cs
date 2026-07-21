@@ -196,4 +196,125 @@ public class OrderServiceTests : IDisposable
         // No order should have been persisted
         Assert.Equal(0, await _context.Orders.CountAsync());
     }
+
+    // ──────────────────────────────────────────────────────────────────
+    // IsOrderPaidAsync
+    // ──────────────────────────────────────────────────────────────────
+
+    [Fact]
+    public async Task IsOrderPaidAsync_OrderNotFound_ReturnsFalse()
+    {
+        // Act
+        var result = await _service.IsOrderPaidAsync(9999);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public async Task IsOrderPaidAsync_OrderPaid_ReturnsTrue()
+    {
+        // Arrange
+        var order = new Order { UserId = "user-1", OrderDate = DateTime.UtcNow, TotalAmount = 50m };
+        _context.Orders.Add(order);
+        await _context.SaveChangesAsync();
+
+        var payment = new Payment
+        {
+            OrderId = order.OrderId,
+            Amount = 50m,
+            PaymentStatus = PaymentStatus.Succeeded,
+            PaymentMethod = PaymentMethod.Visa
+        };
+        _context.Payments.Add(payment);
+        await _context.SaveChangesAsync();
+
+        // Act
+        var result = await _service.IsOrderPaidAsync(order.OrderId);
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public async Task IsOrderPaidAsync_OrderPending_ReturnsFalse()
+    {
+        // Arrange
+        var order = new Order { UserId = "user-1", OrderDate = DateTime.UtcNow, TotalAmount = 30m };
+        _context.Orders.Add(order);
+        await _context.SaveChangesAsync();
+
+        var payment = new Payment
+        {
+            OrderId = order.OrderId,
+            Amount = 30m,
+            PaymentStatus = PaymentStatus.Pending,
+            PaymentMethod = PaymentMethod.Cash
+        };
+        _context.Payments.Add(payment);
+        await _context.SaveChangesAsync();
+
+        // Act
+        var result = await _service.IsOrderPaidAsync(order.OrderId);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    // ──────────────────────────────────────────────────────────────────
+    // RemoveFromCart
+    // ──────────────────────────────────────────────────────────────────
+
+    [Fact]
+    public void RemoveFromCart_ItemNotInCart_ReturnsFalse()
+    {
+        // Arrange
+        var cart = new List<OrderItemVM>
+        {
+            new OrderItemVM { ProductId = 1, Quantity = 1, Price = 10m, ProductName = "Book A" }
+        };
+
+        // Act
+        var result = _service.RemoveFromCart(9999, cart);
+
+        // Assert
+        Assert.False(result);
+        Assert.Single(cart); // cart unchanged
+    }
+
+    [Fact]
+    public void RemoveFromCart_ItemExists_RemovesFromCart()
+    {
+        // Arrange
+        var cart = new List<OrderItemVM>
+        {
+            new OrderItemVM { ProductId = 42, Quantity = 2, Price = 15m, ProductName = "Book B" }
+        };
+
+        // Act
+        var result = _service.RemoveFromCart(42, cart);
+
+        // Assert
+        Assert.True(result);
+        Assert.Empty(cart);
+    }
+
+    [Fact]
+    public void RemoveFromCart_MultipleItems_RemovesOnlyTarget()
+    {
+        // Arrange
+        var cart = new List<OrderItemVM>
+        {
+            new OrderItemVM { ProductId = 1, Quantity = 1, Price = 10m, ProductName = "Book A" },
+            new OrderItemVM { ProductId = 2, Quantity = 3, Price = 20m, ProductName = "Book B" }
+        };
+
+        // Act
+        var result = _service.RemoveFromCart(1, cart);
+
+        // Assert
+        Assert.True(result);
+        Assert.Single(cart);
+        Assert.Equal(2, cart[0].ProductId); // Book B remains
+    }
 }

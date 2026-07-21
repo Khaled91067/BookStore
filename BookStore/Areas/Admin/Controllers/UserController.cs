@@ -1,11 +1,9 @@
 using BookStore.Areas.Admin.Models;
-using BookStore.Data;
 using BookStore.Models;
 using BookStore.Services.Implementaion;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
 
 namespace BookStore.Areas.Admin.Controllers
 {
@@ -13,20 +11,17 @@ namespace BookStore.Areas.Admin.Controllers
     [Area("Admin")]
     public class UserController : Controller
     {
-        private UserManager<ApplicationUser> _userManager;
-        private RoleManager<IdentityRole> _roleManager;
-        private UserService _userService;
+        private readonly UserService _userService;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ILogger<UserController> _logger;
 
         public UserController(
-            UserManager<ApplicationUser> userManager,
-            RoleManager<IdentityRole> roleManager,
             UserService userService,
+            RoleManager<IdentityRole> roleManager,
             ILogger<UserController> logger)
         {
-            _userManager = userManager;
-            _roleManager = roleManager;
             _userService = userService;
+            _roleManager = roleManager;
             _logger = logger;
         }
 

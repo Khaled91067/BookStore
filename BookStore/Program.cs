@@ -56,6 +56,10 @@ namespace BookStore
                 builder.Services.AddScoped<BookService>();
                 builder.Services.AddScoped<OrderService>();
                 builder.Services.AddScoped<UserService>();
+                builder.Services.AddScoped<AuthorService>();
+                builder.Services.AddScoped<CategoryService>();
+                builder.Services.AddScoped<DashboardService>();
+                builder.Services.AddScoped<HomeService>();
                 builder.Services.AddHttpClient<IPaymobService, PaymobService>();
 
                 var app = builder.Build();
