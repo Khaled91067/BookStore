@@ -115,12 +115,12 @@
                             </p>
 
                             <div class="d-flex align-items-center justify-content-between mt-4 book-card-footer flex-wrap gap-2">
-                                <span class="h4 fw-bold text-indigo mb-0 book-card-price">$@book.Price.ToString("F2")</span>
+                                <span class="h4 fw-bold text-indigo mb-0 book-card-price">@book.Price.ToString("0.00") EGP</span>
 
                                 @if (book.StockQuantity > 0)
                                 {
                                     <a asp-controller="Order" asp-action="AddToCart" asp-route-bookId="@book.BookId" class="btn btn-info text-dark fw-bold btn-sm px-4 rounded-pill shadow-sm book-card-btn ms-auto">
-                                        <i class="bi bi-cart-plus me-1"></i> Buy
+                                        <i class="bi bi-cart-plus me-1"></i> Add to Cart
                                     </a>
                                 }
                                 else

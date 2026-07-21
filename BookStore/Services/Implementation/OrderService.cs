@@ -17,7 +17,7 @@ namespace BookStore.Services.Implementaion
             _logger = logger;
         }
 
-        public async Task<bool> AddToCart(int bookId, List<OrderItemVM> cart)
+        public async Task<bool> AddToCart(int bookId, List<OrderItemVM> cart, int quantity = 1)
         {
             var book = await _context.Books.FindAsync(bookId);
 
@@ -31,26 +31,32 @@ namespace BookStore.Services.Implementaion
 
             if (item != null)
             {
-                if (item.Quantity >= book.StockQuantity)
+                if (item.Quantity + quantity > book.StockQuantity)
                 {
                     _logger.LogWarning("AddToCart blocked for book {BookId} '{Title}': stock limit {StockQuantity}", bookId, book.Title, book.StockQuantity);
                     return false;
                 }
 
-                item.Quantity++;
+                item.Quantity += quantity;
             }
             else
             {
+                if (quantity > book.StockQuantity)
+                {
+                    _logger.LogWarning("AddToCart blocked for book {BookId} '{Title}': stock limit {StockQuantity}", bookId, book.Title, book.StockQuantity);
+                    return false;
+                }
+
                 cart.Add(new OrderItemVM
                 {
                     ProductId = book.BookId,
                     ProductName = book.Title,
                     Price = book.Price,
-                    Quantity = 1
+                    Quantity = quantity
                 });
             }
 
-            _logger.LogDebug("Book {BookId} '{Title}' added/updated in cart", bookId, book.Title);
+            _logger.LogDebug("Book {BookId} '{Title}' added/updated in cart with quantity {Quantity}", bookId, book.Title, quantity);
             return true;
         }
 

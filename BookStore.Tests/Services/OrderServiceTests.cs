@@ -114,6 +114,25 @@ public class OrderServiceTests : IDisposable
         Assert.Equal(2, cart[0].Quantity); // unchanged
     }
 
+    [Fact]
+    public async Task AddToCart_MultipleQuantity_AddsToCartWithCustomQuantity()
+    {
+        // Arrange
+        var book = new Book { Title = "Custom Book", Price = 10m, StockQuantity = 5, Description = "", CategoryId = 1, PublisherId = 1 };
+        _context.Books.Add(book);
+        await _context.SaveChangesAsync();
+
+        var cart = new List<OrderItemVM>();
+
+        // Act
+        var result = await _service.AddToCart(book.BookId, cart, 3);
+
+        // Assert
+        Assert.True(result);
+        Assert.Single(cart);
+        Assert.Equal(3, cart[0].Quantity);
+    }
+
     // ──────────────────────────────────────────────────────────────────
     // PlaceOrder
     // ──────────────────────────────────────────────────────────────────

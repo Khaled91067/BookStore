@@ -40,18 +40,36 @@ namespace BookStore.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> AddToCart(int bookId)
+        public async Task<IActionResult> AddToCart(int bookId, int quantity = 1)
         {
             var cart = HttpContext.Session.Get<List<OrderItemVM>>("Cart") ?? new List<OrderItemVM>();
 
-            if (!await _orderService.AddToCart(bookId, cart))
+            if (!await _orderService.AddToCart(bookId, cart, quantity))
             {
                 _logger.LogWarning("AddToCart failed for book {BookId} (user {UserId})", bookId, _userManager.GetUserId(User));
-                return NotFound();
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return Json(new { success = false, message = "Could not add item to cart. Out of stock or invalid book." });
+                }
+                TempData["Error"] = "Could not add item to cart. Out of stock or invalid book.";
+                return RedirectToAction("Index", "UserBook");
             }
 
             HttpContext.Session.Set("Cart", cart);
+            
+            var totalCount = cart.Sum(x => x.Quantity);
             TempData["Success"] = "Book added to cart successfully.";
+
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return Json(new { success = true, message = "Book added to cart successfully.", cartCount = totalCount });
+            }
+
+            var referer = Request.Headers["Referer"].ToString();
+            if (!string.IsNullOrEmpty(referer))
+            {
+                return Redirect(referer);
+            }
 
             return RedirectToAction("Index", "UserBook");
         }

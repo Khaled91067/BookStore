@@ -69,7 +69,7 @@
                                         <div class="fw-semibold text-white">@book.Title</div>
                                         <div class="text-muted small text-truncate" style="max-width: 350px;" title="@book.Description">@book.Description</div>
                                     </td>
-                                    <td class="fw-bold text-primary">$@book.Price.ToString("F2")</td>
+                                    <td class="fw-bold text-primary">@book.Price.ToString("0.00") EGP</td>
                                     <td>
                                         @if (book.StockQuantity <= 5)
                                         {
