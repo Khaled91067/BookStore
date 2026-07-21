@@ -1,0 +1,117 @@
+/* --- Card Component Styles --- */
+
+/* Base Hover Card */
+.hover-card {
+    transition: var(--transition-base);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.hover-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-hover) !important;
+    border-color: rgba(99, 102, 241, 0.2);
+}
+
+/* Book Card Base & Enhancements */
+.book-card {
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: var(--radius-md);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+}
+
+.book-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Responsive Book Card Overrides for Catalog/Grid */
+@media (max-width: 575.98px) {
+    .book-card-cover {
+        height: 180px !important;
+    }
+    .book-card-cover img {
+        padding: 0.75rem !important;
+    }
+    .book-card-body {
+        padding: 1rem !important;
+    }
+    .book-card-title {
+        font-size: 0.9rem !important;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    .book-card-author {
+        font-size: 0.75rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+    .book-card-description {
+        display: none !important;
+    }
+    .book-card-footer {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 0.5rem;
+        margin-top: 0.75rem !important;
+    }
+    .book-card-price {
+        font-size: 1.1rem !important;
+    }
+    .book-card-btn {
+        width: 100%;
+        font-size: 0.8rem !important;
+        padding: 0.35rem 0.75rem !important;
+        text-align: center;
+    }
+    .book-card-btn-group {
+        width: 100%;
+        flex-direction: column;
+    }
+    .book-card-btn-group form,
+    .book-card-btn-group button {
+        width: 100%;
+    }
+}
+
+/* Cart Card */
+.cart-card {
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: var(--radius-lg);
+}
+
+/* Checkout Card */
+.checkout-card {
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: var(--radius-lg);
+}
+
+/* Order Card */
+.order-card {
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background-color: #ffffff;
+    margin-bottom: 2rem;
+    transition: box-shadow 0.3s ease;
+}
+
+.order-card:hover {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Auth Card */
+.auth-card {
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3) !important;
+    z-index: 2;
+}
+
+/* Status Card */
+.status-card {
+    max-width: 500px;
+    margin: 50px auto;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}

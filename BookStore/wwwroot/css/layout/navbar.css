@@ -1,0 +1,85 @@
+/* --- Header & Navigation Layout Styles --- */
+.navbar-custom {
+    background-color: #0f172a !important;
+}
+
+.navbar-custom .nav-link {
+    font-family: var(--font-outfit);
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.75) !important;
+    transition: color 0.2s ease;
+}
+
+.navbar-custom .nav-link:hover {
+    color: var(--color-info) !important;
+}
+
+.navbar-custom .nav-link.active {
+    color: #ffffff !important;
+    font-weight: 600;
+}
+
+/* Premium Header Search Bar styles */
+.search-container-header {
+    position: relative;
+    transition: var(--transition-base);
+}
+
+.search-input-header {
+    background-color: rgba(255, 255, 255, 0.06) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    color: #ffffff !important;
+    transition: var(--transition-base);
+    font-family: var(--font-outfit);
+}
+
+.search-input-header::placeholder {
+    color: rgba(255, 255, 255, 0.45) !important;
+}
+
+.search-input-header:focus {
+    background-color: rgba(255, 255, 255, 0.12) !important;
+    border-color: var(--color-info) !important;
+    box-shadow: 0 0 10px rgba(13, 202, 240, 0.25) !important;
+}
+
+.search-btn-header {
+    color: rgba(255, 255, 255, 0.6) !important;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.search-btn-header:hover {
+    color: var(--color-info) !important;
+    transform: scale(1.05);
+}
+
+.responsive-nav-text {
+    display: inline-block;
+    max-width: 200px;
+    opacity: 1;
+    overflow: hidden;
+    white-space: nowrap;
+    vertical-align: middle;
+    transition: max-width 0.3s ease, opacity 0.3s ease, margin-left 0.3s ease;
+    margin-left: 6px;
+}
+
+@media (max-width: 1200px) {
+    .responsive-nav-text {
+        max-width: 0;
+        opacity: 0;
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 576px) {
+    .navbar-custom .nav-link {
+        padding-left: 4px !important;
+        padding-right: 4px !important;
+        font-size: 0.9rem !important;
+    }
+    .navbar-brand {
+        font-size: 1.1rem !important;
+        margin-right: 0 !important;
+    }
+}

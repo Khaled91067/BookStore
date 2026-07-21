@@ -7,43 +7,7 @@
     decimal total = Model?.Sum(x => x.Price * x.Quantity) ?? 0;
 }
 
-@section Styles {
-    <style>
-        .font-outfit {
-            font-family: 'Outfit', sans-serif;
-        }
-        .text-indigo {
-            color: #4f46e5;
-        }
-        .bg-indigo-soft {
-            background-color: rgba(79, 70, 229, 0.04);
-        }
-        .btn-indigo {
-            background-color: #4f46e5;
-            color: white;
-            transition: all 0.2s ease;
-        }
-        .btn-indigo:hover {
-            background-color: #4338ca;
-            color: white;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
-        }
-        .btn-outline-indigo {
-            border-color: #4f46e5;
-            color: #4f46e5;
-            transition: all 0.2s ease;
-        }
-        .btn-outline-indigo:hover {
-            background-color: #4f46e5;
-            color: white;
-        }
-        .cart-card {
-            border: 1px solid rgba(0, 0, 0, 0.06);
-            border-radius: 1rem;
-        }
-    </style>
-}
+
 
 <div class="container mt-4 mt-md-5 mb-5">
     <div class="row justify-content-center">

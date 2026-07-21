@@ -4,66 +4,7 @@
     Layout = "_AdminLayout";
 }
 
-<style>
-    .stat-card {
-        background: var(--admin-surface);
-        border: 1px solid var(--admin-border);
-        border-radius: 1rem;
-        padding: 1.5rem;
-        transition: transform 0.2s, box-shadow 0.2s;
-        position: relative;
-        overflow: hidden;
-    }
-    .stat-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-    }
-    .stat-icon {
-        position: absolute;
-        right: -10px;
-        bottom: -20px;
-        font-size: 6rem;
-        opacity: 0.05;
-        color: var(--admin-text);
-        transition: transform 0.3s ease;
-    }
-    .stat-card:hover .stat-icon {
-        transform: scale(1.1) rotate(-5deg);
-    }
-    .feature-card {
-        background: linear-gradient(145deg, var(--admin-surface) 0%, rgba(30, 41, 59, 0.5) 100%);
-        border: 1px solid var(--admin-border);
-        border-radius: 1rem;
-        padding: 1.5rem;
-        text-align: center;
-        text-decoration: none;
-        color: var(--admin-text);
-        transition: all 0.3s ease;
-        display: block;
-    }
-    .feature-card:hover {
-        border-color: var(--admin-primary);
-        background: rgba(59, 130, 246, 0.05);
-        color: var(--admin-text);
-    }
-    .feature-icon-wrapper {
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 1rem auto;
-        font-size: 1.25rem;
-    }
-    .chart-container {
-        background: var(--admin-surface);
-        border: 1px solid var(--admin-border);
-        border-radius: 1rem;
-        padding: 1.5rem;
-        height: 100%;
-    }
-</style>
+
 
 <div class="d-flex justify-content-between align-items-end mb-4">
     <div>

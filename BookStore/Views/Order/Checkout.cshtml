@@ -5,69 +5,7 @@
     decimal total = Model.OrderItems.Sum(x => x.Price * x.Quantity);
 }
 
-@section Styles {
-    <style>
-        .font-outfit {
-            font-family: 'Outfit', sans-serif;
-        }
-        .text-indigo {
-            color: #4f46e5;
-        }
-        .bg-indigo-soft {
-            background-color: rgba(79, 70, 229, 0.04);
-        }
-        .checkout-card {
-            border: 1px solid rgba(0, 0, 0, 0.06);
-            border-radius: 1rem;
-        }
-        .checkout-img-container {
-            width: 70px;
-            height: 85px;
-            flex-shrink: 0;
-            background-color: #f8f9fa;
-            border-radius: 0.5rem;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid rgba(0, 0, 0, 0.05);
-        }
-        .form-control:focus {
-            border-color: #4f46e5;
-            box-shadow: 0 0 0 0.25rem rgba(79, 70, 229, 0.15);
-        }
-        .form-check-input:checked {
-            background-color: #4f46e5;
-            border-color: #4f46e5;
-        }
-        .btn-info-custom {
-            background-color: #0dcaf0;
-            color: #000;
-            transition: all 0.2s ease;
-        }
-        .btn-info-custom:hover {
-            background-color: #0bacce;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(13, 202, 240, 0.3);
-        }
-        .payment-method-card {
-            transition: all 0.2s ease;
-            cursor: pointer;
-        }
-        .payment-method-card:hover {
-            border-color: rgba(79, 70, 229, 0.4) !important;
-            background-color: rgba(79, 70, 229, 0.01);
-        }
-        .payment-method-card:has(input[type="radio"]:checked) {
-            border-color: #4f46e5 !important;
-            background-color: rgba(79, 70, 229, 0.04);
-            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.05);
-        }
-        .cursor-pointer {
-            cursor: pointer;
-        }
-    </style>
-}
+
 
 <div class="container my-4 my-md-5">
     <main>

@@ -4,46 +4,7 @@
     ViewData["Title"] = Model.Title;
 }
 
-@section Styles {
-    <style>
-        .font-outfit {
-            font-family: 'Outfit', sans-serif;
-        }
-        .text-indigo {
-            color: #4f46e5;
-        }
-        .bg-indigo-soft {
-            background-color: rgba(79, 70, 229, 0.04);
-        }
-        .btn-info-custom {
-            background-color: #0dcaf0;
-            color: #000;
-            transition: all 0.2s ease;
-        }
-        .btn-info-custom:hover {
-            background-color: #0bacce;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(13, 202, 240, 0.3);
-        }
-        .book-cover-container {
-            position: relative;
-            border-radius: 1rem;
-            overflow: hidden;
-            background: #f8f9fa;
-        }
-        .book-cover-container::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.04);
-            pointer-events: none;
-            border-radius: 1rem;
-        }
-        .hover-text-info:hover {
-            color: #0dcaf0 !important;
-        }
-    </style>
-}
+
 
 <div class="container my-4 my-md-5">
     <div class="mb-4">

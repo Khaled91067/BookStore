@@ -1,0 +1,13 @@
+/* --- Footer Layout Styles --- */
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    white-space: nowrap;
+    line-height: 60px;
+}
+
+.footer-gradient {
+    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}

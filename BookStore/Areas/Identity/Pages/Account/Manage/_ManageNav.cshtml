@@ -3,28 +3,7 @@
     var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
 }
 
-<style>
-    .manage-nav-list .nav-link {
-        font-family: 'Outfit', sans-serif;
-        font-weight: 500;
-        color: #4b5563 !important;
-        border-radius: 0.5rem;
-        padding: 0.75rem 1rem;
-        margin-bottom: 0.25rem;
-        transition: all 0.2s ease;
-    }
-    
-    .manage-nav-list .nav-link:hover {
-        background-color: rgba(99, 102, 241, 0.08);
-        color: #4f46e5 !important;
-    }
-    
-    .manage-nav-list .nav-link.active {
-        background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%) !important;
-        color: #ffffff !important;
-        box-shadow: 0 4px 10px rgba(79, 70, 229, 0.2);
-    }
-</style>
+
 
 <ul class="nav nav-pills flex-column manage-nav-list">
     <li class="nav-item"><a class="nav-link @ManageNavPages.IndexNavClass(ViewContext)" id="profile" asp-page="./Index">Profile</a></li>

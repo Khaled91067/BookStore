@@ -1,0 +1,129 @@
+/* --- Customer Orders Page Specific Styles --- */
+.amazon-orders-view .breadcrumb {
+    margin-bottom: 0.5rem;
+}
+
+.amazon-orders-view .breadcrumb-item, 
+.amazon-orders-view .breadcrumb-item.active {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.amazon-orders-view .breadcrumb-item + .breadcrumb-item::before {
+    content: "›";
+    color: var(--text-secondary);
+    margin: 0 0.25rem;
+    font-size: 1.1rem;
+}
+
+.amazon-orders-view .nav-tabs {
+    border-bottom: 2px solid #ddd;
+    margin-bottom: 2rem;
+}
+
+.amazon-orders-view .nav-link {
+    color: var(--color-amazon-blue);
+    border: none;
+    padding: 0.5rem 1rem;
+    font-weight: normal;
+}
+
+.amazon-orders-view .nav-link:hover {
+    color: var(--color-amazon-orange-hover);
+    border: none;
+}
+
+.amazon-orders-view .nav-item.active {
+    font-weight: bold;
+    position: relative;
+}
+
+.amazon-orders-view .nav-item.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: var(--color-amazon-orange);
+}
+
+.amazon-orders-view .nav-link.active {
+    background: transparent;
+}
+
+.order-header {
+    background-color: var(--bg-light);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    padding: 1.25rem 1.5rem;
+}
+
+.order-header-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.order-header-value {
+    font-size: 0.9rem;
+    color: #212529;
+    font-weight: 500;
+    margin-top: 0.25rem;
+}
+
+.order-header-value a {
+    text-decoration: none;
+    color: var(--color-amazon-blue);
+}
+
+.order-header-id {
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+}
+
+.order-header-id span {
+    color: #111111;
+    font-weight: bold;
+}
+
+.order-item-list {
+    padding: 1.5rem;
+}
+
+.product-row {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.product-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 0;
+}
+
+.book-thumb-container {
+    width: 80px;
+    height: 100px;
+    background-color: var(--bg-light);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.book-thumb {
+    max-height: 120px;
+    border-radius: 4px;
+    object-fit: contain;
+}
+
+.product-title a {
+    text-decoration: none;
+    color: var(--color-amazon-blue);
+    font-weight: normal;
+}

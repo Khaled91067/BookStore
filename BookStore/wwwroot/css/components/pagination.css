@@ -1,0 +1,19 @@
+/* --- Pagination Component Styles --- */
+.pagination .page-item .page-link {
+    border-radius: var(--radius-sm);
+    margin: 0 0.2rem;
+    border: none;
+    color: var(--color-indigo);
+    font-weight: 500;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--color-indigo);
+    color: #ffffff;
+    box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+}
+
+.pagination .page-item.disabled .page-link {
+    color: var(--text-muted);
+    background-color: transparent;
+}

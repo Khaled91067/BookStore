@@ -1,0 +1,52 @@
+/* --- Shared Utility Classes --- */
+.font-outfit {
+    font-family: var(--font-outfit);
+}
+
+.text-indigo {
+    color: var(--color-indigo);
+}
+
+.bg-indigo-soft {
+    background-color: var(--color-indigo-soft);
+}
+
+.hover-text-info {
+    transition: color 0.2s ease;
+}
+
+.hover-text-info:hover {
+    color: var(--color-info) !important;
+}
+
+.hover-underline:hover {
+    text-decoration: underline !important;
+}
+
+.transition-all {
+    transition: var(--transition-base);
+}
+
+.backdrop-blur {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.scrollbar-custom::-webkit-scrollbar {
+    height: 6px;
+}
+.scrollbar-custom::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+}
+.scrollbar-custom::-webkit-scrollbar-thumb {
+    background: rgba(99, 102, 241, 0.2);
+    border-radius: 10px;
+}
+.scrollbar-custom::-webkit-scrollbar-thumb:hover {
+    background: rgba(99, 102, 241, 0.4);
+}
+
+.icon-large {
+    font-size: 5rem;
+}

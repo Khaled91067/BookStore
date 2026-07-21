@@ -1,0 +1,268 @@
+/* --- Admin Panel Layout & Theme Overrides --- */
+
+body.admin-body {
+    font-family: var(--font-sans);
+    background-color: var(--admin-bg);
+    color: var(--admin-text);
+    margin: 0;
+    overflow-x: hidden;
+}
+
+/* Sidebar Styles */
+.admin-sidebar {
+    width: var(--sidebar-width);
+    background-color: var(--admin-surface);
+    border-right: 1px solid var(--admin-border);
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 1000;
+    transition: transform 0.3s ease;
+}
+
+.sidebar-brand {
+    padding: 1.5rem;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--admin-text);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--admin-border);
+}
+
+.sidebar-brand i {
+    color: var(--admin-primary);
+}
+
+.sidebar-nav {
+    padding: 1rem 0;
+    list-style: none;
+    margin: 0;
+}
+
+.sidebar-nav-item {
+    padding: 0.25rem 1rem;
+}
+
+.sidebar-nav-link {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    color: var(--admin-text-muted);
+    text-decoration: none;
+    border-radius: var(--radius-sm);
+    transition: var(--transition-fast);
+    font-weight: 500;
+}
+
+.sidebar-nav-link:hover, 
+.sidebar-nav-link.active {
+    background-color: rgba(59, 130, 246, 0.1);
+    color: var(--admin-primary);
+}
+
+.sidebar-nav-link i {
+    margin-right: 0.75rem;
+    font-size: 1.2rem;
+}
+
+/* Main Content Layout */
+.admin-main {
+    margin-left: var(--sidebar-width);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Topbar Styles */
+.admin-topbar {
+    height: 70px;
+    background-color: var(--admin-surface);
+    border-bottom: 1px solid var(--admin-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    position: fixed;
+    top: 0;
+    left: var(--sidebar-width);
+    right: 0;
+    z-index: 999;
+}
+
+.topbar-btn {
+    background: none;
+    border: none;
+    color: var(--admin-text-muted);
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.topbar-btn:hover {
+    color: var(--admin-text);
+}
+
+/* Content Area */
+.admin-content {
+    padding: 2rem;
+    margin-top: 70px;
+    flex-grow: 1;
+}
+
+@media (max-width: 991px) {
+    :root {
+        --sidebar-width: 70px;
+    }
+    .admin-sidebar {
+        transform: none !important;
+    }
+    .sidebar-brand {
+        justify-content: center;
+        padding: 1.25rem 0;
+    }
+    .brand-text {
+        display: none !important;
+    }
+    .sidebar-nav-item {
+        padding: 0.25rem 0.5rem;
+    }
+    .sidebar-nav-link {
+        justify-content: center;
+        padding: 0.75rem 0;
+    }
+    .sidebar-nav-link i {
+        margin-right: 0 !important;
+        font-size: 1.4rem;
+    }
+    .sidebar-nav-link span,
+    .sidebar-section-header {
+        display: none !important;
+    }
+    .admin-main {
+        margin-left: var(--sidebar-width) !important;
+    }
+    .admin-topbar {
+        left: var(--sidebar-width) !important;
+    }
+}
+
+/* Premium Dark Theme Overrides for Bootstrap elements in Admin Area */
+.admin-main .card {
+    background-color: var(--admin-surface) !important;
+    border: 1px solid var(--admin-border) !important;
+    color: var(--admin-text) !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+}
+
+.admin-main .card-header {
+    background-color: rgba(15, 23, 42, 0.3) !important;
+    border-bottom: 1px solid var(--admin-border) !important;
+    color: var(--admin-text) !important;
+}
+
+.admin-main .card-header .bg-dark {
+    background-color: transparent !important;
+}
+
+.admin-main .card-body {
+    color: var(--admin-text) !important;
+}
+
+.admin-main .table {
+    color: var(--admin-text) !important;
+}
+
+.admin-main .table > :not(caption) > * > * {
+    background-color: transparent !important;
+    color: var(--admin-text) !important;
+    border-bottom-color: var(--admin-border) !important;
+}
+
+.admin-main .table .table-light, 
+.admin-main .table thead, 
+.admin-main .table tr[class*="table-light"] {
+    background-color: rgba(15, 23, 42, 0.5) !important;
+}
+
+.admin-main .table thead th, 
+.admin-main .table thead td {
+    color: var(--admin-text-muted) !important;
+    background-color: rgba(15, 23, 42, 0.5) !important;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+    border-bottom: 1.5px solid var(--admin-border) !important;
+}
+
+.admin-main .table-hover tbody tr:hover > * {
+    background-color: rgba(255, 255, 255, 0.03) !important;
+    color: var(--admin-text) !important;
+}
+
+.admin-main .form-control, 
+.admin-main .form-select {
+    background-color: var(--admin-bg) !important;
+    border: 1px solid var(--admin-border) !important;
+    color: var(--admin-text) !important;
+}
+
+.admin-main .form-control:focus, 
+.admin-main .form-select:focus {
+    background-color: var(--admin-bg) !important;
+    border-color: var(--admin-primary) !important;
+    color: var(--admin-text) !important;
+    box-shadow: 0 0 0 0.25rem rgba(59, 130, 246, 0.25) !important;
+}
+
+.admin-main .form-control::placeholder {
+    color: var(--admin-text-muted) !important;
+}
+
+.admin-main hr {
+    color: var(--admin-border) !important;
+    opacity: 0.3;
+}
+
+.admin-main .text-muted {
+    color: var(--admin-text-muted) !important;
+}
+
+.admin-main .vr {
+    background-color: var(--admin-border) !important;
+    opacity: 0.5;
+}
+
+.admin-main .btn-outline-danger {
+    border-color: #ef4444 !important;
+    color: #ef4444 !important;
+}
+
+.admin-main .btn-outline-danger:hover {
+    background-color: #ef4444 !important;
+    color: #ffffff !important;
+}
+
+.admin-main .btn-outline-success {
+    border-color: #10b981 !important;
+    color: #10b981 !important;
+}
+
+.admin-main .btn-outline-success:hover {
+    background-color: #10b981 !important;
+    color: #ffffff !important;
+}
+
+.admin-main .btn-outline-warning {
+    border-color: #f59e0b !important;
+    color: #f59e0b !important;
+}
+
+.admin-main .btn-outline-warning:hover {
+    background-color: #f59e0b !important;
+    color: #ffffff !important;
+}

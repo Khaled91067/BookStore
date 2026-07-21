@@ -1,0 +1,19 @@
+/* --- Book Catalog / Index Specific Styles --- */
+.book-image-wrapper {
+    background-color: #fcfcfc;
+    overflow: hidden;
+}
+
+.book-image-wrapper img {
+    transition: transform 0.5s ease;
+}
+
+.book-card:hover .book-image-wrapper img {
+    transform: scale(1.08);
+}
+
+.price-tag {
+    color: var(--color-teal);
+    font-size: 1.15rem;
+    font-weight: 700;
+}

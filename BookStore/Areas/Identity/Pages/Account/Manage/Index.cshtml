@@ -5,24 +5,7 @@
     ViewData["ActivePage"] = ManageNavPages.Index;
 }
 
-<style>
-    .profile-card-title {
-        font-family: 'Outfit', sans-serif;
-        font-weight: 700;
-        color: #1e1b4b;
-    }
-    
-    .form-floating .form-control {
-        border-radius: 0.75rem;
-        border: 1px solid rgba(0, 0, 0, 0.12);
-        transition: all 0.2s ease;
-    }
 
-    .form-floating .form-control:focus {
-        border-color: #0dcaf0;
-        box-shadow: 0 0 0 3px rgba(13, 202, 240, 0.2);
-    }
-</style>
 
 <h3 class="profile-card-title mb-4">@ViewData["Title"]</h3>
 <partial name="_StatusMessage" for="StatusMessage" />

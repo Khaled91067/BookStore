@@ -1,0 +1,63 @@
+/* --- Author & User Profile Specific Styles --- */
+/* Standalone Author Profile Avatar (Details Page) */
+.author-avatar {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border: 4px solid #ffffff;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Author Avatar inside Author Card (Home Page) */
+.author-card .author-avatar {
+    width: 90px;
+    height: 90px;
+    background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+    color: #ffffff;
+    font-size: 2rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    box-shadow: 0 4px 10px rgba(99, 102, 241, 0.2);
+    transition: transform 0.3s ease;
+    border: none;
+}
+
+.author-card img.author-avatar {
+    background: transparent;
+    object-fit: cover;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.author-card:hover .author-avatar {
+    transform: scale(1.05) rotate(5deg);
+}
+
+.profile-card-title {
+    font-family: var(--font-outfit);
+    font-weight: 700;
+    color: #1e1b4b;
+}
+
+.manage-nav-list .nav-link {
+    font-family: var(--font-outfit);
+    font-weight: 500;
+    color: #4b5563 !important;
+    border-radius: var(--radius-sm);
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.25rem;
+    transition: var(--transition-fast);
+}
+
+.manage-nav-list .nav-link:hover {
+    background-color: rgba(99, 102, 241, 0.08);
+    color: var(--color-indigo) !important;
+}
+
+.manage-nav-list .nav-link.active {
+    background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 10px rgba(79, 70, 229, 0.2);
+}

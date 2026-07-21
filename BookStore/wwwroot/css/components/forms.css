@@ -1,0 +1,68 @@
+/* --- Form Control Component Styles --- */
+.btn:focus, 
+.btn:active:focus, 
+.btn-link.nav-link:focus, 
+.form-control:focus, 
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem #ffffff, 0 0 0 0.25rem #258cfb;
+}
+
+.form-floating .form-control {
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    transition: var(--transition-fast);
+}
+
+.form-floating .form-control:focus {
+    border-color: var(--color-indigo);
+    box-shadow: 0 0 0 0.25rem rgba(79, 70, 229, 0.15);
+}
+
+.form-floating > .form-control-plaintext::placeholder, 
+.form-floating > .form-control::placeholder {
+    color: var(--bs-secondary-color);
+    text-align: end;
+}
+
+.form-floating > .form-control-plaintext:focus::placeholder, 
+.form-floating > .form-control:focus::placeholder {
+    text-align: start;
+}
+
+.form-check-input:checked {
+    background-color: var(--color-indigo);
+    border-color: var(--color-indigo);
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.payment-method-card {
+    transition: var(--transition-fast);
+    cursor: pointer;
+}
+
+.payment-method-card:hover {
+    border-color: rgba(79, 70, 229, 0.4) !important;
+    background-color: rgba(79, 70, 229, 0.01);
+}
+
+.payment-method-card:has(input[type="radio"]:checked) {
+    border-color: var(--color-indigo) !important;
+    background-color: rgba(79, 70, 229, 0.04);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.05);
+}
+
+.checkout-img-container {
+    width: 70px;
+    height: 85px;
+    flex-shrink: 0;
+    background-color: var(--bg-light);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}

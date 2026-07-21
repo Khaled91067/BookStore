@@ -1,0 +1,95 @@
+/* --- Button Component Styles --- */
+.btn {
+    transition: var(--transition-fast);
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-indigo {
+    background-color: var(--color-indigo);
+    color: #ffffff;
+    transition: var(--transition-fast);
+}
+
+.btn-indigo:hover {
+    background-color: var(--color-indigo-dark);
+    color: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
+
+.btn-outline-indigo {
+    border-color: var(--color-indigo);
+    color: var(--color-indigo);
+    transition: var(--transition-fast);
+}
+
+.btn-outline-indigo:hover {
+    background-color: var(--color-indigo);
+    color: #ffffff;
+}
+
+.btn-info-custom {
+    background-color: var(--color-info);
+    color: #000000;
+    transition: var(--transition-fast);
+}
+
+.btn-info-custom:hover {
+    background-color: var(--color-info-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(13, 202, 240, 0.3);
+}
+
+.btn-custom-pill {
+    border-radius: var(--radius-pill);
+    padding: 0.4rem 1.2rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: var(--transition-fast);
+}
+
+.btn-view-item {
+    background-color: #ffffff;
+    border: 1px solid #ced4da;
+    color: #495057;
+}
+
+.btn-view-item:hover {
+    background-color: var(--bg-light);
+    border-color: #adb5bd;
+    color: #212529;
+}
+
+.btn-buy-again {
+    background-color: var(--color-info);
+    border: 1px solid var(--color-info);
+    color: #000000;
+}
+
+.btn-buy-again:hover {
+    background-color: var(--color-info-hover);
+    border-color: var(--color-info-hover);
+    box-shadow: 0 4px 10px rgba(13, 202, 240, 0.25);
+}
+
+.search-btn {
+    background-color: var(--color-indigo);
+    border-color: var(--color-indigo);
+    color: #ffffff;
+    transition: var(--transition-fast);
+}
+
+.search-btn:hover {
+    background-color: var(--color-indigo-dark);
+    border-color: var(--color-indigo-dark);
+    color: #ffffff;
+}
+
+button.accept-policy {
+    font-size: 1rem;
+    line-height: inherit;
+}

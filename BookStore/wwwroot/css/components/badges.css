@@ -1,0 +1,4 @@
+/* --- Shared Badge & Indicator Component Styles --- */
+.badge {
+    transition: var(--transition-fast);
+}

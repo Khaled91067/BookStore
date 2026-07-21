@@ -1,0 +1,59 @@
+/* --- Global CSS Variables & Design Tokens --- */
+:root {
+    /* Brand Colors */
+    --color-primary: #1b6ec2;
+    --color-primary-dark: #1861ac;
+    --color-indigo: #4f46e5;
+    --color-indigo-dark: #4338ca;
+    --color-indigo-deeper: #3730a3;
+    --color-indigo-soft: rgba(79, 70, 229, 0.04);
+    --color-info: #0dcaf0;
+    --color-info-hover: #0bacce;
+    --color-teal: #2b7a78;
+    --color-amazon-blue: #007185;
+    --color-amazon-orange: #e47911;
+    --color-amazon-orange-hover: #c45500;
+    
+    /* Status Colors */
+    --color-success: #10b981;
+    --color-danger: #ef4444;
+    --color-warning: #f59e0b;
+
+    /* Backgrounds & Neutrals */
+    --bg-main: #f8fafc;
+    --bg-light: #f8f9fa;
+    --bg-card: #ffffff;
+    --text-primary: #1e293b;
+    --text-secondary: #565959;
+    --text-muted: #6c757d;
+
+    /* Admin Theme Variables */
+    --admin-bg: #0f172a;
+    --admin-surface: #1e293b;
+    --admin-primary: #3b82f6;
+    --admin-text: #f8fafc;
+    --admin-text-muted: #94a3b8;
+    --admin-border: #334155;
+    --sidebar-width: 260px;
+
+    /* Typography */
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-outfit: 'Outfit', sans-serif;
+
+    /* Radius Tokens */
+    --radius-sm: 0.5rem;
+    --radius-md: 0.75rem;
+    --radius-lg: 1rem;
+    --radius-xl: 1.5rem;
+    --radius-pill: 50rem;
+
+    /* Shadow Tokens */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 15px 35px rgba(0, 0, 0, 0.3);
+    --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+    /* Transitions */
+    --transition-fast: all 0.2s ease;
+    --transition-base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
