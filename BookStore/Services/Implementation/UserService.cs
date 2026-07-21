@@ -3,6 +3,7 @@ using BookStore.Data;
 using BookStore.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookStore.Services.Implementaion
 {
@@ -36,21 +37,22 @@ namespace BookStore.Services.Implementaion
 
         public async Task<UserVM> GetUsersAsync()
         {
-            List<ApplicationUser> users = new List<ApplicationUser>();
+            var users = await _userManager.Users
+                .AsNoTracking()
+                .ToListAsync();
 
-            foreach (ApplicationUser user in _userManager.Users)
+            foreach (var user in users)
             {
                 user.RoleNames = await _userManager.GetRolesAsync(user);
-                users.Add(user);
             }
 
-            UserVM model = new UserVM
+            return new UserVM
             {
                 Users = users,
-                Roles = _roleManager.Roles.ToList()
+                Roles = await _roleManager.Roles
+                    .AsNoTracking()
+                    .ToListAsync()
             };
-
-            return model;
         }
 
         public async Task<bool> AddUserToRoleAsync(string id, string roleName)

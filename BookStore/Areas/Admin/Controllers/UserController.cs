@@ -61,9 +61,9 @@ namespace BookStore.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> RemoveFromRole(string userId, string roleName)
+        public async Task<IActionResult> RemoveFromRole(string id, string roleName)
         {
-            await _userService.RemoveUserFromRoleAsync(userId, roleName);
+            await _userService.RemoveUserFromRoleAsync(id, roleName);
             return RedirectToAction("Index");
         }
 
@@ -78,6 +78,7 @@ namespace BookStore.Areas.Admin.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
         public async Task<IActionResult> CreateAdminRole()
         {
             _logger.LogInformation("CreateAdminRole utility action invoked");
@@ -85,6 +86,7 @@ namespace BookStore.Areas.Admin.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
         public async Task<IActionResult> DeleteRole(string id)
         {
             IdentityRole role = await _roleManager.FindByIdAsync(id);

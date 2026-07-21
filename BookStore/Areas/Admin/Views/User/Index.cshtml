@@ -1,4 +1,4 @@
-﻿@using BookStore.Data
+@using BookStore.Data
 @model UserVM
 @{
     ViewData["Title"] = "Manage Users & Roles";
@@ -6,7 +6,7 @@
 
 <div class="container my-4">
     <div class="card shadow-sm mb-5">
-        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+        <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="mb-0"><i class="bi bi-people-fill me-2"></i>Manage Users</h5>
             <a asp-action="Register" asp-area="Identity" asp-controller="Account" class="btn btn-sm btn-success">
                 <i class="bi bi-person-plus-fill me-1"></i> Add a User
@@ -15,7 +15,7 @@
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light">
+                    <thead>
                         <tr>
                             <th scope="col" class="ps-3">Username</th>
                             <th scope="col">Current Roles</th>
@@ -52,7 +52,7 @@
                                         <div class="d-inline-flex gap-2 justify-content-end align-items-center">
                                             @foreach (var role in Model.Roles)
                                             {
-                                                if (!user.RoleNames.Contains(role.Name))
+                                                if (role.Name != null && !user.RoleNames.Contains(role.Name))
                                                 {
                                                     <form method="post" asp-action="AddToRole" asp-route-id="@user.Id" asp-route-roleName="@role.Name" class="m-0">
                                                         <button type="submit" class="btn btn-sm btn-outline-success">
@@ -62,7 +62,7 @@
                                                 }
                                                 else
                                                 {
-                                                    <form method="post" asp-action="RemoveFromRole" asp-route-userid="@user.Id" asp-route-roleName="@role.Name" class="m-0">
+                                                    <form method="post" asp-action="RemoveFromRole" asp-route-id="@user.Id" asp-route-roleName="@role.Name" class="m-0">
                                                         <button type="submit" class="btn btn-sm btn-outline-warning">
                                                             - @role.Name
                                                         </button>
@@ -89,7 +89,7 @@
     </div>
 
     <div class="card shadow-sm">
-        <div class="card-header bg-dark text-white">
+        <div class="card-header">
             <h5 class="mb-0"><i class="bi bi-shield-lock-fill me-2"></i>Manage Roles</h5>
         </div>
         <div class="card-body">
@@ -128,7 +128,7 @@
             {
                 <div class="table-responsive" style="max-width: 600px;">
                     <table class="table table-sm table-hover align-middle">
-                        <thead class="table-light">
+                        <thead>
                             <tr>
                                 <th>Role Name</th>
                                 <th class="text-end">Action</th>
