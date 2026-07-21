@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Admin V2</title>
+    <title>@ViewData["Title"] - Admin Panel</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -139,14 +139,41 @@
         }
 
         @@media (max-width: 991px) {
+            :root {
+                --sidebar-width: 70px;
+            }
             .admin-sidebar {
-                transform: translateX(-100%);
+                transform: none !important;
+            }
+            .sidebar-brand {
+                justify-content: center;
+                padding: 1.25rem 0;
+            }
+            .brand-text {
+                display: none !important;
+            }
+            .sidebar-nav-item {
+                padding: 0.25rem 0.5rem;
+            }
+            .sidebar-nav-link {
+                justify-content: center;
+                padding: 0.75rem 0;
+            }
+            .sidebar-nav-link i {
+                margin-right: 0 !important;
+                font-size: 1.4rem;
+            }
+            .sidebar-nav-link span {
+                display: none !important;
+            }
+            .sidebar-section-header {
+                display: none !important;
             }
             .admin-main {
-                margin-left: 0;
+                margin-left: var(--sidebar-width) !important;
             }
             .admin-topbar {
-                left: 0 !important;
+                left: var(--sidebar-width) !important;
             }
         }
 
@@ -249,40 +276,35 @@
     <!-- Sidebar -->
     <aside class="admin-sidebar">
         <a asp-area="" asp-controller="Home" asp-action="Index" class="sidebar-brand">
-            <i class="bi bi-book-half me-2"></i> BookStore
+            <i class="bi bi-book-half"></i><span class="brand-text ms-2">BookStore</span>
         </a>
         <ul class="sidebar-nav">
             <li class="sidebar-nav-item">
-                <a asp-controller="Dashboard" asp-action="V2" class="sidebar-nav-link @(ViewContext.RouteData.Values["Action"].ToString() == "V2" ? "active" : "")">
-                    <i class="bi bi-grid-1x2-fill"></i> Dashboard V2
-                </a>
-            </li>
-            <li class="sidebar-nav-item">
-                <a asp-controller="Dashboard" asp-action="V1" class="sidebar-nav-link">
-                    <i class="bi bi-arrow-left-circle"></i> Switch to V1
+                <a asp-controller="Dashboard" asp-action="Index" class="sidebar-nav-link @(ViewContext.RouteData.Values["Action"].ToString() == "Index" ? "active" : "")">
+                    <i class="bi bi-grid-1x2-fill"></i><span>Dashboard</span>
                 </a>
             </li>
             <li class="sidebar-nav-item mt-4 mb-2 px-3">
-                <span class="text-uppercase small fw-bold text-muted" style="letter-spacing: 1px;">Management</span>
+                <span class="text-uppercase small fw-bold text-muted sidebar-section-header" style="letter-spacing: 1px;">Management</span>
             </li>
             <li class="sidebar-nav-item">
                 <a asp-controller="Book" asp-action="Index" asp-area="Admin" class="sidebar-nav-link">
-                    <i class="bi bi-book"></i> Books
+                    <i class="bi bi-book"></i><span>Books</span>
                 </a>
             </li>
             <li class="sidebar-nav-item">
                 <a asp-controller="Category" asp-action="Index" class="sidebar-nav-link">
-                    <i class="bi bi-tags"></i> Categories
+                    <i class="bi bi-tags"></i><span>Categories</span>
                 </a>
             </li>
             <li class="sidebar-nav-item">
                 <a asp-controller="Author" asp-action="Index" class="sidebar-nav-link">
-                    <i class="bi bi-people"></i> Authors
+                    <i class="bi bi-people"></i><span>Authors</span>
                 </a>
             </li>
             <li class="sidebar-nav-item">
                 <a asp-controller="User" asp-action="Index" class="sidebar-nav-link">
-                    <i class="bi bi-shield-lock"></i> Users
+                    <i class="bi bi-shield-lock"></i><span>Users</span>
                 </a>
             </li>
         </ul>
@@ -328,5 +350,205 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
+    <!-- AJAX Single-Page Navigation for Admin Panel -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Intercept clicks on links
+            document.body.addEventListener("click", function (e) {
+                const link = e.target.closest("a");
+                if (!link) return;
+
+                const href = link.getAttribute("href");
+                if (!href) return;
+
+                // Check if it's an admin link and not external/identity/logout/preview
+                const isAbsolute = href.startsWith("http://") || href.startsWith("https://");
+                const currentOrigin = window.location.origin;
+                
+                if (isAbsolute && !href.startsWith(currentOrigin)) return;
+
+                let path = href;
+                if (isAbsolute) {
+                    path = href.substring(currentOrigin.length);
+                }
+
+                // Verify it's in the admin area, and not leaving to customer views or identity
+                if (!path.toLowerCase().startsWith("/admin")) return;
+                if (path.toLowerCase().includes("/account/") || path.toLowerCase().includes("/identity/")) return;
+                if (link.hasAttribute("data-no-ajax")) return;
+
+                e.preventDefault();
+                loadAdminPage(path);
+            });
+
+            // Intercept form submissions
+            document.body.addEventListener("submit", function (e) {
+                const form = e.target.closest("form");
+                if (!form) return;
+
+                const action = form.getAttribute("action") || window.location.pathname;
+                const method = (form.getAttribute("method") || "GET").toUpperCase();
+
+                const isAbsolute = action.startsWith("http://") || action.startsWith("https://");
+                const currentOrigin = window.location.origin;
+
+                if (isAbsolute && !action.startsWith(currentOrigin)) return;
+
+                let path = action;
+                if (isAbsolute) {
+                    path = action.substring(currentOrigin.length);
+                }
+
+                if (!path.toLowerCase().startsWith("/admin")) return;
+                if (form.hasAttribute("data-no-ajax")) return;
+
+                e.preventDefault();
+
+                if (method === "GET") {
+                    const params = new URLSearchParams(new FormData(form)).toString();
+                    const url = path.split("?")[0] + "?" + params;
+                    loadAdminPage(url);
+                } else {
+                    submitAdminForm(path, form);
+                }
+            });
+
+            // Handle back/forward browser buttons
+            window.addEventListener("popstate", function (e) {
+                loadAdminPage(window.location.pathname + window.location.search, false);
+            });
+
+            function loadAdminPage(url, pushState = true) {
+                const mainContent = document.querySelector(".admin-content");
+                if (!mainContent) return;
+
+                mainContent.style.opacity = "0.4";
+                mainContent.style.transition = "opacity 0.15s ease";
+
+                fetch(url)
+                    .then(response => {
+                        if (!response.ok) throw new Error("Network response was not ok");
+                        return response.text();
+                    })
+                    .then(html => {
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, "text/html");
+
+                        // Update Page Title
+                        document.title = doc.title;
+
+                        // Update active sidebar state
+                        updateActiveSidebar(url);
+
+                        const newContent = doc.querySelector(".admin-content");
+                        if (newContent) {
+                            mainContent.innerHTML = newContent.innerHTML;
+                            mainContent.style.opacity = "1";
+
+                            // Execute newly loaded scripts
+                            const scripts = doc.querySelectorAll(".admin-content script, body > script");
+                            scripts.forEach(oldScript => {
+                                const src = oldScript.getAttribute("src");
+                                if (src && (src.includes("jquery") || src.includes("bootstrap"))) return;
+
+                                const newScript = document.createElement("script");
+                                Array.from(oldScript.attributes).forEach(attr => {
+                                    newScript.setAttribute(attr.name, attr.value);
+                                });
+                                newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                                
+                                document.body.appendChild(newScript);
+                                newScript.parentNode.removeChild(newScript);
+                            });
+                        } else {
+                            window.location.href = url;
+                        }
+
+                        if (pushState) {
+                            window.history.pushState(null, doc.title, url);
+                        }
+                    })
+                    .catch(error => {
+                        console.error("AJAX navigation error:", error);
+                        window.location.href = url;
+                    });
+            }
+
+            function submitAdminForm(url, form) {
+                const mainContent = document.querySelector(".admin-content");
+                if (!mainContent) return;
+
+                mainContent.style.opacity = "0.4";
+                mainContent.style.transition = "opacity 0.15s ease";
+
+                fetch(url, {
+                    method: "POST",
+                    body: new FormData(form)
+                })
+                .then(response => {
+                    if (response.redirected) {
+                        loadAdminPage(response.url);
+                        return null;
+                    }
+                    if (!response.ok) throw new Error("Form post failed");
+                    return response.text();
+                })
+                .then(html => {
+                    if (html === null) return;
+
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, "text/html");
+
+                    document.title = doc.title;
+                    updateActiveSidebar(url);
+
+                    const newContent = doc.querySelector(".admin-content");
+                    if (newContent) {
+                        mainContent.innerHTML = newContent.innerHTML;
+                        mainContent.style.opacity = "1";
+
+                        const scripts = doc.querySelectorAll(".admin-content script, body > script");
+                        scripts.forEach(oldScript => {
+                            const src = oldScript.getAttribute("src");
+                            if (src && (src.includes("jquery") || src.includes("bootstrap"))) return;
+
+                            const newScript = document.createElement("script");
+                            Array.from(oldScript.attributes).forEach(attr => {
+                                newScript.setAttribute(attr.name, attr.value);
+                            });
+                            newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                            
+                            document.body.appendChild(newScript);
+                            newScript.parentNode.removeChild(newScript);
+                        });
+                    } else {
+                        window.location.href = url;
+                    }
+                })
+                .catch(error => {
+                    console.error("AJAX form error:", error);
+                    form.submit();
+                });
+            }
+
+            function updateActiveSidebar(url) {
+                const links = document.querySelectorAll(".admin-sidebar .sidebar-nav-link");
+                links.forEach(link => {
+                    link.classList.remove("active");
+                    const href = link.getAttribute("href");
+                    if (href) {
+                        const urlLower = url.toLowerCase().split('?')[0];
+                        const hrefLower = href.toLowerCase().split('?')[0];
+                        
+                        // Active check logic: exact match or sub-controller routes (e.g. /Admin/Book/AddEdit is matching /Admin/Book)
+                        if (urlLower === hrefLower || (hrefLower !== "/admin" && urlLower.startsWith(hrefLower))) {
+                            link.classList.add("active");
+                        }
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>

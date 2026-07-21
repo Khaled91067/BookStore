@@ -16,18 +16,7 @@ namespace BookStore.Areas.Admin.Controllers
             _dashboardService = dashboardService;
         }
 
-        public IActionResult Index()
-        {
-            // Default to V2 (Premium Dashboard)
-            return RedirectToAction(nameof(V2));
-        }
-
-        public IActionResult V1()
-        {
-            return View();
-        }
-
-        public async Task<IActionResult> V2()
+        public async Task<IActionResult> Index()
         {
             try
             {
