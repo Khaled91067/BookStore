@@ -109,5 +109,27 @@ namespace BookStore.Services.Implementaion
 
             return result;
         }
+
+        public async Task CreateAdminRoleAsync()
+        {
+            if (!await _roleManager.RoleExistsAsync("Admin"))
+            {
+                _logger.LogInformation("Creating Admin role");
+                await _roleManager.CreateAsync(new IdentityRole("Admin"));
+            }
+        }
+
+        public async Task<bool> DeleteRoleByIdAsync(string roleId)
+        {
+            IdentityRole role = await _roleManager.FindByIdAsync(roleId);
+            if (role != null)
+            {
+                _logger.LogInformation("Role '{RoleName}' (id: {RoleId}) deleted via admin", role.Name, roleId);
+                var result = await _roleManager.DeleteAsync(role);
+                return result.Succeeded;
+            }
+            _logger.LogWarning("DeleteRole: role {RoleId} not found", roleId);
+            return false;
+        }
     }
 }

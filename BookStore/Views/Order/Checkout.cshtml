@@ -50,6 +50,22 @@
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(13, 202, 240, 0.3);
         }
+        .payment-method-card {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .payment-method-card:hover {
+            border-color: rgba(79, 70, 229, 0.4) !important;
+            background-color: rgba(79, 70, 229, 0.01);
+        }
+        .payment-method-card:has(input[type="radio"]:checked) {
+            border-color: #4f46e5 !important;
+            background-color: rgba(79, 70, 229, 0.04);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.05);
+        }
+        .cursor-pointer {
+            cursor: pointer;
+        }
     </style>
 }
 
@@ -141,6 +157,40 @@
                                 <label asp-for="Address" class="form-label fw-semibold text-secondary small">Full Address</label>
                                 <input asp-for="Address" class="form-control rounded-3 py-2" placeholder="1234 Main St, Apartment, City" required />
                                 <span asp-validation-for="Address" class="invalid-feedback">Please enter your shipping address.</span>
+                            </div>
+                        </div>
+
+                        <hr class="my-4 text-muted opacity-25" />
+
+                        <h5 class="mb-3 font-outfit fw-bold text-dark">Payment Method</h5>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <div class="payment-method-card border rounded-3 p-3 position-relative">
+                                    <div class="form-check mb-0">
+                                        <input id="payment-cash" asp-for="PaymentMethod" type="radio" class="form-check-input" value="Cash" checked required />
+                                        <label class="form-check-label ms-2 cursor-pointer w-100" for="payment-cash">
+                                            <span class="d-flex align-items-center gap-2 fw-semibold text-dark">
+                                                <i class="bi bi-cash-coin text-success fs-4"></i>
+                                                Cash on Delivery
+                                            </span>
+                                            <span class="d-block text-muted small mt-1">Pay when you receive the order</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="payment-method-card border rounded-3 p-3 position-relative">
+                                    <div class="form-check mb-0">
+                                        <input id="payment-card" asp-for="PaymentMethod" type="radio" class="form-check-input" value="Paymob" required />
+                                        <label class="form-check-label ms-2 cursor-pointer w-100" for="payment-card">
+                                            <span class="d-flex align-items-center gap-2 fw-semibold text-dark">
+                                                <i class="bi bi-credit-card-2-front text-indigo fs-4"></i>
+                                                Credit / Debit Card
+                                            </span>
+                                            <span class="d-block text-muted small mt-1">Pay securely online via Paymob</span>
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 

@@ -12,16 +12,13 @@ namespace BookStore.Areas.Admin.Controllers
     public class UserController : Controller
     {
         private readonly UserService _userService;
-        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ILogger<UserController> _logger;
 
         public UserController(
             UserService userService,
-            RoleManager<IdentityRole> roleManager,
             ILogger<UserController> logger)
         {
             _userService = userService;
-            _roleManager = roleManager;
             _logger = logger;
         }
 
@@ -82,23 +79,14 @@ namespace BookStore.Areas.Admin.Controllers
         public async Task<IActionResult> CreateAdminRole()
         {
             _logger.LogInformation("CreateAdminRole utility action invoked");
-            await _roleManager.CreateAsync(new IdentityRole("Admin"));
+            await _userService.CreateAdminRoleAsync();
             return RedirectToAction("Index");
         }
 
         [HttpPost]
         public async Task<IActionResult> DeleteRole(string id)
         {
-            IdentityRole role = await _roleManager.FindByIdAsync(id);
-            if (role != null)
-            {
-                _logger.LogInformation("Role '{RoleName}' (id: {RoleId}) deleted via admin", role.Name, id);
-                await _roleManager.DeleteAsync(role);
-            }
-            else
-            {
-                _logger.LogWarning("DeleteRole: role {RoleId} not found", id);
-            }
+            await _userService.DeleteRoleByIdAsync(id);
             return RedirectToAction("Index");
         }
     }

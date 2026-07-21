@@ -317,4 +317,35 @@ public class OrderServiceTests : IDisposable
         Assert.Single(cart);
         Assert.Equal(2, cart[0].ProductId); // Book B remains
     }
+
+    // ──────────────────────────────────────────────────────────────────
+    // UpdatePaymentMethodAsync
+    // ──────────────────────────────────────────────────────────────────
+
+    [Fact]
+    public async Task UpdatePaymentMethodAsync_ValidOrder_UpdatesPaymentMethod()
+    {
+        // Arrange
+        var order = new Order { UserId = "user-1", OrderDate = DateTime.UtcNow, TotalAmount = 100m };
+        _context.Orders.Add(order);
+        await _context.SaveChangesAsync();
+
+        var payment = new Payment
+        {
+            OrderId = order.OrderId,
+            Amount = 100m,
+            PaymentStatus = PaymentStatus.Pending,
+            PaymentMethod = PaymentMethod.Cash
+        };
+        _context.Payments.Add(payment);
+        await _context.SaveChangesAsync();
+
+        // Act
+        await _service.UpdatePaymentMethodAsync(order.OrderId, PaymentMethod.Paymob);
+
+        // Assert
+        var updatedPayment = await _context.Payments.FirstOrDefaultAsync(p => p.OrderId == order.OrderId);
+        Assert.NotNull(updatedPayment);
+        Assert.Equal(PaymentMethod.Paymob, updatedPayment.PaymentMethod);
+    }
 }

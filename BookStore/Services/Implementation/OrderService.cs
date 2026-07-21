@@ -9,11 +9,13 @@ namespace BookStore.Services.Implementaion
     public class OrderService
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<OrderService> _logger;
 
         public OrderService(ApplicationDbContext context, UserManager<ApplicationUser> userManager, ILogger<OrderService> logger)
         {
             _context = context;
+            _userManager = userManager;
             _logger = logger;
         }
 
@@ -187,13 +189,15 @@ namespace BookStore.Services.Implementaion
             }
 
             return await query
+                .OrderByDescending(o => o.OrderDate)
                 .Select(o => new OrderVM
                 {
                     OrderId = o.OrderId,
                     OrderDate = o.OrderDate,
                     CustomerName = o.User.UserName,
                     TotalAmount = o.OrderItems.Sum(i => i.Price * i.Quantity),
-                    PaymentStatus = o.Payments.Where(p => p.OrderId == o.OrderId && p.PaymentStatus == PaymentStatus.Succeeded)
+                    PaymentStatus = o.Payments.Where(p => p.OrderId == o.OrderId)
+                                              .OrderByDescending(p => p.CreatedAt)
                                               .Select(p => p.PaymentStatus)
                                               .FirstOrDefault(),
 
@@ -213,6 +217,33 @@ namespace BookStore.Services.Implementaion
         {
             return await _context.Payments
                 .AnyAsync(p => p.OrderId == orderId && p.PaymentStatus == PaymentStatus.Succeeded);
+        }
+
+        public async Task UpdatePaymentMethodAsync(int orderId, PaymentMethod method)
+        {
+            var payment = await _context.Payments
+                .Where(p => p.OrderId == orderId)
+                .OrderByDescending(p => p.PaymentId)
+                .FirstOrDefaultAsync();
+
+            if (payment != null)
+            {
+                payment.PaymentMethod = method;
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task UpdateUserAddressAsync(ApplicationUser user, CheckOutVM vm)
+        {
+            if (user != null)
+            {
+                user.FirstName = vm.FirstName;
+                user.LastName = vm.LastName;
+                user.Address = vm.Address;
+                user.PhoneNumber = vm.PhoneNumber;
+
+                await _userManager.UpdateAsync(user);
+            }
         }
     }
 }

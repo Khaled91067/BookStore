@@ -16,27 +16,29 @@ namespace BookStore.Controllers
     {
         private readonly IPaymobService _paymobService;
         private readonly IConfiguration _configuration;
-        private readonly ApplicationDbContext _context;
         private readonly ILogger<PaymentController> _logger;
 
         public PaymentController(
             IConfiguration configuration,
             IPaymobService paymobService,
-            ApplicationDbContext context,
             ILogger<PaymentController> logger)
         {
             _configuration = configuration;
             _paymobService = paymobService;
-            _context = context;
             _logger = logger;
         }
 
-        public async Task<IActionResult> PaymentResult(int? orderId)
+        public async Task<IActionResult> PaymentResult(int? orderId, string? success, string? id, string? pending)
         {
             if (orderId == null)
             {
                 _logger.LogWarning("PaymentResult: no orderId provided");
                 return RedirectToAction("ViewOrders", "Order");
+            }
+
+            if (!string.IsNullOrEmpty(success))
+            {
+                await _paymobService.UpdatePaymentStatusFromCallbackAsync(orderId.Value, success, id, pending);
             }
 
             var vm = await _paymobService.GetPaymentResultAsync(orderId.Value);

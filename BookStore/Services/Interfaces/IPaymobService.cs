@@ -1,4 +1,4 @@
-﻿using BookStore.DTOs.Paymob;
+using BookStore.DTOs.Paymob;
 using BookStore.ViewModels;
 
 namespace BookStore.Services.Interfaces
@@ -10,5 +10,7 @@ namespace BookStore.Services.Interfaces
         Task ProcessWebhookAsync(PaymobWebHookDto webhook);
 
         Task<OrderVM> GetPaymentResultAsync(int orderId);
+
+        Task<bool> UpdatePaymentStatusFromCallbackAsync(int orderId, string? success, string? id, string? pending);
     }
 }

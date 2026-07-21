@@ -143,81 +143,101 @@
         <div class="orders-list">
             @foreach (var order in Model)
             {
-                @if (order.PaymentStatus == PaymentStatus.Succeeded)
-                {
-                    <!-- Master card for the whole order -->
-                    <div class="order-card shadow-sm">
-                        <!-- Order Header -->
-                        <div class="order-header">
-                            <div class="row align-items-center g-3">
-                                <div class="col-sm-9">
-                                    <div class="row row-cols-2 row-cols-sm-4 g-3">
-                                        <div class="col">
-                                            <div class="order-header-label">Order Placed</div>
-                                            <div class="order-header-value">@order.OrderDate.ToString("MMMM dd, yyyy")</div>
-                                        </div>
-                                        <div class="col">
-                                            <div class="order-header-label">Total</div>
-                                            <div class="order-header-value text-indigo fw-bold">@order.TotalAmount.ToString("0.00") EGP</div>
-                                        </div>
-                                        <div class="col col-sm-6">
-                                            <div class="order-header-label">Ship To</div>
-                                            <div class="order-header-value">
-                                                <span class="text-dark fw-semibold">@order.CustomerName</span>
-                                            </div>
-                                        </div>
+                <!-- Master card for the whole order -->
+                <div class="order-card shadow-sm">
+                    <!-- Order Header -->
+                    <div class="order-header">
+                        <div class="row align-items-center g-3">
+                            <div class="col-sm-9">
+                                <div class="row row-cols-2 row-cols-sm-4 g-3">
+                                    <div class="col">
+                                        <div class="order-header-label">Order Placed</div>
+                                        <div class="order-header-value">@order.OrderDate.ToString("MMMM dd, yyyy")</div>
                                     </div>
-                                </div>
-                                <div class="col-sm-3 text-sm-end text-muted small">
-                                    <div class="order-header-label mb-1">Order ID</div>
-                                    <div class="text-dark fw-mono font-monospace small">#@order.OrderId</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Inner Card Body containing product list -->
-                        <div class="order-item-list">
-                            @foreach (var item in order.OrderItems)
-                            {
-                                <div class="row align-items-center product-row g-3">
-                                    <div class="col-md-2 col-3 d-flex justify-content-center">
-                                        <div class="book-thumb-container shadow-sm">
-                                            @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                    <div class="col">
+                                        <div class="order-header-label">Total</div>
+                                        <div class="order-header-value text-indigo fw-bold">@order.TotalAmount.ToString("0.00") EGP</div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="order-header-label">Status</div>
+                                        <div class="order-header-value">
+                                            @if (order.PaymentStatus == PaymentStatus.Succeeded)
                                             {
-                                                <img src="~/Images/Books/@item.ImageUrl" alt="@item.ProductName" class="img-fluid object-fit-contain p-1" style="max-height: 90px;">
+                                                <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-2 py-1" style="font-size: 0.75rem;">Succeeded</span>
+                                            }
+                                            else if (order.PaymentStatus == PaymentStatus.Failed)
+                                            {
+                                                <span class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-2 py-1" style="font-size: 0.75rem;">Failed</span>
                                             }
                                             else
                                             {
-                                                <i class="bi bi-book-half text-secondary opacity-50 fs-3"></i>
+                                                <span class="badge bg-warning bg-opacity-10 text-warning rounded-pill px-2 py-1" style="font-size: 0.75rem;">Pending</span>
                                             }
                                         </div>
                                     </div>
-                                    <div class="col-md-7 col-9">
-                                        <h5 class="h6 product-title fw-bold text-dark mb-1">
-                                            <a asp-controller="UserBook" asp-action="Details" asp-route-Id="@item.ProductId" class="text-decoration-none text-dark hover-text-info">@item.ProductName</a>
-                                        </h5>
-                                        <p class="text-muted small mb-0">Quantity: <span class="fw-semibold text-dark">@item.Quantity</span></p>
-                                    </div>
-                                    <div class="col-md-3 col-12 d-flex flex-md-column gap-2 justify-content-start align-items-md-end">
-                                        <a asp-controller="UserBook"
-                                           asp-action="Details"
-                                           asp-route-Id="@item.ProductId"
-                                           class="btn btn-custom-pill btn-view-item w-100 text-center">
-                                            <i class="bi bi-eye me-1"></i> View Item
-                                        </a>
-
-                                        <a asp-controller="Order" 
-                                           asp-action="AddToCart" 
-                                           asp-route-bookId="@item.ProductId" 
-                                           class="btn btn-custom-pill btn-buy-again w-100 text-center fw-bold">
-                                            <i class="bi bi-cart-plus me-1"></i> Buy It Again
-                                        </a>
+                                    <div class="col">
+                                        <div class="order-header-label">Ship To</div>
+                                        <div class="order-header-value">
+                                            <span class="text-dark fw-semibold">@order.CustomerName</span>
+                                        </div>
                                     </div>
                                 </div>
-                            }
+                            </div>
+                            <div class="col-sm-3 text-sm-end text-muted small">
+                                <div class="order-header-label mb-1">Order ID</div>
+                                <div class="text-dark fw-mono font-monospace small mb-2">#@order.OrderId</div>
+                                @if (order.PaymentStatus == PaymentStatus.Pending)
+                                {
+                                    <a asp-controller="Order" asp-action="Checkout" asp-route-id="@order.OrderId" class="btn btn-sm btn-outline-primary fw-bold rounded-pill px-3 py-1">
+                                        <i class="bi bi-credit-card me-1"></i> Pay Now
+                                    </a>
+                                }
+                            </div>
                         </div>
                     </div>
-                }
+
+                    <!-- Inner Card Body containing product list -->
+                    <div class="order-item-list">
+                        @foreach (var item in order.OrderItems)
+                        {
+                            <div class="row align-items-center product-row g-3">
+                                <div class="col-md-2 col-3 d-flex justify-content-center">
+                                    <div class="book-thumb-container shadow-sm">
+                                        @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                        {
+                                            <img src="~/Images/Books/@item.ImageUrl" alt="@item.ProductName" class="img-fluid object-fit-contain p-1" style="max-height: 90px;">
+                                        }
+                                        else
+                                        {
+                                            <i class="bi bi-book-half text-secondary opacity-50 fs-3"></i>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="col-md-7 col-9">
+                                    <h5 class="h6 product-title fw-bold text-dark mb-1">
+                                        <a asp-controller="UserBook" asp-action="Details" asp-route-Id="@item.ProductId" class="text-decoration-none text-dark hover-text-info">@item.ProductName</a>
+                                    </h5>
+                                    <p class="text-muted small mb-0">Quantity: <span class="fw-semibold text-dark">@item.Quantity</span></p>
+                                </div>
+                                <div class="col-md-3 col-12 d-flex flex-md-column gap-2 justify-content-start align-items-md-end">
+                                    <a asp-controller="UserBook"
+                                       asp-action="Details"
+                                       asp-route-Id="@item.ProductId"
+                                       class="btn btn-custom-pill btn-view-item w-100 text-center">
+                                        <i class="bi bi-eye me-1"></i> View Item
+                                    </a>
+
+                                    <a asp-controller="Order" 
+                                       asp-action="AddToCart" 
+                                       asp-route-bookId="@item.ProductId" 
+                                       class="btn btn-custom-pill btn-buy-again w-100 text-center fw-bold">
+                                        <i class="bi bi-cart-plus me-1"></i> Buy It Again
+                                    </a>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
             }
         </div>
     }

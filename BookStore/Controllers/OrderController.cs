@@ -175,16 +175,20 @@ namespace BookStore.Controllers
 
             if (user != null)
             {
-                user.FirstName = vm.FirstName;
-                user.LastName = vm.LastName;
-                user.Address = vm.Address;
-                user.PhoneNumber = vm.PhoneNumber;
-
-                await _userManager.UpdateAsync(user);
+                await _orderService.UpdateUserAddressAsync(user, vm);
             }
 
-            var checkoutUrl = await _paymobService.CreateIntentionAsync(orderId);
-            return Redirect(checkoutUrl);
+            await _orderService.UpdatePaymentMethodAsync(orderId, vm.PaymentMethod);
+
+            if (vm.PaymentMethod == PaymentMethod.Cash)
+            {
+                return RedirectToAction("PaymentResult", "Payment", new { orderId = orderId });
+            }
+            else
+            {
+                var checkoutUrl = await _paymobService.CreateIntentionAsync(orderId);
+                return Redirect(checkoutUrl);
+            }
         }
     }
 }

@@ -42,6 +42,7 @@ namespace BookStore.Services.Implementaion
             {
                 OrderId = orderId,
                 PaymentStatus = payment.PaymentStatus,
+                PaymentMethod = payment.PaymentMethod,
                 TransactionId = payment.TransactionId
             };
             return vm;
@@ -81,6 +82,8 @@ namespace BookStore.Services.Implementaion
             var totalPrice = order.OrderItems
                 .Sum(i => i.Price * i.Quantity);
 
+            var baseUrl = (_configuration["Paymob:BaseUrl"] ?? "https://bookstore.khaled303.dev").TrimEnd('/');
+
             var body = new CreateIntentionRequestDto
             {
                 Amount = (int)(totalPrice * 100),
@@ -94,8 +97,8 @@ namespace BookStore.Services.Implementaion
                     PhoneNumber = order.User.PhoneNumber,
                     Address = order.User.Address
                 },
-                NotificationUrl = "https://bookstore.khaled303.dev/Payment/Webhook",
-                RedirectionUrl = $"https://bookstore.khaled303.dev/Payment/PaymentResult?orderId={order.OrderId}"
+                NotificationUrl = $"{baseUrl}/Payment/Webhook",
+                RedirectionUrl = $"{baseUrl}/Payment/PaymentResult?orderId={order.OrderId}"
             };
 
             var json = JsonSerializer.Serialize(body);
@@ -173,6 +176,39 @@ namespace BookStore.Services.Implementaion
             }
 
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<bool> UpdatePaymentStatusFromCallbackAsync(int orderId, string? success, string? id, string? pending)
+        {
+            if (string.IsNullOrEmpty(success))
+                return false;
+
+            bool isSuccess = string.Equals(success, "true", StringComparison.OrdinalIgnoreCase);
+            bool isPending = string.Equals(pending, "true", StringComparison.OrdinalIgnoreCase);
+
+            var payment = await _context.Payments
+                .Where(p => p.OrderId == orderId)
+                .OrderByDescending(p => p.PaymentId)
+                .FirstOrDefaultAsync();
+
+            if (payment != null && payment.PaymentStatus == PaymentStatus.Pending && payment.PaymentMethod != PaymentMethod.Cash)
+            {
+                if (isSuccess)
+                {
+                    payment.PaymentStatus = PaymentStatus.Succeeded;
+                    payment.TransactionId = id;
+                    payment.PaymentMethod = PaymentMethod.Paymob;
+                    _logger.LogInformation("PaymentResult GET callback: Payment SUCCEEDED for order {OrderId}, transaction {TransactionId}", orderId, id);
+                }
+                else if (!isPending)
+                {
+                    payment.PaymentStatus = PaymentStatus.Failed;
+                    _logger.LogWarning("PaymentResult GET callback: Payment FAILED for order {OrderId}", orderId);
+                }
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            return false;
         }
     }
 }

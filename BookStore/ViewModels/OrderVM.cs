@@ -1,4 +1,4 @@
-﻿using BookStore.Models;
+using BookStore.Models;
 
 namespace BookStore.ViewModels
 {
@@ -16,6 +16,7 @@ namespace BookStore.ViewModels
 
         public String TransactionId { get; set; }
         public PaymentStatus PaymentStatus { get; set; }
+        public PaymentMethod PaymentMethod { get; set; }
 
         public decimal TotalAmount { get; set; }
     }
