@@ -1,151 +1,197 @@
-# BookStore
+# 📚 BookStore
 
-BookStore is a web application designed to provide a complete online bookstore experience. It allows customers to browse and purchase books while providing administrators with tools to manage the bookstore's catalog and related data.
+[![Build & Deploy](https://github.com/Khaled91067/BookStore/actions/workflows/dotnet.yml/badge.svg)](https://github.com/Khaled91067/BookStore/actions/workflows/dotnet.yml)
+![.NET Version](https://img.shields.io/badge/.NET-10-512BD4?logo=dotnet)
+![Entity Framework Core](https://img.shields.io/badge/EF%20Core-512BD4)
+![Database](https://img.shields.io/badge/Database-SQL%20Server-CC292B?logo=microsoftsqlserver)
+![License](https://img.shields.io/badge/License-MIT-blue)
 
-### Key Features & Implementation
-* **Authentication & Authorization:** Implemented secure user authentication and Role-Based Access Control utilizing **ASP.NET Core Identity**.
-* **E-Commerce Workflow:** Developed a complete checkout pipeline including a dynamic shopping cart, order processing, and a comprehensive order management system.
-* **Payment Gateway Integration:** Integrated **Paymob API** for secure credit card processing, implementing **Webhooks** for real-time payment status synchronization and order validation.
-* **Advanced Search & Pagination:** Built an optimized product catalog supporting multi-criteria filtering (by Category, Publisher, and Author), text search, and server-side pagination to ensure high performance with large datasets.
-* **Admin Dashboard:** Created a secure administrative portal for complete CRUD operations on books, categories, inventory management, and user-role assignments.
-* **Database Architecture:** Designed a normalized relational database schema for complex data relations (Users, Orders, Payments, and Catalog) using **Entity Framework Core**.
-* **Media & Inventory Management:** Implemented file upload streams for book cover images alongside an automated inventory tracking system.
+**BookStore** is an e-commerce web application built with **ASP.NET Core MVC (.NET 10)** and **Entity Framework Core**. It provides an online bookstore where customers can browse books, manage a shopping cart, place orders, and pay online using Paymob. The application also includes an administrative portal for catalog and user management.
 
-## Technologies
+---
 
-### Backend
+## 🌐 Live Demo & Testing
 
-* ASP.NET Core MVC
-* C#
-* Entity Framework Core
-* LINQ
+🚀 **Live Demo:** https://bookstore.khaled303.dev/
 
-### Database
+Use the live demo to browse the catalog, add books to the cart, and complete the checkout process.
 
-* SQL Server
+> **Demo Account:** `customer@bookstore.com` / `#BookStore123`
 
-### Authentication & Authorization
+The application uses the **Paymob Sandbox** environment.
 
-* ASP.NET Core Identity
+To test the payment flow:
 
-### Frontend
+1. Add one or more books to the shopping cart.
+2. Proceed to **Checkout**.
+3. Select **Online Payment**.
+4. Complete the payment using the official Paymob Sandbox test card credentials.
 
-* Bootstrap 5
-* HTML5
-* CSS3
-* JavaScript
+👉 **Official Paymob Sandbox Test Cards:**  
+https://developers.paymob.com/paymob-docs/need-help/faq/test-credentials
 
-### Payment Integration
+> **Note:** This demo uses the Paymob Sandbox environment. Do not use real payment cards.
 
-* Paymob Payment Gateway
+---
 
-## Database
+## 🌟 Key Features
 
-The database schema is illustrated below.
+- 🛍️ Customer storefront with search, filtering, pagination, and product details.
+- 🛒 Session-based shopping cart with stock validation.
+- 💳 Paymob payment integration using the Intention API and Webhooks.
+- 💵 Cash on Delivery checkout option.
+- 🔐 ASP.NET Core Identity with role-based authorization.
+- ⚙️ Administrative portal for managing books, categories, authors, roles, and users.
+- ⚡ Rate limiting, structured logging, exception handling, and PII masking.
 
-![Database Diagram](/BookStore/Docs/ERD.png)
+---
 
-## Project Structure
+## 🛠️ Technology Stack
+
+| Layer | Technology | Purpose |
+| --- | --- | --- |
+| Framework | ASP.NET Core MVC (.NET 10) | MVC web application |
+| Data Access | Entity Framework Core | ORM & LINQ |
+| Database | SQL Server / LocalDB | Data persistence |
+| Identity | ASP.NET Core Identity | Authentication & Authorization |
+| Logging | Serilog | Structured logging |
+| Payments | Paymob API | Online payments |
+| Rate Limiting | ASP.NET Core RateLimiter | Request throttling |
+| Testing | xUnit & Moq | Unit testing |
+| CI/CD | GitHub Actions & Azure App Service | Build, test, deployment |
+
+---
+
+## 🏛️ Architecture Summary
+
+BookStore follows a layered architecture separating presentation, business logic, data access, and infrastructure.
+
+```mermaid
+graph TD
+    Presentation["Presentation"] --> Services["Business Logic"]
+    Services --> Data["Data Access"]
+    Services --> External["Paymob API"]
+    Data --> DB[("SQL Server")]
+    Presentation --> Middleware["Middleware"]
+```
+
+See **docs/ARCHITECTURE_OVERVIEW.md** for more details.
+
+---
+
+## 📂 Project Structure
 
 ```text
-BookStore
-├── Areas
-│   ├── Admin
-│   │   ├── Controllers
-│   │   ├── Models
-│   │   └── Views
-│   └── Identity
-│       └── Pages
-├── Controllers
-├── Data
-│   └── Migrations
-├── DTOs
-│   └── Paymob
-├── Models
-├── Services
-│   ├── Interfaces
-│   └── Implementation
-├── ViewModels
-├── Views
-├── wwwroot
-│   ├── css
-│   ├── Images
-│   ├── js
-│   └── lib
-└── Program.cs
+BookStore/
+├── Areas/           # Admin and Identity
+├── Controllers/     # MVC controllers
+├── Services/        # Business logic
+├── Data/            # DbContext, migrations, seeding
+├── DTOs/            # Data Transfer Objects
+├── Models/          # Domain entities
+├── ViewModels/      # View models
+├── Middleware/      # Custom middleware
+├── Helpers/         # Helper utilities
+├── Extensions/      # Dependency injection
+├── Docs/            # Documentation assets
+└── Program.cs       # Application entry point
+
+BookStore.Tests/
+└── Services/        # Unit tests
 ```
 
-## Getting Started
+---
 
-1. Clone the repository.
+## 📸 Screenshots
 
-```bash
-git clone https://github.com/Khaled91067/BookStore.git
-```
-
-2. Update the connection string and Paymob configuration in `appsettings.json`.
-
-3. Apply the database migrations.
-
-```bash
-dotnet ef database update
-```
-
-4. Run the application.
-
-```bash
-dotnet run
-```
-
-## Screenshots
-
-### Home Page
-
-![Home Page](BookStore/Docs/Books.png)
+### Customer Storefront
+![Storefront](BookStore/Docs/Books.png)
 
 ### Book Details
-
 ![Book Details](BookStore/Docs/BookDetails.png)
 
 ### Shopping Cart
+![Cart](BookStore/Docs/Cart.png)
 
-![Shoping Cart](BookStore/Docs/Cart.png)
-
-### Checkout
-
+### Checkout & Payment
 ![Checkout](BookStore/Docs/Checkout.png)
 
-### Pay
+![Paymob](BookStore/Docs/PaymobPayment.png)
 
-![Pay](BookStore/Docs/PaymobPayment.png)
+![Payment Success](BookStore/Docs/PaymentSuccess.png)
 
-### Payment Result
+### Admin Portal
+![Books](BookStore/Docs/Add_Edit_Books.png)
 
-![Payment Result](BookStore/Docs/PaymentSuccess.png)
+![Roles](BookStore/Docs/Add_Edit_Roles.png)
 
-### Manage Books
+---
 
-![Book CRUD](BookStore/Docs/Add_Edit_Books.png)
-![Book CRUD](BookStore/Docs/Add_Edit_Books_Details.png)
+## 🚀 Getting Started
 
-### Manage Roles
-![Roles CRUD](BookStore/Docs/Add_Edit_Roles.png)
+### Prerequisites
 
-## Future Improvements
+- .NET 10 SDK
+- SQL Server / LocalDB
+- Git
 
-- Email notifications
-- Product reviews
-- Wishlist
-- Discount coupons
-- Docker support
-- Unit Testing
+### Installation
 
-## Author
+```bash
+git clone https://github.com/Khaled91067/BookStore.git
+cd BookStore
+```
 
-**Khaled Ahmed**
+### Configuration
 
-Software Developer
+Update the `DefaultConnection` connection string in `appsettings.Development.json` or User Secrets.
 
-LinkedIn: https://www.linkedin.com/in/khaled-ahmed-53a3a4295/
+### Database
 
-GitHub: https://github.com/Khaled91067 
+```bash
+dotnet ef database update --project BookStore
+```
+
+### Run
+
+```bash
+dotnet run --project BookStore
+```
+
+The application seeds default roles, an administrator account, and sample catalog data on first startup.
+
+For detailed setup instructions, see **docs/GETTING_STARTED_AND_CONFIGURATION.md**.
+
+---
+
+## ☁️ Deployment
+
+BookStore is deployed to **Azure App Service** using **GitHub Actions**. Every push to the `main` branch automatically builds, runs the test suite, and deploys the application.
+
+See **docs/CI_CD_AND_DEPLOYMENT.md** for deployment details.
+
+---
+
+## 📖 Documentation
+
+The `docs/` directory contains detailed documentation for:
+
+- Architecture
+- Getting Started
+- Business Rules
+- Authentication & Authorization
+- Database & Data Access
+- API & Integrations
+- Cross-Cutting Concerns
+- CI/CD & Deployment
+- Testing
+- Security
+
+---
+
+## 👤 Author & License
+
+- **Author:** Khaled Ahmed
+- **LinkedIn:** https://www.linkedin.com/in/khaled-ahmed-53a3a4295/
+- **GitHub:** https://github.com/Khaled91067
+- **License:** MIT License
