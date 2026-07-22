@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 
 namespace BookStore.DTOs.Paymob
 {
@@ -8,20 +8,20 @@ namespace BookStore.DTOs.Paymob
         public int Amount { get; set; }
 
         [JsonPropertyName("currency")]
-        public string Currency { get; set; }
+        public string Currency { get; set; } = string.Empty;
 
         [JsonPropertyName("payment_methods")]
-        public int[] PaymentMethods { get; set; }
+        public int[] PaymentMethods { get; set; } = Array.Empty<int>();
 
         [JsonPropertyName("billing_data")]
-        public BillingDataDto BillingData { get; set; }
+        public BillingDataDto BillingData { get; set; } = null!;
 
         [JsonPropertyName("notification_url")]
-        public string NotificationUrl { get; set; }
+        public string NotificationUrl { get; set; } = string.Empty;
 
 
         [JsonPropertyName("redirection_url")]
-        public string RedirectionUrl { get; set; }
+        public string RedirectionUrl { get; set; } = string.Empty;
 
 
     }

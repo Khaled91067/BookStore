@@ -1,4 +1,4 @@
-﻿using BookStore.ViewModels;
+using BookStore.ViewModels;
 
 namespace BookStore.Models
 {
@@ -26,7 +26,7 @@ namespace BookStore.Models
         public decimal Amount { get; set; }
         
         public int OrderId { get; set; }
-        public Order Order { get; set; }
+        public Order Order { get; set; } = null!;
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 

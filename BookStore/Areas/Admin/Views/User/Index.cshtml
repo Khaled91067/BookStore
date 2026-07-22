@@ -52,7 +52,7 @@
                                         <div class="d-inline-flex gap-2 justify-content-end align-items-center">
                                             @foreach (var role in Model.Roles)
                                             {
-                                                if (role.Name != null && !user.RoleNames.Contains(role.Name))
+                                                if (role.Name != null && !(user.RoleNames?.Contains(role.Name) ?? false))
                                                 {
                                                     <form method="post" asp-action="AddToRole" asp-route-id="@user.Id" asp-route-roleName="@role.Name" class="m-0">
                                                         <button type="submit" class="btn btn-sm btn-outline-success">

@@ -2,28 +2,39 @@ using BookStore.Data;
 using BookStore.Models;
 using BookStore.ViewModels;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace BookStore.Services.Implementaion
 {
     public class AuthorService
     {
+        private const string AuthorsCacheKey = "Authors_All";
+        private const string HomeDataCacheKey = "Home_Data";
+
         private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly ILogger<AuthorService> _logger;
+        private readonly IMemoryCache _cache;
 
         public AuthorService(
             ApplicationDbContext context,
             IWebHostEnvironment webHostEnvironment,
-            ILogger<AuthorService> logger)
+            ILogger<AuthorService> logger,
+            IMemoryCache cache)
         {
             _context = context;
             _webHostEnvironment = webHostEnvironment;
             _logger = logger;
+            _cache = cache;
         }
 
         public async Task<List<Author>> GetAllAuthorsAsync()
         {
-            return await _context.Authors.ToListAsync();
+            return (await _cache.GetOrCreateAsync(AuthorsCacheKey, async entry =>
+            {
+                entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30);
+                return await _context.Authors.ToListAsync();
+            }))!;
         }
 
         public async Task AddAuthorAsync(string authorName, IFormFile? imageFile)
@@ -53,6 +64,9 @@ namespace BookStore.Services.Implementaion
 
             _context.Authors.Add(author);
             await _context.SaveChangesAsync();
+
+            _cache.Remove(AuthorsCacheKey);
+            _cache.Remove(HomeDataCacheKey);
 
             _logger.LogInformation("Author created: {AuthorId} '{AuthorName}'", author.AuthorId, authorName);
         }
@@ -86,6 +100,9 @@ namespace BookStore.Services.Implementaion
             _context.Authors.Remove(author);
             await _context.SaveChangesAsync();
 
+            _cache.Remove(AuthorsCacheKey);
+            _cache.Remove(HomeDataCacheKey);
+
             _logger.LogInformation("Author deleted: {AuthorId} '{AuthorName}'", id, author.Name);
             return true;
         }
@@ -112,7 +129,7 @@ namespace BookStore.Services.Implementaion
                     .Where(ba => ba.Book != null)
                     .Select(ba => new BookVM
                     {
-                        BookId = ba.Book.BookId,
+                        BookId = ba.Book!.BookId,
                         Title = ba.Book.Title,
                         Price = ba.Book.Price,
                         StockQuantity = ba.Book.StockQuantity,

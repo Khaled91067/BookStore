@@ -57,14 +57,14 @@ namespace BookStore.Services.Implementaion
 
         public async Task<bool> AddUserToRoleAsync(string id, string roleName)
         {
-            IdentityRole role = await _roleManager.FindByNameAsync(roleName);
+            IdentityRole? role = await _roleManager.FindByNameAsync(roleName);
             if (role == null)
             {
                 _logger.LogWarning("AddUserToRole: role '{RoleName}' not found", roleName);
                 return false;
             }
 
-            ApplicationUser user = await _userManager.FindByIdAsync(id);
+            ApplicationUser? user = await _userManager.FindByIdAsync(id);
             if (user == null)
             {
                 _logger.LogWarning("AddUserToRole: user {UserId} not found", id);
@@ -78,7 +78,7 @@ namespace BookStore.Services.Implementaion
 
         public async Task RemoveUserFromRoleAsync(string userId, string roleName)
         {
-            ApplicationUser user = await _userManager.FindByIdAsync(userId);
+            ApplicationUser? user = await _userManager.FindByIdAsync(userId);
             if (user != null)
             {
                 await _userManager.RemoveFromRoleAsync(user, roleName);
@@ -92,7 +92,7 @@ namespace BookStore.Services.Implementaion
 
         public async Task<IdentityResult> DeleteUserByIdAsync(string id)
         {
-            ApplicationUser user = await _userManager.FindByIdAsync(id);
+            ApplicationUser? user = await _userManager.FindByIdAsync(id);
 
             if (user == null)
             {
@@ -121,7 +121,7 @@ namespace BookStore.Services.Implementaion
 
         public async Task<bool> DeleteRoleByIdAsync(string roleId)
         {
-            IdentityRole role = await _roleManager.FindByIdAsync(roleId);
+            IdentityRole? role = await _roleManager.FindByIdAsync(roleId);
             if (role != null)
             {
                 _logger.LogInformation("Role '{RoleName}' (id: {RoleId}) deleted via admin", role.Name, roleId);

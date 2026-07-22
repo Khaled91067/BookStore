@@ -9,7 +9,7 @@ namespace BookStore.Services.Interfaces
 
         Task ProcessWebhookAsync(PaymobWebHookDto webhook);
 
-        Task<OrderVM> GetPaymentResultAsync(int orderId);
+        Task<OrderVM?> GetPaymentResultAsync(int orderId);
 
         Task<bool> UpdatePaymentStatusFromCallbackAsync(int orderId, string? success, string? id, string? pending);
     }

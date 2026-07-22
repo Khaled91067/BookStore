@@ -89,7 +89,8 @@ namespace BookStore.Services.Implementaion
 
             // 7. Top Selling Books
             viewModel.TopSellingBooks = await _context.OrderItems
-                .GroupBy(oi => new { oi.BookId, oi.Book.Title, oi.Book.ImageUrl })
+                .Where(oi => oi.Book != null)
+                .GroupBy(oi => new { oi.BookId, Title = oi.Book!.Title, ImageUrl = oi.Book!.ImageUrl })
                 .Select(g => new TopSellingBookVM
                 {
                     BookId = g.Key.BookId,

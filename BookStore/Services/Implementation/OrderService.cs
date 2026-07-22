@@ -142,7 +142,7 @@ namespace BookStore.Services.Implementaion
             return order.OrderId;
         }
 
-        public async Task<CheckOutVM> PrepareCheckOutVMAsync(int id, ApplicationUser user)
+        public async Task<CheckOutVM?> PrepareCheckOutVMAsync(int id, ApplicationUser user)
         {
             var order = await _context.Orders.Where(o => o.OrderId == id && o.UserId == user.Id)
                                              .Include(o => o.OrderItems)
@@ -157,17 +157,17 @@ namespace BookStore.Services.Implementaion
             CheckOutVM vm = new CheckOutVM
             {
                 OrderId = order.OrderId,
-                Address = user?.Address,
-                PhoneNumber = user?.PhoneNumber,
-                Email = user?.Email,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
+                Address = user.Address ?? string.Empty,
+                PhoneNumber = user.PhoneNumber ?? string.Empty,
+                Email = user.Email ?? string.Empty,
+                FirstName = user.FirstName ?? string.Empty,
+                LastName = user.LastName ?? string.Empty,
 
                 OrderItems = order.OrderItems.Select(i => new OrderItemVM
                 {
                     ProductId = i.BookId,
-                    ProductName = i.Book.Title,
-                    ImageUrl = i.Book.ImageUrl,
+                    ProductName = i.Book != null ? i.Book.Title : string.Empty,
+                    ImageUrl = i.Book != null ? i.Book.ImageUrl : null,
                     Price = i.Price,
                     Quantity = i.Quantity
                 }).ToList()
@@ -185,7 +185,7 @@ namespace BookStore.Services.Implementaion
             {
                 query = query.Where(o =>
                     o.OrderItems.Any(i =>
-                        i.Book.Title.Contains(searchTerm)));
+                        i.Book != null && i.Book.Title.Contains(searchTerm)));
             }
 
             return await query
@@ -194,7 +194,7 @@ namespace BookStore.Services.Implementaion
                 {
                     OrderId = o.OrderId,
                     OrderDate = o.OrderDate,
-                    CustomerName = o.User.UserName,
+                    CustomerName = o.User != null ? (o.User.UserName ?? string.Empty) : string.Empty,
                     TotalAmount = o.OrderItems.Sum(i => i.Price * i.Quantity),
                     PaymentStatus = o.Payments.Where(p => p.OrderId == o.OrderId)
                                               .OrderByDescending(p => p.CreatedAt)
@@ -204,8 +204,8 @@ namespace BookStore.Services.Implementaion
                     OrderItems = o.OrderItems.Select(i => new OrderItemVM
                     {
                         ProductId = i.BookId,
-                        ProductName = i.Book.Title,
-                        ImageUrl = i.Book.ImageUrl,
+                        ProductName = i.Book != null ? i.Book.Title : string.Empty,
+                        ImageUrl = i.Book != null ? i.Book.ImageUrl : null,
                         Quantity = i.Quantity,
                         Price = i.Price
                     }).ToList()
