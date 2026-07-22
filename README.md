@@ -102,31 +102,6 @@ BookStore.Tests/
 
 ---
 
-## 📸 Screenshots
-
-### Customer Storefront
-![Storefront](BookStore/Docs/Books.png)
-
-### Book Details
-![Book Details](BookStore/Docs/BookDetails.png)
-
-### Shopping Cart
-![Cart](BookStore/Docs/Cart.png)
-
-### Checkout & Payment
-![Checkout](BookStore/Docs/Checkout.png)
-
-![Paymob](BookStore/Docs/PaymobPayment.png)
-
-![Payment Success](BookStore/Docs/PaymentSuccess.png)
-
-### Admin Portal
-![Books](BookStore/Docs/Add_Edit_Books.png)
-
-![Roles](BookStore/Docs/Add_Edit_Roles.png)
-
----
-
 ## 🚀 Getting Started
 
 ### Prerequisites
