@@ -1,13 +1,10 @@
 using BookStore.Data;
+using BookStore.Extensions;
 using BookStore.Middleware;
 using BookStore.Models;
-using BookStore.Services.Implementaion;
-using BookStore.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
-using System.Threading.RateLimiting;
 
 namespace BookStore
 {
@@ -47,39 +44,8 @@ namespace BookStore
                                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
                 builder.Services.AddMemoryCache();
-
-                builder.Services.AddRateLimiter(options =>
-                {
-                    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
-
-                    options.OnRejected = async (context, token) =>
-                    {
-                        context.HttpContext.Response.ContentType = "application/json";
-                        await context.HttpContext.Response.WriteAsync(
-                            "{\"error\": \"Too many requests. Please try again later.\"}", cancellationToken: token);
-                    };
-
-                    options.AddPolicy("GlobalPolicy", httpContext =>
-                        RateLimitPartition.GetFixedWindowLimiter(
-                            partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "anonymous",
-                            factory: _ => new FixedWindowRateLimiterOptions
-                            {
-                                PermitLimit = 100,
-                                Window = TimeSpan.FromMinutes(1),
-                                QueueLimit = 5,
-                                QueueProcessingOrder = QueueProcessingOrder.OldestFirst
-                            }));
-
-                    options.AddPolicy("StrictPolicy", httpContext =>
-                        RateLimitPartition.GetFixedWindowLimiter(
-                            partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "anonymous",
-                            factory: _ => new FixedWindowRateLimiterOptions
-                            {
-                                PermitLimit = 10,
-                                Window = TimeSpan.FromMinutes(1),
-                                QueueLimit = 0
-                            }));
-                });
+                builder.Services.AddRateLimitingPolicies();
+                builder.Services.AddApplicationServices();
 
                 builder.Services.AddControllersWithViews();
 
@@ -89,15 +55,6 @@ namespace BookStore
                     //option.Cookie.HttpOnly = true;
                     //option.Cookie.IsEssential = true;
                 });
-
-                builder.Services.AddScoped<BookService>();
-                builder.Services.AddScoped<OrderService>();
-                builder.Services.AddScoped<UserService>();
-                builder.Services.AddScoped<AuthorService>();
-                builder.Services.AddScoped<CategoryService>();
-                builder.Services.AddScoped<DashboardService>();
-                builder.Services.AddScoped<HomeService>();
-                builder.Services.AddHttpClient<IPaymobService, PaymobService>();
 
                 var app = builder.Build();
 

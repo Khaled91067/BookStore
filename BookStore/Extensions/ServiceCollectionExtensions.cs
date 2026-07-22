@@ -1,0 +1,62 @@
+using BookStore.Services.Implementaion;
+using BookStore.Services.Interfaces;
+using Microsoft.AspNetCore.RateLimiting;
+using System.Threading.RateLimiting;
+
+namespace BookStore.Extensions
+{
+    public static class ServiceCollectionExtensions
+    {
+        public static IServiceCollection AddApplicationServices(this IServiceCollection services)
+        {
+            services.AddScoped<BookService>();
+            services.AddScoped<OrderService>();
+            services.AddScoped<UserService>();
+            services.AddScoped<AuthorService>();
+            services.AddScoped<CategoryService>();
+            services.AddScoped<DashboardService>();
+            services.AddScoped<HomeService>();
+            services.AddHttpClient<IPaymobService, PaymobService>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddRateLimitingPolicies(this IServiceCollection services)
+        {
+            services.AddRateLimiter(options =>
+            {
+                options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+                options.OnRejected = async (context, token) =>
+                {
+                    context.HttpContext.Response.ContentType = "application/json";
+                    await context.HttpContext.Response.WriteAsync(
+                        "{\"error\": \"Too many requests. Please try again later.\"}", cancellationToken: token);
+                };
+
+                options.AddPolicy("GlobalPolicy", httpContext =>
+                    RateLimitPartition.GetFixedWindowLimiter(
+                        partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "anonymous",
+                        factory: _ => new FixedWindowRateLimiterOptions
+                        {
+                            PermitLimit = 100,
+                            Window = TimeSpan.FromMinutes(1),
+                            QueueLimit = 5,
+                            QueueProcessingOrder = QueueProcessingOrder.OldestFirst
+                        }));
+
+                options.AddPolicy("StrictPolicy", httpContext =>
+                    RateLimitPartition.GetFixedWindowLimiter(
+                        partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "anonymous",
+                        factory: _ => new FixedWindowRateLimiterOptions
+                        {
+                            PermitLimit = 10,
+                            Window = TimeSpan.FromMinutes(1),
+                            QueueLimit = 0
+                        }));
+            });
+
+            return services;
+        }
+    }
+}
