@@ -1,12 +1,33 @@
+using BookStore.Data;
+using BookStore.Models;
 using BookStore.Services.Implementaion;
 using BookStore.Services.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.EntityFrameworkCore;
 using System.Threading.RateLimiting;
 
 namespace BookStore.Extensions
 {
     public static class ServiceCollectionExtensions
     {
+        public static IServiceCollection AddDatabaseAndIdentityServices(this IServiceCollection services, IConfiguration configuration)
+        {
+            var connectionString = configuration.GetConnectionString("DefaultConnection")
+                ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(connectionString));
+
+            services.AddDatabaseDeveloperPageExceptionFilter();
+
+            services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddRoles<IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            return services;
+        }
+
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
             services.AddScoped<BookService>();
@@ -57,6 +78,19 @@ namespace BookStore.Extensions
             });
 
             return services;
+        }
+
+        public static async Task SeedDatabaseAsync(this WebApplication app)
+        {
+            using var scope = app.Services.CreateScope();
+            var services = scope.ServiceProvider;
+            var context = services.GetRequiredService<ApplicationDbContext>();
+            var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+            var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+            var loggerFactory = services.GetRequiredService<ILoggerFactory>();
+            var dbLogger = loggerFactory.CreateLogger("BookStore.Data.DbInitializer");
+
+            await DbInitializer.SeedDataAsync(context, userManager, roleManager, dbLogger);
         }
     }
 }

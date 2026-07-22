@@ -1,9 +1,5 @@
-using BookStore.Data;
 using BookStore.Extensions;
 using BookStore.Middleware;
-using BookStore.Models;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Serilog;
 
 namespace BookStore
@@ -23,51 +19,29 @@ namespace BookStore
 
                 var builder = WebApplication.CreateBuilder(args);
 
-                // Replace the default logging provider with Serilog, reading config from appsettings
+                // Replace default logging provider with Serilog
                 builder.Host.UseSerilog((ctx, services, cfg) =>
                     cfg.ReadFrom.Configuration(ctx.Configuration)
                        .ReadFrom.Services(services)
                        .Enrich.FromLogContext());
 
-                // Add services to the container.
-                var connectionString = builder.Configuration
-                    .GetConnectionString("DefaultConnection") ??
-                        throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-
-                builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                                options.UseSqlServer(connectionString));
-
-                builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-
-                builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                                .AddRoles<IdentityRole>()
-                                .AddEntityFrameworkStores<ApplicationDbContext>();
-
+                // Register services
+                builder.Services.AddDatabaseAndIdentityServices(builder.Configuration);
                 builder.Services.AddMemoryCache();
                 builder.Services.AddRateLimitingPolicies();
                 builder.Services.AddApplicationServices();
-
                 builder.Services.AddControllersWithViews();
-
-                builder.Services.AddSession(option =>
-                {
-                    option.IdleTimeout = TimeSpan.FromMinutes(30);
-                    //option.Cookie.HttpOnly = true;
-                    //option.Cookie.IsEssential = true;
-                });
+                builder.Services.AddSession(option => option.IdleTimeout = TimeSpan.FromMinutes(30));
 
                 var app = builder.Build();
 
-                // Global exception handler — logs and redirects; registered before routing
+                // Middleware Pipeline
                 app.UseMiddleware<ExceptionHandlingMiddleware>();
-
-                // Serilog HTTP request logging — one structured line per request
                 app.UseSerilogRequestLogging(opts =>
                 {
                     opts.MessageTemplate = "HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms";
                 });
 
-                // Configure the HTTP request pipeline.
                 if (app.Environment.IsDevelopment())
                 {
                     app.UseMigrationsEndPoint();
@@ -75,30 +49,18 @@ namespace BookStore
                 else
                 {
                     app.UseExceptionHandler("/Home/Error");
-                    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                     app.UseHsts();
                 }
 
                 app.UseHttpsRedirection();
                 app.UseRouting();
-
                 app.UseRateLimiter();
-
                 app.UseAuthentication();
                 app.UseAuthorization();
+                app.UseSession();
 
-                using (var scope = app.Services.CreateScope())
-                {
-                    var services = scope.ServiceProvider;
-                    var context = services.GetRequiredService<ApplicationDbContext>();
-                    var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
-                    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-                    var loggerFactory = services.GetRequiredService<ILoggerFactory>();
-                    var dbLogger = loggerFactory.CreateLogger("BookStore.Data.DbInitializer");
-                    await DbInitializer.SeedDataAsync(context, userManager, roleManager, dbLogger);
-                }
-
-                app.UseSession();//
+                // Seed database data
+                await app.SeedDatabaseAsync();
 
                 app.MapStaticAssets();
 
