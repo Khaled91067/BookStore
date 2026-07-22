@@ -6,6 +6,7 @@ using BookStore.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace BookStore.Controllers
 {
@@ -34,6 +35,7 @@ namespace BookStore.Controllers
         }
 
         [Authorize]
+        [EnableRateLimiting("StrictPolicy")]
         public async Task<IActionResult> AddToCart(int bookId, int quantity = 1)
         {
             var cart = HttpContext.Session.Get<List<OrderItemVM>>("Cart") ?? new List<OrderItemVM>();
@@ -93,6 +95,7 @@ namespace BookStore.Controllers
 
         [Authorize]
         [HttpPost]
+        [EnableRateLimiting("StrictPolicy")]
         public async Task<IActionResult> PlaceOrder()
         {
             var cart = HttpContext.Session.Get<List<OrderItemVM>>("Cart");
@@ -163,6 +166,7 @@ namespace BookStore.Controllers
 
         [HttpPost]
         [Authorize]
+        [EnableRateLimiting("StrictPolicy")]
         public async Task<IActionResult> Checkout(CheckOutVM vm, int orderId)
         {
             if (await _orderService.IsOrderPaidAsync(orderId))

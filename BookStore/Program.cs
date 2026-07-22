@@ -1,8 +1,7 @@
 using BookStore.Data;
+using BookStore.Extensions;
 using BookStore.Middleware;
 using BookStore.Models;
-using BookStore.Services.Implementaion;
-using BookStore.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -45,6 +44,9 @@ namespace BookStore
                                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
                 builder.Services.AddMemoryCache();
+                builder.Services.AddRateLimitingPolicies();
+                builder.Services.AddApplicationServices();
+
                 builder.Services.AddControllersWithViews();
 
                 builder.Services.AddSession(option =>
@@ -53,15 +55,6 @@ namespace BookStore
                     //option.Cookie.HttpOnly = true;
                     //option.Cookie.IsEssential = true;
                 });
-
-                builder.Services.AddScoped<BookService>();
-                builder.Services.AddScoped<OrderService>();
-                builder.Services.AddScoped<UserService>();
-                builder.Services.AddScoped<AuthorService>();
-                builder.Services.AddScoped<CategoryService>();
-                builder.Services.AddScoped<DashboardService>();
-                builder.Services.AddScoped<HomeService>();
-                builder.Services.AddHttpClient<IPaymobService, PaymobService>();
 
                 var app = builder.Build();
 
@@ -88,6 +81,8 @@ namespace BookStore
 
                 app.UseHttpsRedirection();
                 app.UseRouting();
+
+                app.UseRateLimiter();
 
                 app.UseAuthentication();
                 app.UseAuthorization();

@@ -6,12 +6,14 @@ using BookStore.Services.Interfaces;
 using BookStore.ViewModels;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
 using System.Text.Json;
 
 namespace BookStore.Controllers
 {
+    [EnableRateLimiting("StrictPolicy")]
     public class PaymentController : Controller
     {
         private readonly IPaymobService _paymobService;
