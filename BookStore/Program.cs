@@ -44,6 +44,7 @@ namespace BookStore
                                 .AddRoles<IdentityRole>()
                                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
+                builder.Services.AddMemoryCache();
                 builder.Services.AddControllersWithViews();
 
                 builder.Services.AddSession(option =>

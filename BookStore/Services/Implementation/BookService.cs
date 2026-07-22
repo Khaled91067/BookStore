@@ -4,21 +4,30 @@ using BookStore.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace BookStore.Services.Implementaion
 {
     public class BookService
     {
+        private const string HomeDataCacheKey = "Home_Data";
+
         private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly ILogger<BookService> _logger;
+        private readonly IMemoryCache? _cache;
 
-        public BookService(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment, ILogger<BookService> logger)
+        public BookService(
+            ApplicationDbContext context,
+            IWebHostEnvironment webHostEnvironment,
+            ILogger<BookService> logger,
+            IMemoryCache? cache = null)
         {
             _context = context;
             _webHostEnvironment = webHostEnvironment;
             _logger = logger;
+            _cache = cache;
         }
 
         public async Task<BooksPageVM> GetAllBooksAsync(string? search, int page)
@@ -190,6 +199,7 @@ namespace BookStore.Services.Implementaion
             }
 
             await _context.SaveChangesAsync();
+            _cache?.Remove(HomeDataCacheKey);
             return true;
         }
 
@@ -216,13 +226,14 @@ namespace BookStore.Services.Implementaion
             _context.Books.Remove(book);
             await _context.SaveChangesAsync();
 
+            _cache?.Remove(HomeDataCacheKey);
+
             _logger.LogInformation("Book deleted: {BookId} '{Title}'", id, book.Title);
             return true;
         }
 
-        public async Task<BookDetailsVM> GetBookDetailsAsync(int id)
+        public async Task<BookDetailsVM?> GetBookDetailsAsync(int id)
         {
-            // TODO: Resolve nullable reference warnings (CS8600, CS8602)
             var result = await _context.Books
                 .Include(b => b.Category)
                 .Include(b => b.Publisher)
@@ -237,13 +248,13 @@ namespace BookStore.Services.Implementaion
                     Price = b.Price,
                     ImageUrl = b.ImageUrl,
                     StockQuantity = b.StockQuantity,
-                    CategoryName = b.Category.Name,
-                    PublisherName = b.Publisher.Name,
+                    CategoryName = b.Category != null ? b.Category.Name : string.Empty,
+                    PublisherName = b.Publisher != null ? b.Publisher.Name : string.Empty,
                     Authors = b.BookAuthors
                                 .Select(ba => new AuthorDto
                                 {
                                     AuthorId = ba.AuthorId,
-                                    Name = ba.Author.Name
+                                    Name = ba.Author != null ? ba.Author.Name : string.Empty
                                 })
                                 .ToList()
                 })

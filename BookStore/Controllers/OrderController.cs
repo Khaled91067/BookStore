@@ -104,6 +104,10 @@ namespace BookStore.Controllers
             }
 
             var userId = _userManager.GetUserId(User);
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized();
+            }
             int? orderId = await _orderService.PlaceOrder(userId, cart);
 
             if (!orderId.HasValue)
@@ -143,6 +147,9 @@ namespace BookStore.Controllers
             }
 
             var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return Unauthorized();
+
             var vm = await _orderService.PrepareCheckOutVMAsync(id, user);
 
             if (vm == null)

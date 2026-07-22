@@ -1,28 +1,39 @@
 using BookStore.Data;
 using BookStore.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace BookStore.Services.Implementaion
 {
     public class CategoryService
     {
+        private const string CategoriesCacheKey = "Categories_All";
+        private const string HomeDataCacheKey = "Home_Data";
+
         private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly ILogger<CategoryService> _logger;
+        private readonly IMemoryCache _cache;
 
         public CategoryService(
             ApplicationDbContext context,
             IWebHostEnvironment webHostEnvironment,
-            ILogger<CategoryService> logger)
+            ILogger<CategoryService> logger,
+            IMemoryCache cache)
         {
             _context = context;
             _webHostEnvironment = webHostEnvironment;
             _logger = logger;
+            _cache = cache;
         }
 
         public async Task<List<Category>> GetAllCategoriesAsync()
         {
-            return await _context.Categories.ToListAsync();
+            return (await _cache.GetOrCreateAsync(CategoriesCacheKey, async entry =>
+            {
+                entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30);
+                return await _context.Categories.ToListAsync();
+            }))!;
         }
 
         public async Task AddCategoryAsync(string categoryName, IFormFile? imageFile)
@@ -52,6 +63,9 @@ namespace BookStore.Services.Implementaion
 
             _context.Categories.Add(category);
             await _context.SaveChangesAsync();
+
+            _cache.Remove(CategoriesCacheKey);
+            _cache.Remove(HomeDataCacheKey);
 
             _logger.LogInformation("Category created: {CategoryId} '{CategoryName}'", category.CategoryId, categoryName);
         }
@@ -84,6 +98,9 @@ namespace BookStore.Services.Implementaion
 
             _context.Categories.Remove(category);
             await _context.SaveChangesAsync();
+
+            _cache.Remove(CategoriesCacheKey);
+            _cache.Remove(HomeDataCacheKey);
 
             _logger.LogInformation("Category deleted: {CategoryId} '{CategoryName}'", id, category.Name);
             return true;

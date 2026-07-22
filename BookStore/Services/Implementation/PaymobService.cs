@@ -25,7 +25,7 @@ namespace BookStore.Services.Implementaion
             _logger = logger;
         }
 
-        public async Task<OrderVM> GetPaymentResultAsync(int orderId)
+        public async Task<OrderVM?> GetPaymentResultAsync(int orderId)
         {
             var payment = await _context.Payments
                 .Where(p => p.OrderId == orderId)
@@ -43,7 +43,7 @@ namespace BookStore.Services.Implementaion
                 OrderId = orderId,
                 PaymentStatus = payment.PaymentStatus,
                 PaymentMethod = payment.PaymentMethod,
-                TransactionId = payment.TransactionId
+                TransactionId = payment.TransactionId ?? string.Empty
             };
             return vm;
         }
@@ -91,11 +91,11 @@ namespace BookStore.Services.Implementaion
                 PaymentMethods = new[] { 5733305 },
                 BillingData = new BillingDataDto
                 {
-                    FirstName = order.User.FirstName,
-                    LastName = order.User.LastName,
-                    Email = order.User.Email,       // not logged — masked elsewhere
-                    PhoneNumber = order.User.PhoneNumber,
-                    Address = order.User.Address
+                    FirstName = order.User?.FirstName ?? string.Empty,
+                    LastName = order.User?.LastName ?? string.Empty,
+                    Email = order.User?.Email ?? string.Empty,       // not logged — masked elsewhere
+                    PhoneNumber = order.User?.PhoneNumber ?? string.Empty,
+                    Address = order.User?.Address ?? string.Empty
                 },
                 NotificationUrl = $"{baseUrl}/Payment/Webhook",
                 RedirectionUrl = $"{baseUrl}/Payment/PaymentResult?orderId={order.OrderId}"
@@ -117,8 +117,8 @@ namespace BookStore.Services.Implementaion
             var publicKey = _configuration["Paymob:PublicKey"];
             var intentionResponse = JsonSerializer.Deserialize<CreateIntentionResponseDto>(result);
 
-            var clientSecret = intentionResponse.ClientSecret;
-            var paymobOrderId = intentionResponse.IntentionOrderId;
+            var clientSecret = intentionResponse?.ClientSecret ?? string.Empty;
+            var paymobOrderId = intentionResponse?.IntentionOrderId ?? 0;
 
             var checkoutUrl = $"https://accept.paymob.com/unifiedcheckout/?publicKey={publicKey}&clientSecret={clientSecret}";
 

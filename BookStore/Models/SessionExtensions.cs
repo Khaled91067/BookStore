@@ -1,4 +1,4 @@
-﻿using Microsoft.IdentityModel.Tokens;
+using Microsoft.IdentityModel.Tokens;
 using System.Text.Json;
 
 namespace BookStore.Models
@@ -12,9 +12,9 @@ namespace BookStore.Models
         public static T? Get<T>(this ISession session, string key)
         {
             var json = session.GetString(key);
-            if (json.IsNullOrEmpty())
+            if (string.IsNullOrEmpty(json))
             {
-                return default(T);
+                return default;
             }
             else
             {
