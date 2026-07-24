@@ -56,13 +56,11 @@ namespace BookStore.Controllers
             var totalCount = cart.Sum(x => x.Quantity);
             TempData["Success"] = "Book added to cart successfully.";
 
-            // Supports both AJAX (book detail page quick-add) and full-page form submissions.
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
                 return Json(new { success = true, message = "Book added to cart successfully.", cartCount = totalCount });
             }
 
-            // Return to the referring page (e.g., book listing) for a seamless experience.
             var referer = Request.Headers["Referer"].ToString();
             if (!string.IsNullOrEmpty(referer))
             {
@@ -144,8 +142,6 @@ namespace BookStore.Controllers
         [Authorize]
         public async Task<IActionResult> Checkout(int id)
         {
-            // Idempotency guard: prevents re-processing checkout if the user navigates
-            // back or refreshes after a successful payment.
             if (await _orderService.IsOrderPaidAsync(id))
             {
                 _logger.LogInformation("Checkout: order {OrderId} already paid — redirecting user {UserId}", id, _userManager.GetUserId(User));
@@ -185,7 +181,6 @@ namespace BookStore.Controllers
             if (!ModelState.IsValid)
             {
                 _logger.LogWarning("Checkout POST: invalid model for order {OrderId}, user {UserId}", orderId, user?.Id);
-                // TODO: return the view with validation errors instead of a plain string.
                 return Content("Model Invalid");
             }
 

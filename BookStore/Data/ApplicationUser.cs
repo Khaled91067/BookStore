@@ -12,8 +12,6 @@ namespace BookStore.Data
 
         public ICollection<Order> Orders { get; set; } = new List<Order>();
 
-        // Populated on-demand (e.g., by UserService) after loading from Identity.
-        // Not persisted — accessing this without explicit population will throw NullReferenceException.
         [NotMapped]
         public IList<string> RoleNames { get; set; } = null!;
     }

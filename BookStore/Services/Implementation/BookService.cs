@@ -128,8 +128,6 @@ namespace BookStore.Services.Implementaion
                 var newFileName = Guid.NewGuid().ToString() + "_" + vm.ImageFile.FileName;
                 string path = Path.Combine(uploadsFolder, newFileName);
 
-                // File is written synchronously; for high-throughput scenarios,
-                // consider CopyToAsync with a proper cancellation token.
                 using (var stream = new FileStream(path, FileMode.Create))
                 {
                     vm.ImageFile.CopyTo(stream);
@@ -183,8 +181,6 @@ namespace BookStore.Services.Implementaion
                 book.StockQuantity = vm.StockQuantity;
                 book.PublisherId = vm.PublisherId;
 
-                // Replace all author associations in one sweep rather than diffing.
-                // Simpler to maintain; acceptable given the low expected author count per book.
                 var existingAuthors = _context.BookAuthors
                  .Where(ba => ba.BookId == book.BookId);
 
@@ -203,7 +199,6 @@ namespace BookStore.Services.Implementaion
             }
 
             await _context.SaveChangesAsync();
-            // Invalidate the home-page cache so featured/recent books reflect the change immediately.
             _cache?.Remove(HomeDataCacheKey);
             return true;
         }
