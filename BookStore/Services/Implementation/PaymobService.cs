@@ -86,8 +86,11 @@ namespace BookStore.Services.Implementaion
 
             var body = new CreateIntentionRequestDto
             {
+                // Paymob requires amounts in the smallest currency unit (piastres for EGP)
                 Amount = (int)(totalPrice * 100),
                 Currency = "EGP",
+                // 5733305 is the card payment integration ID configured in the Paymob dashboard.
+                // This should ideally be read from configuration rather than hardcoded.
                 PaymentMethods = new[] { 5733305 },
                 BillingData = new BillingDataDto
                 {
@@ -150,7 +153,9 @@ namespace BookStore.Services.Implementaion
                 return;
             }
 
-            // Verify callback amount matches expected payment amount (in cents)
+            // Guard against replay attacks and amount tampering: reject the webhook if the
+            // amount does not exactly match our stored record. Paymob also recommends
+            // validating an HMAC signature on the payload (not currently implemented).
             var expectedCents = (long)Math.Round(payment.Amount * 100);
             if (webhook.Obj.AmountCents != expectedCents)
             {
@@ -191,6 +196,9 @@ namespace BookStore.Services.Implementaion
                 .OrderByDescending(p => p.PaymentId)
                 .FirstOrDefaultAsync();
 
+            // Paymob calls both the webhook (POST) and the redirection URL (GET) on completion.
+            // This method handles the GET callback; the webhook is the authoritative source.
+            // The Cash guard prevents overwriting a deliberate cash-payment status.
             if (payment != null && payment.PaymentStatus == PaymentStatus.Pending && payment.PaymentMethod != PaymentMethod.Cash)
             {
                 if (isSuccess)

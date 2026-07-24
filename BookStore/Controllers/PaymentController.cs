@@ -30,6 +30,9 @@ namespace BookStore.Controllers
             _logger = logger;
         }
 
+        // Accessible without authentication — orderId is validated inside the service
+        // and results are non-sensitive (payment status only). Intentionally public
+        // so users who are not logged in can still see the Paymob redirect result.
         public async Task<IActionResult> PaymentResult(int? orderId, string? success, string? id, string? pending)
         {
             if (orderId == null)
@@ -54,6 +57,9 @@ namespace BookStore.Controllers
             return View(vm);
         }
 
+        // Must be publicly reachable — Paymob POSTs here from their infrastructure.
+        // No [Authorize] intentionally. Consider validating Paymob's HMAC-SHA512
+        // signature header ("x-webhook-signature") before processing the payload.
         [HttpPost]
         public async Task<IActionResult> Webhook()
         {

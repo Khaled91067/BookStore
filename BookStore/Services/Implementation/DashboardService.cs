@@ -73,7 +73,8 @@ namespace BookStore.Services.Implementaion
                 })
                 .ToListAsync();
 
-            // Fallback: resolve missing customer names via a second query
+            // User navigation properties are not always populated inside projections.
+            // This secondary query catches any unresolved names without changing the main query structure.
             foreach (var order in viewModel.RecentOrders)
             {
                 if (string.IsNullOrWhiteSpace(order.CustomerName) || order.CustomerName == "Guest")
@@ -110,6 +111,8 @@ namespace BookStore.Services.Implementaion
                 .Select(o => new { o.OrderDate, o.TotalAmount })
                 .ToListAsync();
 
+            // Orders are fetched once and grouped in memory because SQL date-only
+            // truncation syntax varies by provider. Acceptable for a 7-day window.
             for (int i = 0; i < 7; i++)
             {
                 var date = startDate.AddDays(i);

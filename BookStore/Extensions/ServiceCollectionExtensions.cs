@@ -37,6 +37,8 @@ namespace BookStore.Extensions
             services.AddScoped<CategoryService>();
             services.AddScoped<DashboardService>();
             services.AddScoped<HomeService>();
+            // Registers PaymobService as a typed HttpClient so IHttpClientFactory manages
+            // the HttpMessageHandler lifecycle and avoids socket exhaustion.
             services.AddHttpClient<IPaymobService, PaymobService>();
 
             return services;
@@ -55,6 +57,7 @@ namespace BookStore.Extensions
                         "{\"error\": \"Too many requests. Please try again later.\"}", cancellationToken: token);
                 };
 
+                // GlobalPolicy: blanket protection on all routes (100 req/min per IP).
                 options.AddPolicy("GlobalPolicy", httpContext =>
                     RateLimitPartition.GetFixedWindowLimiter(
                         partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "anonymous",
@@ -66,6 +69,8 @@ namespace BookStore.Extensions
                             QueueProcessingOrder = QueueProcessingOrder.OldestFirst
                         }));
 
+                // StrictPolicy: applied to mutating endpoints (add-to-cart, place-order,
+                // checkout) to limit abuse without blocking normal browsing.
                 options.AddPolicy("StrictPolicy", httpContext =>
                     RateLimitPartition.GetFixedWindowLimiter(
                         partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "anonymous",
@@ -73,7 +78,7 @@ namespace BookStore.Extensions
                         {
                             PermitLimit = 10,
                             Window = TimeSpan.FromMinutes(1),
-                            QueueLimit = 0
+                            QueueLimit = 0  // no queuing — excess requests fail immediately
                         }));
             });
 
@@ -82,6 +87,8 @@ namespace BookStore.Extensions
 
         public static async Task SeedDatabaseAsync(this WebApplication app)
         {
+            // A dedicated scope is required because DbContext and UserManager are
+            // scoped services and cannot be resolved from the root service provider.
             using var scope = app.Services.CreateScope();
             var services = scope.ServiceProvider;
             var context = services.GetRequiredService<ApplicationDbContext>();

@@ -37,6 +37,8 @@ namespace BookStore.Data
                     }
                     else
                     {
+                        // On subsequent runs, only image URLs are updated so existing category
+                        // relationships and references stay intact.
                         var existingCategories = await context.Categories.ToListAsync();
                         bool changed = false;
                         foreach (var cat in categories)
@@ -161,6 +163,8 @@ namespace BookStore.Data
                                 };
 
                                 await context.Books.AddAsync(book);
+                                // SaveChangesAsync per book to retrieve the generated BookId
+                                // before creating BookAuthor join records.
                                 await context.SaveChangesAsync();
 
                                 // Associate Authors
@@ -211,6 +215,8 @@ namespace BookStore.Data
                             {
                                 UserName = dto.UserName,
                                 Email = dto.Email,
+                                // Pre-confirmed to allow immediate login without an email flow;
+                                // seed accounts are managed credentials, not self-registered.
                                 EmailConfirmed = true,
                                 FirstName = dto.FirstName,
                                 LastName = dto.LastName,
@@ -252,6 +258,8 @@ namespace BookStore.Data
                                 var order = new Order
                                 {
                                     UserId = user.Id,
+                                    // Negative offset produces past dates, making seed orders look
+                                    // realistic in the dashboard's 7-day sales history chart.
                                     OrderDate = DateTime.UtcNow.AddDays(dto.OrderDateOffsetDays),
                                     TotalAmount = dto.Payment.Amount
                                 };
@@ -287,6 +295,8 @@ namespace BookStore.Data
                                         PaymentMethod = method,
                                         PaymentStatus = status,
                                         CreatedAt = order.OrderDate,
+                                        // Synthetic transaction ID for demo data only;
+                                        // real transaction IDs come from the payment gateway.
                                         TransactionId = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 12)
                                     };
                                     await context.Payments.AddAsync(payment);

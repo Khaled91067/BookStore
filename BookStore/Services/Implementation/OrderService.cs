@@ -86,6 +86,9 @@ namespace BookStore.Services.Implementaion
 
             _logger.LogInformation("Placing order for user {UserId}, {ItemCount} item(s)", userId, cart.Count);
 
+            // Stock is decremented here before the Order is saved to catch shortfalls early.
+            // There is no database-level lock, so a concurrent PlaceOrder for the same book
+            // could oversell in theory. Acceptable at current scale; revisit if concurrency grows.
             foreach (var item in cart)
             {
                 var book = await _context.Books.FindAsync(item.ProductId);
@@ -123,12 +126,14 @@ namespace BookStore.Services.Implementaion
                 });
             }
 
+            // Payment.Amount and Order.TotalAmount are both set to the same sum.
+            // If order items change after creation, both must be updated together.
             Payment payment = new Payment
             {
                 Order = order,
                 Amount = order.OrderItems.Sum(i => i.Price * i.Quantity),
                 PaymentStatus = PaymentStatus.Pending,
-                PaymentMethod = PaymentMethod.Cash
+                PaymentMethod = PaymentMethod.Cash   // default; updated during checkout
             };
 
             order.TotalAmount = order.OrderItems.Sum(i => i.Price * i.Quantity);
@@ -219,6 +224,8 @@ namespace BookStore.Services.Implementaion
                 .AnyAsync(p => p.OrderId == orderId && p.PaymentStatus == PaymentStatus.Succeeded);
         }
 
+        // Targets the most recent payment record for the order, consistent with how
+        // the rest of the codebase resolves the authoritative payment.
         public async Task UpdatePaymentMethodAsync(int orderId, PaymentMethod method)
         {
             var payment = await _context.Payments
@@ -233,6 +240,8 @@ namespace BookStore.Services.Implementaion
             }
         }
 
+        // Checkout updates the user's profile with the shipping address provided at
+        // order time. This is a deliberate UX convenience, not a separate address entity.
         public async Task UpdateUserAddressAsync(ApplicationUser user, CheckOutVM vm)
         {
             if (user != null)
